@@ -1,0 +1,37 @@
+package TP_Final.devhire.Entities;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
+
+@Entity
+@Table(name = "publications")
+public class PublicationEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long publication_id;
+    @NotEmpty
+    private String content;
+    private Timestamp publicationDate;
+    @NotNull
+    private Boolean state;
+    @ManyToOne
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_publication"))
+    private UserEntity userId;
+    @OneToMany(mappedBy = "publication_id")
+    private List<LikeEntity>likes;
+    @OneToMany(mappedBy = "publication_id")
+    private List<CommentEntity>comments;
+
+}
