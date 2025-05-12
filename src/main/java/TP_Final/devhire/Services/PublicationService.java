@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
-@NoArgsConstructor
 public class PublicationService{
     @Autowired
     private PublicationsRepository publicationsRepository;
