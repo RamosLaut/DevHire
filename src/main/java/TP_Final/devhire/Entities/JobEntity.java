@@ -28,7 +28,7 @@ public class JobEntity {
     @NotEmpty
     private String description;
 
-    @NotNull
+    @NotEmpty
     private String location;
 
     @ElementCollection(targetClass = SoftSkills.class)
