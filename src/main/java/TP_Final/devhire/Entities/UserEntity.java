@@ -5,10 +5,15 @@ import TP_Final.devhire.Enums.Seniority;
 import TP_Final.devhire.Enums.SoftSkills;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -22,13 +27,13 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_id;
-    @NotNull
+    @NotEmpty
     private String name;
-    @NotNull
+    @NotEmpty
     private String lastName;
     @Email
     private String email;
-    @NotNull
+    @NotEmpty
     private String dni;
     @Enumerated(EnumType.STRING)
     private Seniority seniority;
@@ -64,4 +69,14 @@ public class UserEntity {
     private List<LikeEntity>likes;
     @OneToMany(mappedBy = "user_id")
     private List<CommentEntity>comments;
+
+    @OneToMany(mappedBy = "follower")
+    private List<FollowEntity> followed = new ArrayList<>();
+
+    @OneToMany(mappedBy = "followed")
+    private List<FollowEntity> followers = new ArrayList<>();
+
+    @ManyToMany (mappedBy = "users")
+    private Set<JobEntity> jobs;
+
 }
