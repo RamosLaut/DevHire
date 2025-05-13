@@ -25,7 +25,7 @@ public class PublicationEntity {
     private String content;
     private Timestamp publicationDate;
     @NotNull
-    private Boolean state;
+    private Boolean state = true;
     @ManyToOne
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_publication"))
     private UserEntity userId;
