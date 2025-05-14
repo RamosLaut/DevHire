@@ -1,4 +1,4 @@
-package TP_Final.devhire.Controllers.Exceptions;
+package TP_Final.devhire.Exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package TP_Final.devhire.Controllers.Exceptions;
+package TP_Final.devhire.Exceptions;
 
 public class UserNotFoundException extends RuntimeException {
   public UserNotFoundException(String message) {

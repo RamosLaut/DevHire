@@ -15,14 +15,6 @@ public class DevHireApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DevHireApplication.class, args);
-		UserEntity userEntity = UserEntity.builder().name("lautaro").build();
-		UserEntity userEntity1 = UserEntity.builder().name("juan").build();
-		PublicationEntity publicationEntity = PublicationEntity.builder().content("hola mundo").publicationDate(Timestamp.from(Instant.now())).build();
-		PublicationEntity publicationEntity2 = PublicationEntity.builder().content("API devhire").publicationDate(Timestamp.from(Instant.now())).build();
-		PublicationEntity publicationEntity3 = PublicationEntity.builder().content("Esta funcionando?").publicationDate(Timestamp.from(Instant.now())).build();
-		PublicationService.save(publicationEntity);
-		PublicationService.save(publicationEntity2);
-		PublicationService.save(publicationEntity3);
 	}
 
 }

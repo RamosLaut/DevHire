@@ -1,43 +1,51 @@
 package TP_Final.devhire.Services;
 
-import TP_Final.devhire.Controllers.Exceptions.UserNotFoundException;
 import TP_Final.devhire.Entities.PublicationEntity;
+import TP_Final.devhire.Entities.UserEntity;
+import TP_Final.devhire.Exceptions.UserNotFoundException;
 import TP_Final.devhire.Repositories.PublicationsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
 public class PublicationService{
-//    @Autowired
-    private static PublicationsRepository publicationsRepository;
+    private final PublicationsRepository publicationsRepository;
+    private final UserService userService;
     @Autowired
-    public PublicationService(PublicationsRepository publicationsRepository) {
+    public PublicationService(PublicationsRepository publicationsRepository, UserService userService) {
         this.publicationsRepository = publicationsRepository;
+        this.userService = userService;
     }
-
-    public static void save(PublicationEntity publicationEntity){
+    public void save(PublicationEntity publicationEntity){
         publicationsRepository.save(publicationEntity);
     }
-    public static List<PublicationEntity> findAll(){
+    public List<PublicationEntity> findAll(){
         return publicationsRepository.findAll();
     }
-    public static PublicationEntity findById(Long id)throws RuntimeException{
+    public PublicationEntity findById(Long id)throws RuntimeException{
         return publicationsRepository.findById(id).orElseThrow(RuntimeException::new);
     }
-//    public static List<PublicationEntity> findByuserId(Long id)throws UserNotFoundException {
-//        return publicationsRepository.findByuserId(id).orElseThrow(()->new UserNotFoundException("User not found"));
-//    }
-    public static void deleteById(Long id){
+    public List<PublicationEntity> findByuserId(Long id)throws UserNotFoundException {
+        Optional<UserEntity> user = userService.findById(id);
+        return publicationsRepository.findByuserId(user.get()).orElseThrow(()->new UserNotFoundException("User not found"));
+    }
+    public  void deleteById(Long id){
         publicationsRepository.deleteById(id);
     }
-//    public static void deleteByuserId(Long id){
-//        publicationsRepository.deleteByuserId(id);
-//    }
-//    public static void updateContent(PublicationEntity publicationEntity){
-//        publicationsRepository.updateContent(publicationEntity.getContent(), publicationEntity.getPublication_id());
-//    }
+    public void deleteByuserId(Long id)throws UserNotFoundException{
+        Optional<UserEntity> user = userService.findById(id);
+        if(user.isPresent()){
+            publicationsRepository.deleteByuserId(user.get().getUser_id());
+        }else{
+            throw new UserNotFoundException("User not found");
+        }
+    }
+    public void updateContent(PublicationEntity publicationEntity){
+        publicationsRepository.updateContent(publicationEntity.getContent(), publicationEntity.getPublication_id());
+    }
 
 }
