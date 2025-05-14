@@ -37,6 +37,10 @@ public class UserEntity {
     private String dni;
     @Enumerated(EnumType.STRING)
     private Seniority seniority;
+    @Column(unique = true, nullable = false)
+    private String username;
+    @NotEmpty
+    private String password;
 
     @ElementCollection
     @CollectionTable(name = "user_academic_info", joinColumns = @JoinColumn(name = "user_id"))
