@@ -19,10 +19,10 @@ public class LikeEntity {
     private long like_id;
     @ManyToOne
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_like"))
-    private UserEntity user_id;
+    private UserEntity user;
     @ManyToOne
     @JoinColumn(name = "publication_id", foreignKey = @ForeignKey(name = "FK_publication_like"))
-    private PublicationEntity publication_id;
+    private PublicationEntity publication;
     private Timestamp likeDate;
     @NotNull
     private Boolean state;

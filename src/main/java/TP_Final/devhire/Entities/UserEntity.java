@@ -67,11 +67,11 @@ public class UserEntity {
 
     @NotNull
     private Boolean state;
-    @OneToMany(mappedBy = "userId")
+    @OneToMany(mappedBy = "user")
     private List<PublicationEntity>publications;
-    @OneToMany(mappedBy = "user_id")
+    @OneToMany(mappedBy = "user")
     private List<LikeEntity>likes;
-    @OneToMany(mappedBy = "user_id")
+    @OneToMany(mappedBy = "user")
     private List<CommentEntity>comments;
 
     @OneToMany(mappedBy = "follower")

@@ -20,10 +20,10 @@ public class CommentEntity {
     private long comment_id;
     @ManyToOne
     @JoinColumn(name = "publication_id", foreignKey = @ForeignKey(name = "FK_publication_comment"))
-    private PublicationEntity publication_id;
+    private PublicationEntity publication;
     @ManyToOne
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_comment"))
-    private UserEntity user_id;
+    private UserEntity user;
     @NotEmpty
     private String content;
     private Timestamp commentDate;
