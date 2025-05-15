@@ -29,21 +29,21 @@ public class PublicationService{
     public PublicationEntity findById(Long id)throws RuntimeException{
         return publicationsRepository.findById(id).orElseThrow(RuntimeException::new);
     }
-    public List<PublicationEntity> findByuserId(Long id)throws UserNotFoundException {
-        Optional<UserEntity> user = userService.findById(id);
-        return publicationsRepository.findByuserId(user.get()).orElseThrow(()->new UserNotFoundException("User not found"));
-    }
+//    public List<PublicationEntity> findByuserId(Long id)throws UserNotFoundException {
+//        Optional<UserEntity> user = userService.findById(id);
+//        return publicationsRepository.findByuser(user.get()).orElseThrow(()->new UserNotFoundException("User not found"));
+//    }
     public  void deleteById(Long id){
         publicationsRepository.deleteById(id);
     }
-    public void deleteByuserId(Long id)throws UserNotFoundException{
-        Optional<UserEntity> user = userService.findById(id);
-        if(user.isPresent()){
-            publicationsRepository.deleteByuserId(user.get().getUser_id());
-        }else{
-            throw new UserNotFoundException("User not found");
-        }
-    }
+//    public void deleteByuserId(Long id)throws UserNotFoundException{
+//        Optional<UserEntity> user = userService.findById(id);
+//        if(user.isPresent()){
+//            publicationsRepository.deleteByuserId(user.get().getUser_id());
+//        }else{
+//            throw new UserNotFoundException("User not found");
+//        }
+//    }
     public void updateContent(PublicationEntity publicationEntity){
         publicationsRepository.updateContent(publicationEntity.getContent(), publicationEntity.getPublication_id());
     }

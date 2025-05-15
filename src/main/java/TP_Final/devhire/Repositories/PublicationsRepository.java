@@ -17,16 +17,16 @@ import java.util.Optional;
 public interface PublicationsRepository extends JpaRepository<PublicationEntity, Long> {
     @Modifying
     @Transactional
-    @Query("UPDATE publications p SET p.content = :content WHERE p.publication_id = :id")
+    @Query("UPDATE PublicationEntity SET content = :content WHERE publication_id = :id")
     void updateContent(@Param("content") String content, @Param("id") Long id);
 
-    Optional<List<PublicationEntity>> findByuserId(UserEntity user);
+////    Optional<List<PublicationEntity>> findByuser(UserEntity user);
 
     Optional<PublicationEntity> findById(@NonNull Long id);
 
     void deleteById(@NonNull Long id);
-    @Modifying
-    @Transactional
-    @Query("DELETE FROM publications p WHERE p.user_id = :id")
-    void deleteByuserId(@Param("userId") Long userId);
+//    @Modifying
+//    @Transactional
+//    @Query("DELETE FROM PublicationEntity WHERE p.user.user_id = :userId")
+//    void deleteByuserId(@Param("userId") Long userId);
 }
