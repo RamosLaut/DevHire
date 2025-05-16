@@ -1,6 +1,10 @@
 package TP_Final.devhire.Services;
 
+import TP_Final.devhire.Entities.AcademicInfo;
+import TP_Final.devhire.Entities.JobExperience;
 import TP_Final.devhire.Entities.UserEntity;
+import TP_Final.devhire.Enums.HardSkills;
+import TP_Final.devhire.Enums.SoftSkills;
 import TP_Final.devhire.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,13 +29,13 @@ public class UserService {
 
     public UserEntity register (UserEntity user){
         if (userRepository.findByUsername(user.getUsername()).isPresent()){
-            throw new RuntimeException("El nombre de usuario ya existe");
+            throw new RuntimeException("The username already exists");
         }
         if (userRepository.findByEmail(user.getEmail()).isPresent()){
-            throw new RuntimeException("El email ya se encuentra registrado");
+            throw new RuntimeException("The is already registered");
         }
         if (userRepository.findByDni(user.getDni()).isPresent()){
-            throw new RuntimeException("El dni ya se encuentra registrado");
+            throw new RuntimeException("The DNI is already registered");
         }
         return userRepository.save(user);
     }
@@ -40,18 +44,75 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public Page<UserEntity> listAllPage(){
+    public Page<UserEntity> findAllPage(){
         Pageable pageable = PageRequest.of(page, size);
         Page<UserEntity> entityPage;
         return  entityPage = userRepository.findAll(pageable);
     }
 
-    public List<UserEntity> listAll(){
+    public List<UserEntity> findAll(){
         return userRepository.findAll();
     }
 
-    public void delete (Long userID){
+    public void deleteById (Long userID){
         userRepository.deleteById(userID);
     }
+
+    public UserEntity update (Long userID, UserEntity user){
+        user.setUser_id(userID);
+        return userRepository.save(user);
+    }
+
+    public UserEntity updateUserFields (Long userID, UserEntity user){
+        return userRepository.findById(userID).map(u -> {user.setName(user.getName());
+            u.setLastName(user.getLastName());
+            u.setEmail(user.getEmail());
+            u.setDni(user.getDni());
+            u.setPassword(user.getPassword());
+            u.setAcademicInfo(user.getAcademicInfo());
+            u.setLocation(user.getLocation());
+            u.setSeniority(user.getSeniority());
+            u.setJobExperience(user.getJobExperience());
+            u.setSoftSkills(user.getSoftSkills());
+            u.setHardSkills(user.getHardSkills());
+            return userRepository.save(u);}).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public void updatePassword (Long userID, String newPassword){
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setPassword(newPassword);
+        userRepository.save(user);
+    }
+
+    public void updateSkills (Long userID, List<SoftSkills> softSkills, List<HardSkills> hardSkills){
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setSoftSkills(softSkills);
+        user.setHardSkills(hardSkills);
+        userRepository.save(user);
+    }
+
+    public void updateAcademicInfo (Long userID, List<AcademicInfo> academicInfo){
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setAcademicInfo(academicInfo);
+        userRepository.save(user);
+    }
+    public void updateJobExperience (Long userID, List<JobExperience> jobExperience){
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setJobExperience(jobExperience);
+        userRepository.save(user);
+    }
+
+    public void deactivate (Long userID){
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setState(false);
+        userRepository.save(user);
+    }
+
+    public void reactivate (Long userID){
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setState(true);
+        userRepository.save(user);
+    }
+
 
 }
