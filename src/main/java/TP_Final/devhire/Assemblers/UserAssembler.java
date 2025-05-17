@@ -3,6 +3,7 @@ package TP_Final.devhire.Assemblers;
 import TP_Final.devhire.Controllers.PublicationController;
 import TP_Final.devhire.Controllers.UserController;
 import TP_Final.devhire.DTOS.UserDTO;
+import TP_Final.devhire.DTOS.UserRegisterDTO;
 import TP_Final.devhire.Entities.UserEntity;
 import TP_Final.devhire.Mappers.UserMapper;
 import jakarta.validation.constraints.NotNull;
@@ -12,30 +13,22 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Component
 public class UserAssembler implements RepresentationModelAssembler<UserEntity, EntityModel<UserDTO>> {
     @Autowired
     private UserMapper userMapper;
 
     @Override
-    public @NotNull EntityModel<UserDTO> toModel(@NotNull UserEntity user) {
-        return null;
+    public EntityModel<UserDTO> toModel(UserEntity entity) {
+        UserDTO dto = userMapper.converToDto(entity);
+        return EntityModel.of(dto,
+                linkTo(methodOn(UserController.class).getUserById(entity.getUser_id())).withSelfRel(),
+                linkTo(methodOn(UserController.class).listAllUsers()).withRel("list all users"));
     }
 
-//    UserDTO userDTO = userMapper.converToDto(user);
-//        return EntityModel.of(userDTO, linkTo(methodOn(UserController.class). );
-//}
-//
-//    public UserEntity toEntity(UserRegisterDTO dto) {
-//        return modelMapper.map(dto, UserEntity.class);
-//    }
-//
-//    public UserEntity toEntity(UserUpdateDTO dto) {
-//        return modelMapper.map(dto, UserEntity.class);
-//    }
-//
-//    public UserResponseDTO toResponseDTO(UserEntity entity) {
-//        return modelMapper.map(entity, UserResponseDTO.class);
-//    }
+
 }
 
