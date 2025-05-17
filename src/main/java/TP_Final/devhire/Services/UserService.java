@@ -91,15 +91,15 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void updateAcademicInfo (Long userID, List<AcademicInfo> academicInfo){
+    public UserEntity updateAcademicInfo (Long userID, List<AcademicInfo> academicInfo){
         UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
         user.setAcademicInfo(academicInfo);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
-    public void updateJobExperience (Long userID, List<JobExperience> jobExperience){
+    public UserEntity updateJobExperience (Long userID, List<JobExperience> jobExperience){
         UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
         user.setJobExperience(jobExperience);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public void deactivate (Long userID){

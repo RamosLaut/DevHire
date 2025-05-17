@@ -1,7 +1,12 @@
 package TP_Final.devhire.Controllers;
 
 import TP_Final.devhire.Assemblers.UserAssembler;
+import TP_Final.devhire.DTOS.AcademicInfoDTO;
+import TP_Final.devhire.DTOS.JobExperienceDTO;
 import TP_Final.devhire.DTOS.UserDTO;
+import TP_Final.devhire.DTOS.UserRegisterDTO;
+import TP_Final.devhire.Entities.AcademicInfo;
+import TP_Final.devhire.Entities.JobExperience;
 import TP_Final.devhire.Entities.UserEntity;
 import TP_Final.devhire.Mappers.UserMapper;
 import TP_Final.devhire.Services.UserService;
@@ -35,8 +40,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<EntityModel<UserDTO>> register (@RequestBody @Valid UserDTO dto ){
-      UserEntity entity = userMapper.converToEntity(dto);
+    public ResponseEntity<EntityModel<UserDTO>> register (@RequestBody @Valid UserRegisterDTO dto ){
+      UserEntity entity = userMapper.convertToEntity(dto);
         UserEntity saved = userService.register(entity);
 
         return ResponseEntity
@@ -60,5 +65,28 @@ public class UserController {
                 CollectionModel.of(users,
                         linkTo(methodOn(UserController.class).listAllUsers()).withSelfRel())
         );
+    }
+
+    @PutMapping("/{id}/academicInfo")
+    public ResponseEntity<EntityModel<UserDTO>> updateUserAcademicInfo(@PathVariable Long id, @RequestBody List<AcademicInfoDTO> academicInfoDTOS){
+        List<AcademicInfo> academicInfo = academicInfoDTOS.stream()
+                .map(userMapper::convertToAcademicInfo)
+                .toList();
+
+        UserEntity updated = userService.updateAcademicInfo(id, academicInfo);
+//        UserDTO updatedDTO = userMapper.converToDto(updated);
+        return ResponseEntity.ok(userAssembler.toModel(updated));
+
+    }
+
+    @PutMapping("/{id}/jobExperience")
+    public ResponseEntity<EntityModel<UserDTO>> updateJobExperience(@PathVariable Long id, @RequestBody List<JobExperienceDTO> jobExperienceDTOS){
+        List<JobExperience> jobExperiences = jobExperienceDTOS.stream()
+                .map(userMapper::convertToJobExperience)
+                .toList();
+
+        UserEntity updated = userService.updateJobExperience(id, jobExperiences);
+        return ResponseEntity.ok(userAssembler.toModel(updated));
+
     }
 }
