@@ -1,9 +1,92 @@
 package TP_Final.devhire.Controllers;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import TP_Final.devhire.Assemblers.UserAssembler;
+import TP_Final.devhire.DTOS.AcademicInfoDTO;
+import TP_Final.devhire.DTOS.JobExperienceDTO;
+import TP_Final.devhire.DTOS.UserDTO;
+import TP_Final.devhire.DTOS.UserRegisterDTO;
+import TP_Final.devhire.Entities.AcademicInfo;
+import TP_Final.devhire.Entities.JobExperience;
+import TP_Final.devhire.Entities.UserEntity;
+import TP_Final.devhire.Mappers.UserMapper;
+import TP_Final.devhire.Services.UserService;
+import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    private final UserService userService;
+    private final UserMapper userMapper;
+    private final UserAssembler userAssembler;
+
+    @Autowired
+    public UserController(UserService userService, UserMapper userMapper, UserAssembler userAssembler) {
+        this.userService = userService;
+        this.userMapper = userMapper;
+        this.userAssembler = userAssembler;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<EntityModel<UserDTO>> register (@RequestBody @Valid UserRegisterDTO dto ){
+      UserEntity entity = userMapper.convertToEntity(dto);
+        UserEntity saved = userService.register(entity);
+
+        return ResponseEntity
+            .created(linkTo(methodOn(UserController.class).getUserById(saved.getUser_id())).toUri())
+                .body(userAssembler.toModel(saved));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EntityModel<UserDTO>> getUserById(@PathVariable Long id){
+        UserEntity user = userService.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return ResponseEntity.ok(userAssembler.toModel(user));
+    }
+
+    @GetMapping
+    public ResponseEntity<CollectionModel<EntityModel<UserDTO>>> listAllUsers(){
+        List<EntityModel<UserDTO>> users = userService.findAll().stream()
+                .map(userAssembler::toModel)
+                .toList();
+        return ResponseEntity.ok(
+                CollectionModel.of(users,
+                        linkTo(methodOn(UserController.class).listAllUsers()).withSelfRel())
+        );
+    }
+
+    @PutMapping("/{id}/academicInfo")
+    public ResponseEntity<EntityModel<UserDTO>> updateUserAcademicInfo(@PathVariable Long id, @RequestBody List<AcademicInfoDTO> academicInfoDTOS){
+        List<AcademicInfo> academicInfo = academicInfoDTOS.stream()
+                .map(userMapper::convertToAcademicInfo)
+                .toList();
+
+        UserEntity updated = userService.updateAcademicInfo(id, academicInfo);
+//        UserDTO updatedDTO = userMapper.converToDto(updated);
+        return ResponseEntity.ok(userAssembler.toModel(updated));
+
+    }
+
+    @PutMapping("/{id}/jobExperience")
+    public ResponseEntity<EntityModel<UserDTO>> updateJobExperience(@PathVariable Long id, @RequestBody List<JobExperienceDTO> jobExperienceDTOS){
+        List<JobExperience> jobExperiences = jobExperienceDTOS.stream()
+                .map(userMapper::convertToJobExperience)
+                .toList();
+
+        UserEntity updated = userService.updateJobExperience(id, jobExperiences);
+        return ResponseEntity.ok(userAssembler.toModel(updated));
+
+    }
 }
