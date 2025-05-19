@@ -15,6 +15,6 @@ import java.util.function.Function;
 
 public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
 
-    CompanyEntity findByName(String name);
-    CompanyEntity UpdateById(String id,)
+//    CompanyEntity findByName(String name);
+//    CompanyEntity UpdateById(String id,)
 }

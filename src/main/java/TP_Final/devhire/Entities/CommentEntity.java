@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -26,7 +28,7 @@ public class CommentEntity {
     private UserEntity user;
     @NotEmpty
     private String content;
-    private Timestamp commentDate;
+    private Timestamp commentDate = Timestamp.valueOf(LocalDateTime.now());
     @NotNull
     private Boolean state;
 }
