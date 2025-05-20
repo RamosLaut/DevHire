@@ -39,6 +39,13 @@ public class LikeController {
     public ResponseEntity<EntityModel<LikeDTO>>findById(@PathVariable long id){
         return ResponseEntity.ok(assembler.toModel(likeService.findById(id)));
     }
+    @GetMapping("/{publicationId}")
+    public ResponseEntity<CollectionModel<EntityModel<LikeDTO>>> findByPublicationId(@PathVariable long publicationId){
+        List<EntityModel<LikeDTO>> likes = likeService.findByPublicationId(publicationId).stream()
+                .map(assembler::toModel)
+                .toList();
+        return ResponseEntity.ok(CollectionModel.of(likes));
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<?>deleteById(@PathVariable long id) {
         likeService.deleteById(id);

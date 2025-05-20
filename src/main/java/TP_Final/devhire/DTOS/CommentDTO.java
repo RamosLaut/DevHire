@@ -1,16 +1,14 @@
 package TP_Final.devhire.DTOS;
-
-import TP_Final.devhire.Entities.PublicationEntity;
-import TP_Final.devhire.Entities.UserEntity;
-import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Timestamp;
-@Data
+@Getter
+@Setter
 public class CommentDTO {
-//    private Long user_id;
+    private Long user_id;
     private long comment_id;
-//    private long publication_id;
+    private long publication_id;
     private String content;
     private Timestamp commentDate;
 

@@ -10,8 +10,7 @@ import java.util.List;
 
 @Service
 public class LikeService {
-
-    private LikeRepository likeRepository;
+    private final LikeRepository likeRepository;
     @Autowired
     public LikeService(LikeRepository likeRepository) {
         this.likeRepository = likeRepository;
@@ -27,5 +26,8 @@ public class LikeService {
     }
     public void deleteById(long id){
         likeRepository.deleteById(id);
+    }
+    public List<LikeEntity>findByPublicationId(long publicationId){
+        return likeRepository.findByPublicationId(publicationId);
     }
 }
