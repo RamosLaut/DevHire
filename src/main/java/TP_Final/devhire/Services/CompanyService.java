@@ -1,6 +1,8 @@
 package TP_Final.devhire.Services;
 
+import TP_Final.devhire.Entities.CommentEntity;
 import TP_Final.devhire.Entities.CompanyEntity;
+import TP_Final.devhire.Exceptions.CommentNotFoundException;
 import TP_Final.devhire.Repositories.CommentRepository;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +25,14 @@ public class CompanyService {
     public CompanyService(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
     }
-    public void SaveACompany(CompanyEntity company){
+    public void save(CompanyEntity company){
         if(companyRepository.findAll().contains(company)){
             System.out.println("The company exists ");
         }else {
             companyRepository.save(company);
         }
     }
-    public Optional deleteById(Integer idToDelete){
+    public Optional deleteById(Long idToDelete){
         Optional<CompanyEntity> companyToDelete = companyRepository.findById(Long.valueOf(idToDelete));
 
         if (companyToDelete.isPresent()) {
@@ -40,14 +42,14 @@ public class CompanyService {
             return Optional.empty();
         }
     }
-    public void ShowAll(){
-        System.out.println(companyRepository.findAll());
+    public List<CompanyEntity> findAll(){
+        return companyRepository.findAll();
     }
+public  CompanyEntity findById(Long id){
+    Optional<CompanyEntity> company = companyRepository.findById(Long.valueOf(id));
+    return company.orElseThrow(()->new CommentNotFoundException("Comment not found"));
 
-//    public Optional FindByName(String name){
-//        companyRepository.findByName(name);
-//        return Optional.empty();
-//    }
+}
 
     public void UpdateXId(CompanyEntity company){
         if(companyRepository.existsById(company.getCompany_id())){
