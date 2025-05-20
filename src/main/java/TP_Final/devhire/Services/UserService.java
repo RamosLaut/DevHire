@@ -5,7 +5,9 @@ import TP_Final.devhire.Entities.JobExperience;
 import TP_Final.devhire.Entities.UserEntity;
 import TP_Final.devhire.Enums.HardSkills;
 import TP_Final.devhire.Enums.SoftSkills;
+import TP_Final.devhire.Exceptions.UserNotFoundException;
 import TP_Final.devhire.Repositories.UserRepository;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,9 +21,6 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private final UserRepository userRepository;
-
-    int page = 0;
-    int size = 10;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -44,11 +43,11 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public Page<UserEntity> findAllPage(){
-        Pageable pageable = PageRequest.of(page, size);
-        Page<UserEntity> entityPage;
-        return  entityPage = userRepository.findAll(pageable);
-    }
+//    public Page<UserEntity> findAllPage(int page, int size){
+//        Pageable pageable = PageRequest.of(page, size);
+//        Page<UserEntity> entityPage;
+//        return  entityPage = userRepository.findAll(pageable);
+//    }
 
     public List<UserEntity> findAll(){
         return userRepository.findAll();
@@ -75,43 +74,43 @@ public class UserService {
             u.setJobExperience(user.getJobExperience());
             u.setSoftSkills(user.getSoftSkills());
             u.setHardSkills(user.getHardSkills());
-            return userRepository.save(u);}).orElseThrow(() -> new RuntimeException("User not found"));
+            return userRepository.save(u);}).orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
-    public void updatePassword (Long userID, String newPassword){
-        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
+    public UserEntity updatePassword (Long userID, String newPassword){
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new UserNotFoundException("User not found"));
         user.setPassword(newPassword);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    public void updateSkills (Long userID, List<SoftSkills> softSkills, List<HardSkills> hardSkills){
-        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
+    public UserEntity updateSkills (Long userID, List<SoftSkills> softSkills, List<HardSkills> hardSkills){
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new UserNotFoundException("User not found"));
         user.setSoftSkills(softSkills);
         user.setHardSkills(hardSkills);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public UserEntity updateAcademicInfo (Long userID, List<AcademicInfo> academicInfo){
-        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new UserNotFoundException("User not found"));
         user.setAcademicInfo(academicInfo);
         return userRepository.save(user);
     }
     public UserEntity updateJobExperience (Long userID, List<JobExperience> jobExperience){
-        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new UserNotFoundException("User not found"));
         user.setJobExperience(jobExperience);
         return userRepository.save(user);
     }
 
-    public void deactivate (Long userID){
-        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
+    public UserEntity deactivate (Long userID){
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new UserNotFoundException("User not found"));
         user.setState(false);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    public void reactivate (Long userID){
-        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("User not found"));
+    public UserEntity reactivate (Long userID){
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new UserNotFoundException("User not found"));
         user.setState(true);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
 

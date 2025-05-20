@@ -2,6 +2,7 @@ package TP_Final.devhire.Assemblers;
 
 import TP_Final.devhire.Controllers.PublicationController;
 import TP_Final.devhire.Controllers.UserController;
+import TP_Final.devhire.DTOS.UserCredentialsDTO;
 import TP_Final.devhire.DTOS.UserDTO;
 import TP_Final.devhire.DTOS.UserRegisterDTO;
 import TP_Final.devhire.Entities.UserEntity;
@@ -28,7 +29,6 @@ public class UserAssembler implements RepresentationModelAssembler<UserEntity, E
                 linkTo(methodOn(UserController.class).getUserById(entity.getUser_id())).withSelfRel(),
                 linkTo(methodOn(UserController.class).listAllUsers()).withRel("list all users"));
     }
-
 
 }
 

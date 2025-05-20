@@ -23,4 +23,5 @@ private List<SoftSkills> softSkills;
 private List<HardSkills> hardSkills;
 private List<AcademicInfo> academicInfo;
 private List<JobExperience> jobExperience;
+private Boolean state;
 }
