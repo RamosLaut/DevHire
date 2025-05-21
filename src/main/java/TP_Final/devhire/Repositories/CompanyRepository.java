@@ -1,20 +1,19 @@
 package TP_Final.devhire.Repositories;
 
 import TP_Final.devhire.Entities.CompanyEntity;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.query.FluentQuery;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
+    @Modifying
+    @Transactional
+    @Query("UPDATE CompanyEntity c SET c.name = :name, c.location = :location, c.description = :description WHERE c.company_id = :id")
+    void update(@Param("name")String name, @Param("location")String location, @Param("description")String description, @Param("id") Long id);
 
-//    CompanyEntity findByName(String name);
-//    CompanyEntity UpdateById(String id,)
+    @Modifying
+    @Transactional
+    @Query("UPDATE CompanyEntity c SET c.state = false WHERE c.company_id = :id")
+    void logicDown(@Param("id")long id);
 }
