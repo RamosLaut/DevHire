@@ -22,7 +22,7 @@ public class CompanyAssembler implements RepresentationModelAssembler<CompanyEnt
             return EntityModel.of(companyDTO,
                     linkTo(methodOn(CompanyController.class).findAll()).withRel("companies"),
                     linkTo(methodOn(CompanyController.class).findById(entity.getCompany_id())).withSelfRel(),
-                    linkTo(methodOn(CompanyController.class).DeleteById(entity.getCompany_id())).withRel("Delete"),
-                    linkTo(methodOn(CompanyController.class).UpdateCompany(entity)).withRel("Update"));
+                    linkTo(methodOn(CompanyController.class).deleteById(entity.getCompany_id())).withRel("Delete"),
+                    linkTo(methodOn(CompanyController.class).updateCompany(entity)).withRel("Update"));
         }
 }
