@@ -3,15 +3,12 @@ package TP_Final.devhire.Controllers;
 import TP_Final.devhire.Assemblers.CommentAssembler;
 import TP_Final.devhire.DTOS.CommentDTO;
 import TP_Final.devhire.Entities.CommentEntity;
-import TP_Final.devhire.Mappers.CommentMapper;
-import TP_Final.devhire.Repositories.CommentRepository;
 import TP_Final.devhire.Services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -24,7 +21,6 @@ public class CommentController {
         this.commentService = commentService;
         this.assembler = assembler;
     }
-
     @PostMapping
     public ResponseEntity<?> save(@RequestBody CommentEntity comment){
         commentService.save(comment);
@@ -38,6 +34,13 @@ public class CommentController {
     @GetMapping("/{commentId}")
     public ResponseEntity<EntityModel<CommentDTO>> findById(@PathVariable Long commentId){
         return ResponseEntity.ok(assembler.toModel(commentService.findById(commentId)));
+    }
+    @GetMapping("/{publicationId}")
+    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findByPublicationId(@PathVariable long publicationId){
+        List<EntityModel<CommentDTO>> comments = commentService.findByPublicationId(publicationId).stream()
+                .map(assembler::toModel)
+                .toList();
+        return ResponseEntity.ok(CollectionModel.of(comments));
     }
     @PatchMapping
     public ResponseEntity<EntityModel<CommentDTO>> updateContent(@RequestBody CommentEntity comment){
