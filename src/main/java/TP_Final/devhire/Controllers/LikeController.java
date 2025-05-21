@@ -16,35 +16,26 @@ import java.util.List;
 @RequestMapping("/like")
 public class LikeController {
     private final LikeService likeService;
-    private final LikeAssembler assembler;
 
     @Autowired
-    public LikeController(LikeService likeService, LikeAssembler assembler) {
+    public LikeController(LikeService likeService) {
         this.likeService = likeService;
-        this.assembler = assembler;
     }
     @PostMapping
     public ResponseEntity<?>save(@RequestBody LikeEntity like){
-        likeService.save(like);
-        return ResponseEntity.ok(assembler.toModel(like));
+        return ResponseEntity.ok(likeService.save(like));
     }
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<LikeDTO>>>findAll(){
-        List<EntityModel<LikeDTO>> likes = likeService.findAll().stream()
-                .map(assembler::toModel)
-                .toList();
-        return ResponseEntity.ok(CollectionModel.of(likes));
+        return ResponseEntity.ok(likeService.findAll());
     }
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<LikeDTO>>findById(@PathVariable long id){
-        return ResponseEntity.ok(assembler.toModel(likeService.findById(id)));
+        return ResponseEntity.ok(likeService.findById(id));
     }
     @GetMapping("/{publicationId}")
     public ResponseEntity<CollectionModel<EntityModel<LikeDTO>>> findByPublicationId(@PathVariable long publicationId){
-        List<EntityModel<LikeDTO>> likes = likeService.findByPublicationId(publicationId).stream()
-                .map(assembler::toModel)
-                .toList();
-        return ResponseEntity.ok(CollectionModel.of(likes));
+        return ResponseEntity.ok(likeService.findByPublicationId(publicationId));
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<?>deleteById(@PathVariable long id) {
