@@ -14,7 +14,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class PublicationAssembler implements RepresentationModelAssembler<PublicationEntity, EntityModel<PublicationDTO>> {
+public class PublicationAssembler {
+// implements RepresentationModelAssembler<PublicationEntity, EntityModel<PublicationDTO>> {
     @Autowired
     PublicationMapper mapper;
     @Override
@@ -24,4 +25,5 @@ public class PublicationAssembler implements RepresentationModelAssembler<Public
                 linkTo(methodOn(PublicationController.class).deleteById(publicationDTO.getPublication_id())).withRel("Delete publication"),
                 linkTo(methodOn(PublicationController.class).updateContent(publication)).withRel("Update content"));
     }
+
 }

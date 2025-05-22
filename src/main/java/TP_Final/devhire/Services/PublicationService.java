@@ -10,7 +10,6 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 
-
 @Service
 public class PublicationService{
     private final PublicationsRepository publicationsRepository;
@@ -46,5 +45,4 @@ public class PublicationService{
         publicationsRepository.updateContent(publicationEntity.getContent(), publicationEntity.getId());
         return publicationAssembler.toModel(publicationEntity);
     }
-
 }

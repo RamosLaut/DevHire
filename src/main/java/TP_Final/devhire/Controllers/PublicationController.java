@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/publication")
 public class PublicationController {
-
     private final PublicationService publicationService;
     @Autowired
     public PublicationController(PublicationService publicationService) {

@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Repository
 public interface PublicationsRepository extends JpaRepository<PublicationEntity, Long> {
+ Fix/Publications
     @Modifying
     @Transactional
     @Query("UPDATE PublicationEntity SET content = :content WHERE publication_id = :id")
