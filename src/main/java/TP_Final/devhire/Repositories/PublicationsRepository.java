@@ -20,13 +20,10 @@ public interface PublicationsRepository extends JpaRepository<PublicationEntity,
     @Query("UPDATE PublicationEntity SET content = :content WHERE publication_id = :id")
     void updateContent(@Param("content") String content, @Param("id") Long id);
 
-////    Optional<List<PublicationEntity>> findByuser(UserEntity user);
+    List<PublicationEntity> findByUser_Id(long userId);
 
     Optional<PublicationEntity> findById(@NonNull Long id);
 
     void deleteById(@NonNull Long id);
-//    @Modifying
-//    @Transactional
-//    @Query("DELETE FROM PublicationEntity WHERE p.user.user_id = :userId")
-//    void deleteByuserId(@Param("userId") Long userId);
+
 }

@@ -17,7 +17,7 @@ import lombok.*;
 
 @Embeddable
 public class AcademicInfo {
-    private Long AcademicInfo_id;
+    private Long id;
     @NotEmpty
     private String name;
 

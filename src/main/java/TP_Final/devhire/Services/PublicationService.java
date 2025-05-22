@@ -1,51 +1,50 @@
 package TP_Final.devhire.Services;
 
+import TP_Final.devhire.Assemblers.PublicationAssembler;
+import TP_Final.devhire.DTOS.PublicationDTO;
 import TP_Final.devhire.Entities.PublicationEntity;
-import TP_Final.devhire.Entities.UserEntity;
 import TP_Final.devhire.Exceptions.UserNotFoundException;
 import TP_Final.devhire.Repositories.PublicationsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 
 @Service
 public class PublicationService{
     private final PublicationsRepository publicationsRepository;
-    private final UserService userService;
+    private final PublicationAssembler publicationAssembler;
     @Autowired
-    public PublicationService(PublicationsRepository publicationsRepository, UserService userService) {
+    public PublicationService(PublicationsRepository publicationsRepository, PublicationAssembler publicationAssembler) {
         this.publicationsRepository = publicationsRepository;
-        this.userService = userService;
+        this.publicationAssembler = publicationAssembler;
     }
-    public void save(PublicationEntity publicationEntity){
+
+    public EntityModel<PublicationDTO> save(PublicationEntity publicationEntity){
         publicationsRepository.save(publicationEntity);
+        return publicationAssembler.toModel(publicationEntity);
     }
-    public List<PublicationEntity> findAll(){
-        return publicationsRepository.findAll();
+    public CollectionModel<EntityModel<PublicationDTO>> findAll(){
+        return CollectionModel.of(publicationsRepository.findAll().stream()
+                .map(publicationAssembler::toModel)
+                .toList());
     }
-    public PublicationEntity findById(Long id)throws RuntimeException{
-        return publicationsRepository.findById(id).orElseThrow(RuntimeException::new);
+    public EntityModel<PublicationDTO> findById(Long id)throws RuntimeException{
+        return publicationAssembler.toModel(publicationsRepository.findById(id).orElseThrow(RuntimeException::new));
     }
-//    public List<PublicationEntity> findByuserId(Long id)throws UserNotFoundException {
-//        Optional<UserEntity> user = userService.findById(id);
-//        return publicationsRepository.findByuser(user.get()).orElseThrow(()->new UserNotFoundException("User not found"));
-//    }
+    public CollectionModel<EntityModel<PublicationDTO>> findByuserId(Long id)throws UserNotFoundException {
+        return CollectionModel.of(publicationsRepository.findByUser_Id(id).stream()
+                .map(publicationAssembler::toModel)
+                .toList());
+    }
     public  void deleteById(Long id){
         publicationsRepository.deleteById(id);
     }
-//    public void deleteByuserId(Long id)throws UserNotFoundException{
-//        Optional<UserEntity> user = userService.findById(id);
-//        if(user.isPresent()){
-//            publicationsRepository.deleteByuserId(user.get().getUser_id());
-//        }else{
-//            throw new UserNotFoundException("User not found");
-//        }
-//    }
-    public void updateContent(PublicationEntity publicationEntity){
-        publicationsRepository.updateContent(publicationEntity.getContent(), publicationEntity.getPublication_id());
+
+    public EntityModel<PublicationDTO> updateContent(PublicationEntity publicationEntity){
+        publicationsRepository.updateContent(publicationEntity.getContent(), publicationEntity.getId());
+        return publicationAssembler.toModel(publicationEntity);
     }
 
 }
