@@ -18,12 +18,12 @@ public class PublicationAssembler {
 // implements RepresentationModelAssembler<PublicationEntity, EntityModel<PublicationDTO>> {
     @Autowired
     PublicationMapper mapper;
-//    @Override
-//    public @NonNull EntityModel<PublicationDTO> toModel(@NonNull PublicationEntity publication) {
-//        PublicationDTO publicationDTO = mapper.converToDto(publication);
-//        return EntityModel.of(publicationDTO, linkTo(methodOn(PublicationController.class).findAll()).withRel("Publications"),
-//                linkTo(methodOn(PublicationController.class).findById(publicationDTO.getPublication_id())).withSelfRel(),
-//                linkTo(methodOn(PublicationController.class).deleteById(publicationDTO.getPublication_id())).withRel("Delete publication"),
-//                linkTo(methodOn(PublicationController.class).updateContent(publication)).withRel("Update content"));
-//    }
+    @Override
+    public @NonNull EntityModel<PublicationDTO> toModel(@NonNull PublicationEntity publication) {
+        PublicationDTO publicationDTO = mapper.converToDto(publication);
+        return EntityModel.of(publicationDTO, linkTo(methodOn(PublicationController.class).findById(publicationDTO.getPublication_id())).withSelfRel(),
+                linkTo(methodOn(PublicationController.class).deleteById(publicationDTO.getPublication_id())).withRel("Delete publication"),
+                linkTo(methodOn(PublicationController.class).updateContent(publication)).withRel("Update content"));
+    }
+
 }

@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Getter
@@ -20,10 +22,10 @@ import java.util.List;
 public class PublicationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long publication_id;
+    private long id;
     @NotEmpty
     private String content;
-    private Timestamp publicationDate;
+    private Timestamp publicationDate = Timestamp.valueOf(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
     @NotNull
     private Boolean state = true;
     @ManyToOne

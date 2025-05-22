@@ -5,9 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -46,7 +44,7 @@ public class FollowEntity {
     }
 
     public FollowEntity(UserEntity follower, UserEntity followed) {
-        this.id = new FollowId(follower.getUser_id(), followed.getUser_id());
+        this.id = new FollowId(follower.getId(), followed.getId());
         this.followUpDate = LocalDateTime.now();
         this.state = true;
         this.follower = follower;

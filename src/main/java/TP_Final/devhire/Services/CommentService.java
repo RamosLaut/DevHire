@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.List;
+
 @Service
 public class CommentService {
-
     private final CommentRepository commentRepository;
     @Autowired
     public CommentService(CommentRepository commentRepository) {
