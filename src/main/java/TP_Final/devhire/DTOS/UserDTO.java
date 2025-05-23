@@ -21,7 +21,7 @@ private String location;
 private Seniority seniority;
 private List<SoftSkills> softSkills;
 private List<HardSkills> hardSkills;
-private List<AcademicInfo> academicInfo;
-private List<JobExperience> jobExperience;
+private List<AcademicInfoDTO> academicInfo;
+private List<JobExperienceDTO> jobExperience;
 private Boolean state;
 }

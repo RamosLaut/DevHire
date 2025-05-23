@@ -1,14 +1,9 @@
 package TP_Final.devhire.Assemblers;
 
-import TP_Final.devhire.Controllers.PublicationController;
 import TP_Final.devhire.Controllers.UserController;
-import TP_Final.devhire.DTOS.UserCredentialsDTO;
 import TP_Final.devhire.DTOS.UserDTO;
-import TP_Final.devhire.DTOS.UserRegisterDTO;
 import TP_Final.devhire.Entities.UserEntity;
 import TP_Final.devhire.Mappers.UserMapper;
-import jakarta.validation.constraints.NotNull;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -24,10 +19,15 @@ public class UserAssembler implements RepresentationModelAssembler<UserEntity, E
 
     @Override
     public EntityModel<UserDTO> toModel(UserEntity entity) {
-        UserDTO dto = userMapper.converToDto(entity);
+        if (entity == null) {
+            throw new IllegalArgumentException("UserEntity can't be null");
+        }
+        UserDTO dto = userMapper.convertToDto(entity);
         return EntityModel.of(dto,
                 linkTo(methodOn(UserController.class).getUserById(entity.getUser_id())).withSelfRel(),
-                linkTo(methodOn(UserController.class).listAllUsers()).withRel("list all users"));
+                linkTo(methodOn(UserController.class).listAllUsers()).withRel("all users"),
+                linkTo(methodOn(UserController.class).updateUser(entity.getUser_id(), null)).withRel("update"),
+                linkTo(methodOn(UserController.class).deleteUser(entity.getUser_id())).withRel("delete"));
     }
 
 }

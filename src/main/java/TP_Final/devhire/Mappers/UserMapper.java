@@ -14,15 +14,22 @@ import java.util.List;
 public class UserMapper {
     @Autowired
     private ModelMapper modelMapper;
-    public UserDTO converToDto(UserEntity user){
-        return modelMapper.map(user, UserDTO.class);
+
+    //  DTO to Entity
+    public UserEntity convertToEntity(UserDTO dto) {
+        UserEntity entity = modelMapper.map(dto, UserEntity.class);
+
+        entity.setAcademicInfo(convertToAcademicInfoList(dto.getAcademicInfo()));
+        entity.setJobExperience(convertToJobExperienceList(dto.getJobExperience()));
+
+        return entity;
     }
 
-    public UserEntity converToEntity(UserDTO userDto){
-        return modelMapper.map(userDto, UserEntity.class);
+    public UserEntity convertRegisterDTOToEntity(UserRegisterDTO dto){
+        return modelMapper.map(dto, UserEntity.class);
     }
 
-    public UserEntity convertToEntity(UserRegisterDTO dto){
+    public UserEntity convertUpdateDTOToEntity(UserUpdateDTO dto){
         return modelMapper.map(dto, UserEntity.class);
     }
 
@@ -30,21 +37,41 @@ public class UserMapper {
         return modelMapper.map(dto, AcademicInfo.class);
     }
 
-    public UserEntity convertToEntity(UserCredentialsDTO dto){
+    public UserEntity convertCredentialDTOToEntity(UserPasswordDTO dto){
         return modelMapper.map(dto, UserEntity.class);
-    }
-    public AcademicInfoDTO convertToAcademicInfoDTO(AcademicInfo entity) {
-        return modelMapper.map(entity, AcademicInfoDTO.class);
     }
 
     public JobExperience convertToJobExperience(JobExperienceDTO dto) {
         return modelMapper.map(dto, JobExperience.class);
     }
 
+    // Entity to DTO
+    public UserDTO convertToDto(UserEntity user){
+        UserDTO dto = modelMapper.map(user, UserDTO.class);
+        dto.setAcademicInfo(convertToAcademicInfoDTOList(user.getAcademicInfo()));
+        dto.setJobExperience(convertToJobExperienceDTOList(user.getJobExperience()));
+        return dto;
+    }
+
+    public AcademicInfoDTO convertToAcademicInfoDTO(AcademicInfo entity) {
+        return modelMapper.map(entity, AcademicInfoDTO.class);
+    }
+
     public JobExperienceDTO convertToJobExperienceDTO(JobExperience entity) {
         return modelMapper.map(entity, JobExperienceDTO.class);
     }
 
+    public UserRegisterDTO convertToRegisterDTO(UserEntity user){
+        return modelMapper.map(user, UserRegisterDTO.class);
+    }
+    public UserPasswordDTO convertToCredentialsDTO(UserEntity user){
+        return modelMapper.map(user, UserPasswordDTO.class);
+    }
+    public UserUpdateDTO convertToUpdateDTO(UserEntity user){
+        return modelMapper.map(user, UserUpdateDTO.class);
+    }
+
+    // List
     public List<AcademicInfo> convertToAcademicInfoList(List<AcademicInfoDTO> dtos) {
         return dtos.stream()
                 .map(this::convertToAcademicInfo)
@@ -56,4 +83,17 @@ public class UserMapper {
                 .map(this::convertToJobExperience)
                 .toList();
     }
+
+    public List<AcademicInfoDTO> convertToAcademicInfoDTOList(List<AcademicInfo> entities) {
+        return entities.stream()
+                .map(this::convertToAcademicInfoDTO)
+                .toList();
+    }
+
+    public List<JobExperienceDTO> convertToJobExperienceDTOList(List<JobExperience> entities) {
+        return entities.stream()
+                .map(this::convertToJobExperienceDTO)
+                .toList();
+    }
+
 }
