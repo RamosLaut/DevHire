@@ -59,7 +59,7 @@ public class UserService {
     }
 
     public UserEntity update (Long userID, UserEntity user){
-        user.setUser_id(userID);
+        user.setId(userID);
         return userRepository.save(user);
     }
 

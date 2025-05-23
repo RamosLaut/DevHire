@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Setter
 
 public class PublicationDTO {
-    Long publication_id;
+    Long id;
     String content;
     Timestamp publicationDate;
     Long user_id;

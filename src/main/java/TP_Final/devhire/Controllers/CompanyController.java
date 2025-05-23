@@ -1,9 +1,8 @@
 package TP_Final.devhire.Controllers;
-
-import TP_Final.devhire.Assemblers.CompanyAssembler;
 import TP_Final.devhire.DTOS.CompanyDTO;
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Services.CompanyService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -14,21 +13,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/company")
 public class CompanyController {
     private final CompanyService companyService;
-    private final CompanyAssembler companyAssembler;
     @Autowired
-    public CompanyController(CompanyService companyService, CompanyAssembler companyAssembler) {
+    public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
-        this.companyAssembler = companyAssembler;
     }
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody CompanyEntity company){
+    public ResponseEntity<?> save(@RequestBody @Valid CompanyEntity company){
         return ResponseEntity.ok(companyService.save(company));
     }
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<CompanyDTO>>> findAll(){
         return ResponseEntity.ok(companyService.findAll());
     }
-    @GetMapping
+    @GetMapping("/{id}")
     public  ResponseEntity<EntityModel<CompanyDTO>> findById(@PathVariable  Long id){
         return ResponseEntity.ok(companyService.findById(id));
     }
@@ -36,7 +33,7 @@ public class CompanyController {
     public ResponseEntity<EntityModel<CompanyDTO>> updateCompany(@RequestBody CompanyEntity company){
         return ResponseEntity.ok(companyService.updateById(company));
     }
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@PathVariable long id){
         companyService.deleteById(id);
         return ResponseEntity.noContent().build();

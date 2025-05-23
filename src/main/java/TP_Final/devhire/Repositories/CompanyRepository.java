@@ -6,14 +6,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+@Repository
 public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
     @Modifying
     @Transactional
-    @Query("UPDATE CompanyEntity c SET c.name = :name, c.location = :location, c.description = :description WHERE c.company_id = :id")
+    @Query("UPDATE CompanyEntity c SET c.name = :name, c.location = :location, c.description = :description WHERE c.id = :id")
     void update(@Param("name")String name, @Param("location")String location, @Param("description")String description, @Param("id") Long id);
 
     @Modifying
     @Transactional
-    @Query("UPDATE CompanyEntity c SET c.state = false WHERE c.company_id = :id")
+    @Query("UPDATE CompanyEntity c SET c.state = false WHERE c.id = :id")
     void logicDown(@Param("id")long id);
 }

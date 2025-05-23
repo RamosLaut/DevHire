@@ -1,16 +1,13 @@
 package TP_Final.devhire.Mappers;
 
-import TP_Final.devhire.DTOS.CommentDTO;
 import TP_Final.devhire.DTOS.CompanyDTO;
-import TP_Final.devhire.Entities.CommentEntity;
 import TP_Final.devhire.Entities.CompanyEntity;
-import lombok.Builder;
-import lombok.Getter;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class CompanyMapper {
     @Autowired
     private ModelMapper modelMapper;

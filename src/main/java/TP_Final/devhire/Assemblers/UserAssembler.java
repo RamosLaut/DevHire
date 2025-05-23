@@ -21,7 +21,7 @@ public class UserAssembler implements RepresentationModelAssembler<UserEntity, E
     public EntityModel<UserDTO> toModel(UserEntity entity) {
         UserDTO dto = userMapper.converToDto(entity);
         return EntityModel.of(dto,
-                linkTo(methodOn(UserController.class).getUserById(entity.getUser_id())).withSelfRel(),
+                linkTo(methodOn(UserController.class).getUserById(entity.getId())).withSelfRel(),
                 linkTo(methodOn(UserController.class).listAllUsers()).withRel("list all users"));
     }
 

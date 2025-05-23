@@ -1,5 +1,4 @@
 package TP_Final.devhire.Assemblers;
-
 import TP_Final.devhire.Controllers.CommentController;
 import TP_Final.devhire.DTOS.CommentDTO;
 import TP_Final.devhire.Entities.CommentEntity;
@@ -19,11 +18,11 @@ public class CommentAssembler implements RepresentationModelAssembler<CommentEnt
     @Override
     public EntityModel<CommentDTO> toModel(CommentEntity entity) {
         CommentDTO commentDTO = commentMapper.convertToDTO(entity);
-        commentDTO.setUser_id(entity.getUser().getUser_id());
-        commentDTO.setPublication_id(entity.getPublication().getPublication_id());
+//        commentDTO.setUser_id(entity.getUser().getId());
+//        commentDTO.setPublication_id(entity.getPublication().getId());
         return EntityModel.of(commentDTO, linkTo(methodOn(CommentController.class).findAll()).withRel("Comments"),
-                linkTo(methodOn(CommentController.class).findById(entity.getComment_id())).withSelfRel(),
+                linkTo(methodOn(CommentController.class).findById(entity.getId())).withSelfRel(),
                 linkTo(methodOn(CommentController.class).updateContent(entity)).withRel("Update content"),
-                linkTo(methodOn(CommentController.class).deleteById(entity.getComment_id())).withRel("Delete"));
+                linkTo(methodOn(CommentController.class).deleteById(entity.getId())).withRel("Delete"));
     }
 }

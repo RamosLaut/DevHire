@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 public class LikeDTO {
-    private long like_id;
+    private long id;
     private long user_id;
     private long publication_id;
     private Timestamp likeDate;

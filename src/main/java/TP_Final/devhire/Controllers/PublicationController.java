@@ -20,7 +20,8 @@ public class PublicationController {
     }
     @PostMapping
     public ResponseEntity<EntityModel<PublicationDTO>> save(@RequestBody PublicationEntity publicationEntity) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(publicationService.save(publicationEntity));
+
+        return ResponseEntity.ok(publicationService.save(publicationEntity));
     }
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>> findAll() {

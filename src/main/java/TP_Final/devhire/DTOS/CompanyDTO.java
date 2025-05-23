@@ -4,9 +4,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CompanyDTO {
-    Long company_id;
+    Long id;
     String name;
     String location;
-    String descriptiion;
-    Boolean state;
+    String description;
 }

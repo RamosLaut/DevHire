@@ -11,7 +11,6 @@ import TP_Final.devhire.Entities.UserEntity;
 import TP_Final.devhire.Mappers.UserMapper;
 import TP_Final.devhire.Services.UserService;
 import jakarta.validation.Valid;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -45,7 +44,7 @@ public class UserController {
         UserEntity saved = userService.register(entity);
 
         return ResponseEntity
-            .created(linkTo(methodOn(UserController.class).getUserById(saved.getUser_id())).toUri())
+            .created(linkTo(methodOn(UserController.class).getUserById(saved.getId())).toUri())
                 .body(userAssembler.toModel(saved));
     }
 

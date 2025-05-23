@@ -28,7 +28,7 @@ public class CompanyEntity {
 
     private String description;
     @NotNull
-    private Boolean state;
+    private Boolean state = true;
 
     @OneToMany(mappedBy = "company")
     private List<JobEntity> jobs;

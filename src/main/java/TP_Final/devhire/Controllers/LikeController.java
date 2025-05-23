@@ -23,7 +23,7 @@ public class LikeController {
     }
     @PostMapping
     public ResponseEntity<?>save(@RequestBody LikeEntity like){
-        return ResponseEntity.ok(likeService.save(like));
+        return ResponseEntity.noContent().build();
     }
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<LikeDTO>>>findAll(){

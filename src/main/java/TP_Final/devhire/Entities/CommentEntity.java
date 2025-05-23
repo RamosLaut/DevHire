@@ -30,5 +30,5 @@ public class CommentEntity {
     private String content;
     private Timestamp commentDate = Timestamp.valueOf(LocalDateTime.now());
     @NotNull
-    private Boolean state;
+    private Boolean state = true;
 }

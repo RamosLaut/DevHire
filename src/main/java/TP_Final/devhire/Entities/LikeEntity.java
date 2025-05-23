@@ -25,5 +25,5 @@ public class LikeEntity {
     private PublicationEntity publication;
     private Timestamp likeDate;
     @NotNull
-    private Boolean state;
+    private Boolean state = true;
 }

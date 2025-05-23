@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CompanyService {
@@ -28,7 +26,7 @@ public class CompanyService {
                 .map(CompanyEntity::getName)
                 .anyMatch(name -> name.equalsIgnoreCase(company.getName()));
         if(exists) {
-            throw new CompanyAlreadyExistsException("Company with name " + company.getName() + "already exists.");
+            throw new CompanyAlreadyExistsException("Company with name " + company.getName() + " already exists.");
         }
         companyRepository.save(company);
         return companyAssembler.toModel(company);
@@ -46,7 +44,7 @@ public class CompanyService {
         companyRepository.deleteById(id);
     }
     public EntityModel<CompanyDTO> updateById(CompanyEntity company){
-        companyRepository.update(company.getName(), company.getLocation(), company.getDescription(), company.getCompany_id());
+        companyRepository.update(company.getName(), company.getLocation(), company.getDescription(), company.getId());
         return companyAssembler.toModel(company);
     }
 }
