@@ -24,10 +24,10 @@ public class UserAssembler implements RepresentationModelAssembler<UserEntity, E
         }
         UserDTO dto = userMapper.convertToDto(entity);
         return EntityModel.of(dto,
-                linkTo(methodOn(UserController.class).getUserById(entity.getUser_id())).withSelfRel(),
+                linkTo(methodOn(UserController.class).getUserById(entity.getId())).withSelfRel(),
                 linkTo(methodOn(UserController.class).listAllUsers()).withRel("all users"),
-                linkTo(methodOn(UserController.class).updateUser(entity.getUser_id(), null)).withRel("update"),
-                linkTo(methodOn(UserController.class).deleteUser(entity.getUser_id())).withRel("delete"));
+                linkTo(methodOn(UserController.class).updateUser(entity.getId(), null)).withRel("update"),
+                linkTo(methodOn(UserController.class).deleteUser(entity.getId())).withRel("delete"));
     }
 
 }

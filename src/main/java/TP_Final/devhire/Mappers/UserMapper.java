@@ -8,7 +8,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class UserMapper {
@@ -85,12 +87,21 @@ public class UserMapper {
     }
 
     public List<AcademicInfoDTO> convertToAcademicInfoDTOList(List<AcademicInfo> entities) {
+        if (entities == null) {
+            return Collections.emptyList();
+        }
+//        return entities.stream()
+//                .map(this::convertToAcademicInfoDTO)
+//                .toList();
         return entities.stream()
                 .map(this::convertToAcademicInfoDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public List<JobExperienceDTO> convertToJobExperienceDTOList(List<JobExperience> entities) {
+        if (entities == null) {
+            return Collections.emptyList();
+        }
         return entities.stream()
                 .map(this::convertToJobExperienceDTO)
                 .toList();
