@@ -15,7 +15,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
 public class UserAssembler implements RepresentationModelAssembler<UserEntity, EntityModel<UserDTO>> {
     @Autowired
-    private UserMapper userMapper;
+    UserMapper userMapper;
 
     @Override
     public EntityModel<UserDTO> toModel(UserEntity entity) {
@@ -28,6 +28,8 @@ public class UserAssembler implements RepresentationModelAssembler<UserEntity, E
                 linkTo(methodOn(UserController.class).listAllUsers()).withRel("all users"),
                 linkTo(methodOn(UserController.class).updateUser(entity.getId(), null)).withRel("update"),
                 linkTo(methodOn(UserController.class).deleteUser(entity.getId())).withRel("delete"));
+
+            
     }
 
 }

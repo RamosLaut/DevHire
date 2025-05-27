@@ -14,7 +14,7 @@ import lombok.*;
 
 @Embeddable
 public class JobExperience {
-    private Long Experience_id;
+    private Long id;
     @NotEmpty
     private String company;
     @NotNull

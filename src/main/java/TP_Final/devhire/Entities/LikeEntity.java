@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 public class LikeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long like_id;
+    private long id;
     @ManyToOne
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_like"))
     private UserEntity user;
@@ -25,5 +25,5 @@ public class LikeEntity {
     private PublicationEntity publication;
     private Timestamp likeDate;
     @NotNull
-    private Boolean state;
+    private Boolean state = true;
 }

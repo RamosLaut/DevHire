@@ -19,7 +19,7 @@ import java.util.List;
 public class CompanyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long company_id;
+    private long id;
 
     @NotEmpty
     private String name;
@@ -28,7 +28,7 @@ public class CompanyEntity {
 
     private String description;
     @NotNull
-    private Boolean state;
+    private Boolean state = true;
 
     @OneToMany(mappedBy = "company")
     private List<JobEntity> jobs;

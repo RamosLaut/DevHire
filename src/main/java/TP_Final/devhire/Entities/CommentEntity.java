@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long comment_id;
+    private long id;
     @ManyToOne
     @JoinColumn(name = "publication_id", foreignKey = @ForeignKey(name = "FK_publication_comment"))
     private PublicationEntity publication;
@@ -30,5 +30,5 @@ public class CommentEntity {
     private String content;
     private Timestamp commentDate = Timestamp.valueOf(LocalDateTime.now());
     @NotNull
-    private Boolean state;
+    private Boolean state = true;
 }

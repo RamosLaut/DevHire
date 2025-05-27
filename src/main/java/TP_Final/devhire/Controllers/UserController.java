@@ -33,6 +33,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<EntityModel<UserDTO>> register(@RequestBody @Valid UserRegisterDTO dto) {
         return ResponseEntity.ok(userService.register(dto));
+
     }
 
     @GetMapping("/{id}")
