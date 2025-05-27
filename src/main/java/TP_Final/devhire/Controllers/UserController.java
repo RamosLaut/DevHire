@@ -1,17 +1,11 @@
 package TP_Final.devhire.Controllers;
 
 import TP_Final.devhire.Assemblers.UserAssembler;
-import TP_Final.devhire.DTOS.AcademicInfoDTO;
-import TP_Final.devhire.DTOS.JobExperienceDTO;
-import TP_Final.devhire.DTOS.UserDTO;
-import TP_Final.devhire.DTOS.UserRegisterDTO;
-import TP_Final.devhire.Entities.AcademicInfo;
-import TP_Final.devhire.Entities.JobExperience;
-import TP_Final.devhire.Entities.UserEntity;
-import TP_Final.devhire.Mappers.UserMapper;
+import TP_Final.devhire.DTOS.*;
 import TP_Final.devhire.Services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -28,64 +22,82 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-    private final UserMapper userMapper;
     private final UserAssembler userAssembler;
 
     @Autowired
-    public UserController(UserService userService, UserMapper userMapper, UserAssembler userAssembler) {
+    public UserController(UserService userService, UserAssembler userAssembler) {
         this.userService = userService;
-        this.userMapper = userMapper;
         this.userAssembler = userAssembler;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<EntityModel<UserDTO>> register (@RequestBody @Valid UserRegisterDTO dto ){
-      UserEntity entity = userMapper.convertToEntity(dto);
-        UserEntity saved = userService.register(entity);
+    public ResponseEntity<EntityModel<UserDTO>> register(@RequestBody @Valid UserRegisterDTO dto) {
+        return ResponseEntity.ok(userService.register(dto));
 
-        return ResponseEntity
-            .created(linkTo(methodOn(UserController.class).getUserById(saved.getId())).toUri())
-                .body(userAssembler.toModel(saved));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<UserDTO>> getUserById(@PathVariable Long id){
-        UserEntity user = userService.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        return ResponseEntity.ok(userAssembler.toModel(user));
+        return ResponseEntity.ok(userService.findById(id));
     }
 
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<UserDTO>>> listAllUsers(){
-        List<EntityModel<UserDTO>> users = userService.findAll().stream()
-                .map(userAssembler::toModel)
-                .toList();
-        return ResponseEntity.ok(
+    public ResponseEntity<CollectionModel<EntityModel<UserDTO>>> listAllUsers() {
+        List<EntityModel<UserDTO>> users = userService.findAll();
+       return ResponseEntity.ok(
                 CollectionModel.of(users,
                         linkTo(methodOn(UserController.class).listAllUsers()).withSelfRel())
         );
     }
 
-    @PutMapping("/{id}/academicInfo")
-    public ResponseEntity<EntityModel<UserDTO>> updateUserAcademicInfo(@PathVariable Long id, @RequestBody List<AcademicInfoDTO> academicInfoDTOS){
-        List<AcademicInfo> academicInfo = academicInfoDTOS.stream()
-                .map(userMapper::convertToAcademicInfo)
-                .toList();
-
-        UserEntity updated = userService.updateAcademicInfo(id, academicInfo);
-//        UserDTO updatedDTO = userMapper.converToDto(updated);
-        return ResponseEntity.ok(userAssembler.toModel(updated));
-
+    @GetMapping("/page")
+    public ResponseEntity<CollectionModel<EntityModel<UserDTO>>> listAllUsersPage(@RequestParam(defaultValue = "0") int page,  @RequestParam(defaultValue = "10") int size) {
+    Page<EntityModel<UserDTO>> userPage = userService.findAllPage(page, size);
+        return ResponseEntity.ok(
+            CollectionModel.of(userPage.getContent(),
+                    linkTo(methodOn(UserController.class).listAllUsersPage(page, size)).withSelfRel())
+        );
     }
 
-    @PutMapping("/{id}/jobExperience")
-    public ResponseEntity<EntityModel<UserDTO>> updateJobExperience(@PathVariable Long id, @RequestBody List<JobExperienceDTO> jobExperienceDTOS){
-        List<JobExperience> jobExperiences = jobExperienceDTOS.stream()
-                .map(userMapper::convertToJobExperience)
-                .toList();
+    @PutMapping("/academicInfo/{id}")
+    public ResponseEntity<EntityModel<UserDTO>> updateAcademicInfo(@PathVariable Long id, @RequestBody List<AcademicInfoDTO> academicInfoDTOS) {
+        return ResponseEntity.ok(userService.updateAcademicInfo(id, academicInfoDTOS));
+    }
 
-        UserEntity updated = userService.updateJobExperience(id, jobExperiences);
-        return ResponseEntity.ok(userAssembler.toModel(updated));
 
+    @PutMapping("/jobExperience/{id}")
+    public ResponseEntity<EntityModel<UserDTO>> updateJobExperience(@PathVariable Long id, @RequestBody List<JobExperienceDTO> jobExperienceDTOS) {
+        return ResponseEntity.ok(userService.updateJobExperience(id, jobExperienceDTOS));
+    }
+
+    @PutMapping("/skills/{id}")
+    public ResponseEntity<EntityModel<UserDTO>> updateSkills(@PathVariable Long id, @RequestBody SkillsDTO skillsDTO) {
+        return ResponseEntity.ok(userService.updateSkills(id, skillsDTO));
+    }
+
+    @PutMapping("/password/{id}")
+    public ResponseEntity<EntityModel<UserDTO>> updatePassword(@PathVariable Long id, @RequestBody @Valid UserPasswordDTO dto) {
+        return ResponseEntity.ok(userService.updatePassword(id, dto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EntityModel<UserDTO>> updateUser(@PathVariable Long id, @RequestBody UserDTO dto) {
+        return ResponseEntity.ok(userAssembler.toModel(userService.updateUserFields(id, dto)));
+    }
+
+    @PutMapping("/deactivate/{id}")
+    public ResponseEntity<EntityModel<UserDTO>> logicDown(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.deactivate(id));
+    }
+
+    @PutMapping("/reactivate/{id}")
+    public ResponseEntity<EntityModel<UserDTO>> logicHigh(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.reactivate(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

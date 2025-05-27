@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -31,14 +32,21 @@ public class UserEntity {
     @NotEmpty
     private String lastName;
     @Email
+    @NotEmpty
+    @Column(unique = true)
     private String email;
     @NotEmpty
+    @Column(unique = true)
     private String dni;
     @Enumerated(EnumType.STRING)
     private Seniority seniority;
     @Column(unique = true, nullable = false)
     private String username;
     @NotEmpty
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*\\d).{6,}$",
+            message = "The password must have at least 6 characters, one capital letter and one number"
+    )
     private String password;
 
     @ElementCollection

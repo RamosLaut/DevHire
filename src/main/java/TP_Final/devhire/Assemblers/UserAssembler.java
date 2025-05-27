@@ -19,12 +19,18 @@ public class UserAssembler implements RepresentationModelAssembler<UserEntity, E
 
     @Override
     public EntityModel<UserDTO> toModel(UserEntity entity) {
-        UserDTO dto = userMapper.converToDto(entity);
+        if (entity == null) {
+            throw new IllegalArgumentException("UserEntity can't be null");
+        }
+        UserDTO dto = userMapper.convertToDto(entity);
         return EntityModel.of(dto,
                 linkTo(methodOn(UserController.class).getUserById(entity.getId())).withSelfRel(),
-                linkTo(methodOn(UserController.class).listAllUsers()).withRel("list all users"));
-    }
+                linkTo(methodOn(UserController.class).listAllUsers()).withRel("all users"),
+                linkTo(methodOn(UserController.class).updateUser(entity.getId(), null)).withRel("update"),
+                linkTo(methodOn(UserController.class).deleteUser(entity.getId())).withRel("delete"));
 
+            
+    }
 
 }
 
