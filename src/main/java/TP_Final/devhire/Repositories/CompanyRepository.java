@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
     @Modifying
@@ -19,4 +21,6 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
     @Transactional
     @Query("UPDATE CompanyEntity c SET c.state = false WHERE c.id = :id")
     void logicDown(@Param("id")long id);
+
+    Optional<CompanyEntity> findByEmail(String email);
 }

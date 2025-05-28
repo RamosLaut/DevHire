@@ -13,5 +13,5 @@ public class PublicationDTO {
     String content;
     Timestamp publicationDate;
     Long user_id;
-
+    Long company_id;
 }

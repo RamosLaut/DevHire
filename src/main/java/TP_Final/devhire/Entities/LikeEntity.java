@@ -21,6 +21,9 @@ public class LikeEntity {
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_like"))
     private UserEntity user;
     @ManyToOne
+    @JoinColumn(name = "company_id", foreignKey = @ForeignKey(name = "FK_company_like"))
+    private CompanyEntity company;
+    @ManyToOne
     @JoinColumn(name = "publication_id", foreignKey = @ForeignKey(name = "FK_publication_like"))
     private PublicationEntity publication;
     private Timestamp likeDate;

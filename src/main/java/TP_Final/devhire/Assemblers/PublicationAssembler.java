@@ -20,6 +20,11 @@ public class PublicationAssembler implements RepresentationModelAssembler<Public
     @Override
     public @NonNull EntityModel<PublicationDTO> toModel(@NonNull PublicationEntity publication) {
         PublicationDTO publicationDTO = mapper.converToDto(publication);
+        if(publication.getCompany() != null){
+            publicationDTO.setCompany_id(publication.getCompany().getId());
+        }else{
+            publicationDTO.setUser_id(publication.getUser().getId());
+        }
         return EntityModel.of(publicationDTO, linkTo(methodOn(PublicationController.class).findById(publicationDTO.getId())).withSelfRel(),
                 linkTo(methodOn(PublicationController.class).deleteById(publicationDTO.getId())).withRel("Delete publication"),
                 linkTo(methodOn(PublicationController.class).updateContent(publication)).withRel("Update content"));

@@ -23,7 +23,7 @@ import java.util.Set;
 public class JobEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long job_id;
+    private long id;
 
     @NotEmpty
     private String description;
