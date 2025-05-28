@@ -1,5 +1,6 @@
-package TP_Final.devhire.Security;
+package TP_Final.devhire.Security.Entitys;
 
+import TP_Final.devhire.Security.Enums.Roles;
 import jakarta.persistence.*;
 import lombok.*;
 

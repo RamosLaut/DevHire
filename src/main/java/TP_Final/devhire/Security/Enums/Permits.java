@@ -1,4 +1,4 @@
-package TP_Final.devhire.Security;
+package TP_Final.devhire.Security.Enums;
 
 public enum Permits {
     SEE_USER,

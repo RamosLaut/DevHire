@@ -1,4 +1,4 @@
-package TP_Final.devhire.Security;
+package TP_Final.devhire.Security.Entitys;
 
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.UserEntity;
@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class CredentialsEntity implements UserDetails {

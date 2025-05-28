@@ -1,5 +1,6 @@
-package TP_Final.devhire.Security;
+package TP_Final.devhire.Security.Entitys;
 
+import TP_Final.devhire.Security.Enums.Permits;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,5 +20,7 @@ public class PermitEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
     Permits permit;
+
+    
 
 }
