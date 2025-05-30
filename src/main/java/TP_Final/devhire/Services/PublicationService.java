@@ -1,7 +1,7 @@
 package TP_Final.devhire.Services;
 
 import TP_Final.devhire.Assemblers.PublicationAssembler;
-import TP_Final.devhire.DTOS.PublicationDTO;
+import TP_Final.devhire.DTOS.UserPublicationDTO;
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.PublicationEntity;
 import TP_Final.devhire.Entities.UserEntity;
@@ -15,7 +15,9 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PublicationService{
@@ -31,7 +33,7 @@ public class PublicationService{
         this.userRepository = userRepository;
     }
 
-    public EntityModel<PublicationDTO> save(PublicationEntity publicationEntity) {
+    public EntityModel<Object> save(PublicationEntity publicationEntity) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<CompanyEntity> companyOpt = companyRepository.findByEmail(email);
         Optional<UserEntity> userOpt = userRepository.findByEmail(email);
@@ -43,15 +45,17 @@ public class PublicationService{
         publicationsRepository.save(publicationEntity);
         return publicationAssembler.toModel(publicationEntity);
     }
-    public CollectionModel<EntityModel<PublicationDTO>> findAll(){
+    public CollectionModel<EntityModel<Object>> findAll(){
         return CollectionModel.of(publicationsRepository.findAll().stream()
                 .map(publicationAssembler::toModel)
                 .toList());
     }
-    public EntityModel<PublicationDTO> findById(Long id)throws RuntimeException{
+    public EntityModel<Object> findById(Long id)throws RuntimeException{
         return publicationAssembler.toModel(publicationsRepository.findById(id).orElseThrow(RuntimeException::new));
     }
-    public CollectionModel<EntityModel<PublicationDTO>> findByuserId(Long id)throws UserNotFoundException {
+    public CollectionModel<EntityModel<Object>> findByuserId(Long id)throws UserNotFoundException {
+
+
         return CollectionModel.of(publicationsRepository.findByUser_Id(id).stream()
                 .map(publicationAssembler::toModel)
                 .toList());
@@ -60,7 +64,7 @@ public class PublicationService{
         publicationsRepository.deleteById(id);
     }
 
-    public EntityModel<PublicationDTO> updateContent(PublicationEntity publicationEntity){
+    public EntityModel<Object> updateContent(PublicationEntity publicationEntity){
         publicationsRepository.updateContent(publicationEntity.getContent(), publicationEntity.getId());
         return publicationAssembler.toModel(publicationEntity);
     }

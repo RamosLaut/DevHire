@@ -1,9 +1,8 @@
 package TP_Final.devhire.Mappers;
 
-import TP_Final.devhire.DTOS.PublicationDTO;
-import TP_Final.devhire.DTOS.UserDTO;
+import TP_Final.devhire.DTOS.CompanyPublicationDTO;
+import TP_Final.devhire.DTOS.UserPublicationDTO;
 import TP_Final.devhire.Entities.PublicationEntity;
-import TP_Final.devhire.Entities.UserEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,10 +11,13 @@ import org.springframework.stereotype.Component;
 public class PublicationMapper {
     @Autowired
     private ModelMapper modelMapper;
-    public PublicationDTO converToDto(PublicationEntity publication){
-        return modelMapper.map(publication, PublicationDTO.class);
+    public UserPublicationDTO converToUserPublicationDTO(PublicationEntity publication){
+        return modelMapper.map(publication, UserPublicationDTO.class);
     }
-    public PublicationEntity converToEntity(PublicationDTO publicationDto){
-        return modelMapper.map(publicationDto, PublicationEntity.class);
+    public PublicationEntity converFromUserPublicationDTO(UserPublicationDTO userPublicationDto){
+        return modelMapper.map(userPublicationDto, PublicationEntity.class);
+    }
+    public CompanyPublicationDTO converToCompanyPublicationDTO(PublicationEntity publication){
+        return modelMapper.map(publication, CompanyPublicationDTO.class);
     }
 }

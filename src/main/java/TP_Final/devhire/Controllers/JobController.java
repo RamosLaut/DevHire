@@ -6,6 +6,7 @@ import TP_Final.devhire.Services.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class JobController {
     @PostMapping
     public ResponseEntity<?> save(@RequestBody JobEntity job){
         jobService.save(job);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<JobDTO>>> findAll(){
@@ -40,9 +41,4 @@ public class JobController {
     public ResponseEntity<List<String>> findJobRequirements(@PathVariable long jobId){
         return ResponseEntity.ok(jobService.getRequirements(jobId));
     }
-//    @PatchMapping("/{jobId}/addRequirement/{requirement}")
-//    public ResponseEntity<?> addHardSkill(@PathVariable String requirement, @PathVariable long jobId){
-//        jobService.addRequirementHardSkill(jobId, requirement);
-//        return ResponseEntity.noContent().build();
-//    }
 }
