@@ -31,6 +31,9 @@ public class PublicationEntity {
     @ManyToOne
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_publication"))
     private UserEntity user;
+    @ManyToOne
+    @JoinColumn(name = "company_id", foreignKey = @ForeignKey(name = "FK_company_publication"))
+    private CompanyEntity company;
     @OneToMany(mappedBy = "publication")
     private List<LikeEntity>likes;
     @OneToMany(mappedBy = "publication")

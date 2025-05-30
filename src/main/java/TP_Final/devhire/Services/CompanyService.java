@@ -6,9 +6,12 @@ import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Exceptions.CompanyAlreadyExistsException;
 import TP_Final.devhire.Exceptions.CompanyNotFound;
 import TP_Final.devhire.Repositories.CompanyRepository;
+import TP_Final.devhire.Security.Entities.CredentialsEntity;
+import TP_Final.devhire.Security.Repositories.CredentialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -16,19 +19,23 @@ import java.util.List;
 public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyAssembler companyAssembler;
+    private final PasswordEncoder passwordEncoder;
+    private final CredentialsRepository credentialsRepository;
     @Autowired
-    public CompanyService(CompanyRepository companyRepository, CompanyAssembler companyAssembler) {
+    public CompanyService(CompanyRepository companyRepository, CompanyAssembler companyAssembler, PasswordEncoder passwordEncoder, CredentialsRepository credentialsRepository) {
         this.companyRepository = companyRepository;
         this.companyAssembler = companyAssembler;
+        this.passwordEncoder = passwordEncoder;
+        this.credentialsRepository = credentialsRepository;
     }
-    public EntityModel<CompanyDTO> save(CompanyEntity company)throws CompanyAlreadyExistsException {
-        boolean exists = companyRepository.findAll().stream()
-                .map(CompanyEntity::getName)
-                .anyMatch(name -> name.equalsIgnoreCase(company.getName()));
-        if(exists) {
-            throw new CompanyAlreadyExistsException("Company with name " + company.getName() + " already exists.");
-        }
+    public EntityModel<CompanyDTO> register(CompanyEntity company){
         companyRepository.save(company);
+        CredentialsEntity credentialsEntity = CredentialsEntity.builder()
+                .email(company.getEmail())
+                .password(passwordEncoder.encode("password"))
+                .company(company)
+                .build();
+        credentialsRepository.save(credentialsEntity);
         return companyAssembler.toModel(company);
     }
     public CollectionModel<EntityModel<CompanyDTO>> findAll(){

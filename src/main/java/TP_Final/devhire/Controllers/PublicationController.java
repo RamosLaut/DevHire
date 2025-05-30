@@ -1,6 +1,6 @@
 package TP_Final.devhire.Controllers;
 
-import TP_Final.devhire.DTOS.PublicationDTO;
+import TP_Final.devhire.DTOS.UserPublicationDTO;
 import TP_Final.devhire.Entities.PublicationEntity;
 import TP_Final.devhire.Services.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,24 +19,23 @@ public class PublicationController {
         this.publicationService = publicationService;
     }
     @PostMapping
-    public ResponseEntity<EntityModel<PublicationDTO>> save(@RequestBody PublicationEntity publicationEntity) {
-
-        return ResponseEntity.ok(publicationService.save(publicationEntity));
+    public ResponseEntity<EntityModel<Object>> save(@RequestBody PublicationEntity publicationEntity) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(publicationService.save(publicationEntity));
     }
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>> findAll() {
+    public ResponseEntity<CollectionModel<EntityModel<Object>>> findAll() {
         return ResponseEntity.ok(publicationService.findAll());
     }
     @GetMapping("/{publicationId}")
-    public ResponseEntity<EntityModel<PublicationDTO>> findById(@PathVariable Long publicationId){
+    public ResponseEntity<EntityModel<Object>> findById(@PathVariable Long publicationId){
         return ResponseEntity.ok(publicationService.findById(publicationId));
     }
     @GetMapping("/user/{userId}")
-    public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>>findAllByUserId(@PathVariable Long userId){
+    public ResponseEntity<CollectionModel<EntityModel<Object>>>findAllByUserId(@PathVariable Long userId){
         return ResponseEntity.ok(publicationService.findByuserId(userId));
     }
     @PatchMapping
-    public ResponseEntity<EntityModel<PublicationDTO>>updateContent(@RequestBody PublicationEntity publicationEntity){
+    public ResponseEntity<EntityModel<Object>>updateContent(@RequestBody PublicationEntity publicationEntity){
         return ResponseEntity.ok(publicationService.updateContent(publicationEntity));
     }
     @DeleteMapping("/{publicationId}")
@@ -44,9 +43,4 @@ public class PublicationController {
         publicationService.deleteById(publicationId);
         return ResponseEntity.noContent().build();
     }
-//    @DeleteMapping("/user/{userId}")
-//    public ResponseEntity<?> deleteAllByUserId(@PathVariable Long userId){
-//        publicationService.deleteByuserId(userId);
-//        return ResponseEntity.noContent().build();
-//    }
 }

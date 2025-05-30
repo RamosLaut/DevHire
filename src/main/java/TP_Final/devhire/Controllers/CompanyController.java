@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,16 +18,16 @@ public class CompanyController {
     public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
     }
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<?> save(@RequestBody @Valid CompanyEntity company){
-        return ResponseEntity.ok(companyService.save(company));
+        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.register(company));
     }
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<CompanyDTO>>> findAll(){
         return ResponseEntity.ok(companyService.findAll());
     }
     @GetMapping("/{id}")
-    public  ResponseEntity<EntityModel<CompanyDTO>> findById(@PathVariable  Long id){
+    public ResponseEntity<EntityModel<CompanyDTO>> findById(@PathVariable  Long id){
         return ResponseEntity.ok(companyService.findById(id));
     }
     @PatchMapping

@@ -24,7 +24,7 @@ public class CompanyAssembler implements RepresentationModelAssembler<CompanyEnt
     public EntityModel<CompanyDTO> toModel(@NonNull CompanyEntity entity) {
         CompanyDTO companyDTO = mapper.convertToDTO(entity);
             return EntityModel.of(companyDTO,
-                    linkTo(methodOn(CompanyController.class).findAll()).withRel("companies"),
+                    linkTo(methodOn(CompanyController.class).findAll()).withRel("Companies"),
                     linkTo(methodOn(CompanyController.class).findById(entity.getId())).withSelfRel(),
                     linkTo(methodOn(CompanyController.class).deleteById(entity.getId())).withRel("Delete"),
                     linkTo(methodOn(CompanyController.class).updateCompany(entity)).withRel("Update"));
