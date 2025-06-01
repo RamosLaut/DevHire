@@ -2,7 +2,7 @@ package TP_Final.devhire.Assemblers;
 
 import TP_Final.devhire.Controllers.PublicationController;
 import TP_Final.devhire.DTOS.CompanyPublicationDTO;
-import TP_Final.devhire.DTOS.UserPublicationDTO;
+import TP_Final.devhire.DTOS.DeveloperPublicationDTO;
 import TP_Final.devhire.Entities.PublicationEntity;
 import TP_Final.devhire.Mappers.PublicationMapper;
 import io.micrometer.common.lang.NonNull;
@@ -27,10 +27,10 @@ public class PublicationAssembler implements RepresentationModelAssembler<Public
                     linkTo(methodOn(PublicationController.class).deleteById(companyPublication.getId())).withRel("Delete publication"),
                     linkTo(methodOn(PublicationController.class).updateContent(publication)).withRel("Update content"));
         }else{
-            UserPublicationDTO userPublicationDTO = mapper.converToUserPublicationDTO(publication);
-            userPublicationDTO.setUserName(publication.getUser().getName());
-            return EntityModel.of(userPublicationDTO, linkTo(methodOn(PublicationController.class).findById(userPublicationDTO.getId())).withSelfRel(),
-                    linkTo(methodOn(PublicationController.class).deleteById(userPublicationDTO.getId())).withRel("Delete publication"),
+            DeveloperPublicationDTO developerPublicationDTO = mapper.converToUserPublicationDTO(publication);
+            developerPublicationDTO.setUserName(publication.getDeveloper().getName());
+            return EntityModel.of(developerPublicationDTO, linkTo(methodOn(PublicationController.class).findById(developerPublicationDTO.getId())).withSelfRel(),
+                    linkTo(methodOn(PublicationController.class).deleteById(developerPublicationDTO.getId())).withRel("Delete publication"),
                     linkTo(methodOn(PublicationController.class).updateContent(publication)).withRel("Update content"));
         }
     }

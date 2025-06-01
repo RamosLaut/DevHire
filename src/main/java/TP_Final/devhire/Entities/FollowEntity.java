@@ -27,12 +27,12 @@ public class FollowEntity {
     @ManyToOne
     @MapsId("follower_id")
     @JoinColumn(name = "follower_id")
-    private UserEntity follower;
+    private DeveloperEntity follower;
 
     @ManyToOne
     @MapsId("followed_id")
     @JoinColumn(name = "followed_id")
-    private UserEntity followed;
+    private DeveloperEntity followed;
 
     @NotNull
     private Boolean acepted;
@@ -43,7 +43,7 @@ public class FollowEntity {
         this.followUpDate = LocalDateTime.now();
     }
 
-    public FollowEntity(UserEntity follower, UserEntity followed) {
+    public FollowEntity(DeveloperEntity follower, DeveloperEntity followed) {
         this.id = new FollowId(follower.getId(), followed.getId());
         this.followUpDate = LocalDateTime.now();
         this.state = true;

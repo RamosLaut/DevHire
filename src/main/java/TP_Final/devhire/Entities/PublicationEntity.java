@@ -29,8 +29,8 @@ public class PublicationEntity {
     @NotNull
     private Boolean state = true;
     @ManyToOne
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_publication"))
-    private UserEntity user;
+    @JoinColumn(name = "dev_id", foreignKey = @ForeignKey(name = "FK_dev_publication"))
+    private DeveloperEntity developer;
     @ManyToOne
     @JoinColumn(name = "company_id", foreignKey = @ForeignKey(name = "FK_company_publication"))
     private CompanyEntity company;

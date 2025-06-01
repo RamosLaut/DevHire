@@ -1,8 +1,10 @@
 package TP_Final.devhire.Security.Entities;
 
 import TP_Final.devhire.Entities.CompanyEntity;
-import TP_Final.devhire.Entities.UserEntity;
+import TP_Final.devhire.Entities.DeveloperEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,20 +19,24 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(name = "credentials")
 public class CredentialsEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @NotEmpty
     @Column(unique = true, nullable = false)
     private String email;
     @Column(nullable = false)
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$")
+    @NotEmpty
     private String password;
 
-    @OneToOne
-    @JoinColumn(name = "usuario_id", referencedColumnName = "id", unique = true)
-    private UserEntity user;
-    @OneToOne
+    @OneToOne(mappedBy = "credentials", cascade = CascadeType.ALL)
+    @JoinColumn(name = "dev_id", referencedColumnName = "id", unique = true)
+    private DeveloperEntity developer;
+
+    @OneToOne(mappedBy = "credentials", cascade = CascadeType.ALL)
     @JoinColumn(name = "company_id", referencedColumnName = "id", unique = true)
     private CompanyEntity company;
 

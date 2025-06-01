@@ -3,6 +3,7 @@ package TP_Final.devhire.Entities;
 import TP_Final.devhire.Enums.HardSkills;
 import TP_Final.devhire.Enums.Seniority;
 import TP_Final.devhire.Enums.SoftSkills;
+import TP_Final.devhire.Security.Entities.CredentialsEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -22,8 +23,8 @@ import java.util.Set;
 @ToString
 
 @Entity
-@Table(name = "users")
-public class UserEntity {
+@Table(name = "devs")
+public class DeveloperEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,30 +32,17 @@ public class UserEntity {
     private String name;
     @NotEmpty
     private String lastName;
-    @Email
-    @NotEmpty
-    @Column(unique = true)
-    private String email;
     @NotEmpty
     @Column(unique = true)
     private String dni;
     @Enumerated(EnumType.STRING)
     private Seniority seniority;
-    @Column(unique = true, nullable = false)
-    private String username;
-    @NotEmpty
-    @Pattern(
-            regexp = "^(?=.*[A-Z])(?=.*\\d).{6,}$",
-            message = "The password must have at least 6 characters, one capital letter and one number"
-    )
-    private String password;
-
     @ElementCollection
-    @CollectionTable(name = "user_academic_info", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "dev_academic_info", joinColumns = @JoinColumn(name = "developer_id"))
     private List<AcademicInfo> academicInfo;
 
     @ElementCollection
-    @CollectionTable(name = "user_job_experience", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "dev_job_experience", joinColumns = @JoinColumn(name = "developer_id"))
     private List<JobExperience> jobExperience;
 
     @NotNull
@@ -62,23 +50,23 @@ public class UserEntity {
 
     @ElementCollection(targetClass = SoftSkills.class)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_soft_skills", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "dev_soft_skills", joinColumns = @JoinColumn(name = "developer_id"))
     @Column(name = "skill")
     private List<SoftSkills> softSkills;
 
     @ElementCollection(targetClass = HardSkills.class)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_hard_skills", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "dev_hard_skills", joinColumns = @JoinColumn(name = "developer_id"))
     @Column(name = "skill")
     private List<HardSkills> hardSkills;
 
     @NotNull
     private Boolean state;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "developer")
     private List<PublicationEntity>publications;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "developer")
     private List<LikeEntity>likes;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "developer")
     private List<CommentEntity>comments;
 
     @OneToMany(mappedBy = "follower")
@@ -87,7 +75,11 @@ public class UserEntity {
     @OneToMany(mappedBy = "followed")
     private List<FollowEntity> followers = new ArrayList<>();
 
-    @ManyToMany (mappedBy = "users")
+    @ManyToMany (mappedBy = "devs")
     private Set<JobEntity> jobs;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private CredentialsEntity credentials;
 
 }

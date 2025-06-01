@@ -18,10 +18,10 @@ public class CompanyController {
     public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
     }
-    @PostMapping("/register")
-    public ResponseEntity<?> save(@RequestBody @Valid CompanyEntity company){
-        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.register(company));
-    }
+//    @PostMapping("/register")
+//    public ResponseEntity<?> save(@RequestBody @Valid CompanyEntity company){
+//        return ResponseEntity.status(HttpStatus.CREATED).body(companyService.register(company));
+//    }
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<CompanyDTO>>> findAll(){
         return ResponseEntity.ok(companyService.findAll());

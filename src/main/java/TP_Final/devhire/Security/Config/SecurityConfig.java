@@ -40,9 +40,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-
-                        .requestMatchers("/user/register").permitAll()
-                        .requestMatchers("/company/register").permitAll()
+                        .requestMatchers("/register/**").permitAll()
                         .anyRequest().authenticated())
                 .cors(Customizer.withDefaults())
                 .csrf(

@@ -24,8 +24,8 @@ public class CommentEntity {
     @JoinColumn(name = "publication_id", foreignKey = @ForeignKey(name = "FK_publication_comment"))
     private PublicationEntity publication;
     @ManyToOne
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_comment"))
-    private UserEntity user;
+    @JoinColumn(name = "developer_id", foreignKey = @ForeignKey(name = "FK_dev_comment"))
+    private DeveloperEntity developer;
     @ManyToOne
     @JoinColumn(name = "company_id", foreignKey = @ForeignKey(name = "FK_company_comment"))
     private CompanyEntity company;

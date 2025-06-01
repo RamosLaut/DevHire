@@ -1,7 +1,6 @@
 package TP_Final.devhire.Repositories;
 
 import TP_Final.devhire.Entities.PublicationEntity;
-import TP_Final.devhire.Entities.UserEntity;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,7 +19,7 @@ public interface PublicationsRepository extends JpaRepository<PublicationEntity,
     @Query("UPDATE PublicationEntity SET content = :content WHERE id = :id")
     void updateContent(@Param("content") String content, @Param("id") Long id);
 
-    List<PublicationEntity> findByUser_Id(long userId);
+    List<PublicationEntity> findByDeveloperId(long userId);
 
     Optional<PublicationEntity> findById(@NonNull Long id);
 

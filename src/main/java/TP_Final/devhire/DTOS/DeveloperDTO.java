@@ -8,13 +8,11 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class UserDTO {
+public class DeveloperDTO {
 private Long id;
 private String name;
 private String lastName;
-private String email;
 private String dni;
-private String username;
 private String location;
 private Seniority seniority;
 private List<SoftSkills> softSkills;

@@ -35,7 +35,7 @@ public class JobService {
 
     public void save(JobEntity job) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        job.setCompany(companyRepository.findByEmail(email).orElseThrow());
+        job.setCompany(companyRepository.findByCredentials_Email(email).orElseThrow());
         jobRepository.save(job);
     }
 
@@ -52,7 +52,7 @@ public class JobService {
 
     public CollectionModel<EntityModel<JobDTO>> findOwnOffers() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<CompanyEntity> optCompany = companyRepository.findByEmail(email);
+        Optional<CompanyEntity> optCompany = companyRepository.findByCredentials_Email(email);
         List<EntityModel<JobDTO>> jobs = jobRepository.findAll().stream()
                 .filter(job -> job.getCompany().equals(optCompany.orElseThrow()))
                 .map(assembler::toModel)

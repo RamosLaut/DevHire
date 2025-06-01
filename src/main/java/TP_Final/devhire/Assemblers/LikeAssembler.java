@@ -18,7 +18,7 @@ public class LikeAssembler implements RepresentationModelAssembler<LikeEntity, E
     @Override
     public EntityModel<LikeDTO> toModel(LikeEntity like) {
         LikeDTO likeDTO = likeMapper.convertToDTO(like);
-        likeDTO.setUser_id(like.getUser().getId());
+        likeDTO.setDev_id(like.getDeveloper().getId());
         likeDTO.setPublication_id(like.getPublication().getId());
         return EntityModel.of(likeDTO, linkTo(methodOn(LikeController.class).findAll()).withRel("Likes"),
                     linkTo(methodOn(LikeController.class).findById(like.getId())).withSelfRel(),
