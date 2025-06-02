@@ -1,5 +1,6 @@
 package TP_Final.devhire.Assemblers;
 
+import TP_Final.devhire.Controllers.CommentController;
 import TP_Final.devhire.Controllers.PublicationController;
 import TP_Final.devhire.DTOS.CompanyPublicationDTO;
 import TP_Final.devhire.DTOS.DeveloperPublicationDTO;
@@ -25,13 +26,15 @@ public class PublicationAssembler implements RepresentationModelAssembler<Public
             companyPublication.setCompanyName(publication.getCompany().getName());
             return EntityModel.of(companyPublication, linkTo(methodOn(PublicationController.class).findById(companyPublication.getId())).withSelfRel(),
                     linkTo(methodOn(PublicationController.class).deleteById(companyPublication.getId())).withRel("Delete publication"),
-                    linkTo(methodOn(PublicationController.class).updateContent(publication)).withRel("Update content"));
+                    linkTo(methodOn(PublicationController.class).updateContent(publication)).withRel("Update content"),
+                    linkTo(methodOn(CommentController.class).save(null, publication.getId())).withRel("comment"));
         }else{
             DeveloperPublicationDTO developerPublicationDTO = mapper.converToUserPublicationDTO(publication);
             developerPublicationDTO.setUserName(publication.getDeveloper().getName());
             return EntityModel.of(developerPublicationDTO, linkTo(methodOn(PublicationController.class).findById(developerPublicationDTO.getId())).withSelfRel(),
                     linkTo(methodOn(PublicationController.class).deleteById(developerPublicationDTO.getId())).withRel("Delete publication"),
-                    linkTo(methodOn(PublicationController.class).updateContent(publication)).withRel("Update content"));
+                    linkTo(methodOn(PublicationController.class).updateContent(publication)).withRel("Update content"),
+                    linkTo(methodOn(CommentController.class).save(null, publication.getId())).withRel("comment"));
         }
     }
 
