@@ -5,14 +5,13 @@ import TP_Final.devhire.Enums.Seniority;
 import TP_Final.devhire.Enums.SoftSkills;
 import TP_Final.devhire.Security.Entities.CredentialsEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -82,4 +81,15 @@ public class DeveloperEntity {
     @JoinColumn(name = "user_id")
     private CredentialsEntity credentials;
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        DeveloperEntity developer = (DeveloperEntity) o;
+        return Objects.equals(id, developer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

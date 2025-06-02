@@ -20,8 +20,8 @@ public interface PublicationsRepository extends JpaRepository<PublicationEntity,
     void updateContent(@Param("content") String content, @Param("id") Long id);
 
     List<PublicationEntity> findByDeveloperId(long userId);
-
-    Optional<PublicationEntity> findById(@NonNull Long id);
+    List<PublicationEntity> findByCompanyId(long companyId);
+    @NonNull Optional<PublicationEntity> findById(@NonNull Long id);
 
     void deleteById(@NonNull Long id);
 

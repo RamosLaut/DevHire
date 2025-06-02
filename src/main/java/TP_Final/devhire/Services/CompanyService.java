@@ -3,15 +3,11 @@ package TP_Final.devhire.Services;
 import TP_Final.devhire.Assemblers.CompanyAssembler;
 import TP_Final.devhire.DTOS.CompanyDTO;
 import TP_Final.devhire.Entities.CompanyEntity;
-import TP_Final.devhire.Exceptions.CompanyAlreadyExistsException;
 import TP_Final.devhire.Exceptions.CompanyNotFound;
 import TP_Final.devhire.Repositories.CompanyRepository;
-import TP_Final.devhire.Security.Entities.CredentialsEntity;
-import TP_Final.devhire.Security.Repositories.CredentialsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -19,40 +15,41 @@ import java.util.List;
 public class CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyAssembler companyAssembler;
-    private final PasswordEncoder passwordEncoder;
-    private final CredentialsRepository credentialsRepository;
+
     @Autowired
-    public CompanyService(CompanyRepository companyRepository, CompanyAssembler companyAssembler, PasswordEncoder passwordEncoder, CredentialsRepository credentialsRepository) {
+    public CompanyService(CompanyRepository companyRepository, CompanyAssembler companyAssembler) {
         this.companyRepository = companyRepository;
         this.companyAssembler = companyAssembler;
-        this.passwordEncoder = passwordEncoder;
-        this.credentialsRepository = credentialsRepository;
     }
-//    public EntityModel<CompanyDTO> register(CompanyEntity company){
-//        companyRepository.save(company);
-//        CredentialsEntity credentialsEntity = CredentialsEntity.builder()
-//                .email(company.getEmail())
-//                .password(passwordEncoder.encode("password"))
-//                .company(company)
-//                .build();
-//        credentialsRepository.save(credentialsEntity);
-//        return companyAssembler.toModel(company);
-//    }
     public CollectionModel<EntityModel<CompanyDTO>> findAll(){
-        List<EntityModel<CompanyDTO>> companys = companyRepository.findAll().stream()
+        List<EntityModel<CompanyDTO>> companies = companyRepository.findAll().stream()
                 .map(companyAssembler::toModel)
                 .toList();
-        return CollectionModel.of(companys);
+        return CollectionModel.of(companies);
     }
     public  EntityModel<CompanyDTO> findById(Long id)throws CompanyNotFound {
         return companyAssembler.toModel(companyRepository.findById(id).orElseThrow(()->new CompanyNotFound("Company not found")));
     }
     public void deleteById(Long id){
+        if(companyRepository.findById(id).isEmpty()){
+            throw new CompanyNotFound("Company not found");
+        }
         companyRepository.deleteById(id);
     }
-    public EntityModel<CompanyDTO> updateById(CompanyEntity company){
-        companyRepository.update(company.getName(), company.getLocation(), company.getDescription(), company.getId());
-        return companyAssembler.toModel(company);
+    public EntityModel<CompanyDTO> updateById(CompanyDTO companyDTO){
+        if(companyDTO.getId()==null){
+            throw new RuntimeException("Company ID required");
+        }
+        CompanyEntity companyEntity = companyRepository.findById(companyDTO.getId()).orElseThrow(()->new CompanyNotFound("Company not found"));
+        if(companyDTO.getName()!=null){
+            companyEntity.setName(companyDTO.getName());
+        }else if(companyDTO.getLocation()!=null){
+            companyEntity.setLocation(companyDTO.getLocation());
+        }else if(companyDTO.getDescription()!=null){
+            companyEntity.setDescription(companyDTO.getDescription());
+        }
+        companyRepository.update(companyEntity.getName(), companyEntity.getLocation(), companyEntity.getDescription(), companyEntity.getId());
+        return companyAssembler.toModel(companyEntity);
     }
 }
 

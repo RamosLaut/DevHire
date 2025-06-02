@@ -53,7 +53,7 @@ public class AuthService {
 
         if (userOpt.isPresent()) {
             EntityModel<DeveloperDTO> dto = developerAssembler.toModel(userOpt.get());
-            return AuthResponse.builder().usuario(dto).token(token).build();
+            return AuthResponse.builder().developer(dto).token(token).build();
         } else{
             EntityModel<CompanyDTO> dto = companyAssembler.toModel(companyOpt.get());
             return AuthResponse.builder().company(dto).token(token).build();
