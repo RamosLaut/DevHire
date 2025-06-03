@@ -23,6 +23,10 @@ public class CompanyService {
         this.companyRepository = companyRepository;
         this.companyAssembler = companyAssembler;
     }
+    public EntityModel<CompanyDTO> save(CompanyEntity compa){
+companyRepository.save(compa);
+return companyAssembler.toModel(compa);
+    }
     public CollectionModel<EntityModel<CompanyDTO>> findAll(){
         List<EntityModel<CompanyDTO>> companies = companyRepository.findAll().stream()
                 .map(companyAssembler::toModel)
