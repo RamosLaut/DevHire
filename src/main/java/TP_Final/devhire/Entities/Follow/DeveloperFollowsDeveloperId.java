@@ -1,4 +1,4 @@
-package TP_Final.devhire.Entities;
+package TP_Final.devhire.Entities.Follow;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
@@ -13,8 +13,8 @@ import java.io.Serializable;
 @EqualsAndHashCode
 
 @Embeddable
-public class FollowId implements Serializable {
-    private Long follower_id;
-    private Long followed_id;
+public class DeveloperFollowsDeveloperId implements Serializable {
+    private Long developerFollowerId;
+    private Long developerFollowedId;
 
 }

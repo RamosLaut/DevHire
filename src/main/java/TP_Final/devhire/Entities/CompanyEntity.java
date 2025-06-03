@@ -1,5 +1,9 @@
 package TP_Final.devhire.Entities;
 
+import TP_Final.devhire.Entities.Follow.CompanyFollowsCompany;
+import TP_Final.devhire.Entities.Follow.CompanyFollowsDeveloper;
+import TP_Final.devhire.Entities.Follow.DeveloperFollowsCompany;
+import TP_Final.devhire.Entities.Follow.DeveloperFollowsDeveloper;
 import TP_Final.devhire.Security.Entities.CredentialsEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -7,6 +11,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -40,4 +45,17 @@ public class CompanyEntity {
     @OneToOne
     @JoinColumn(name = "user_id")
     private CredentialsEntity credentials;
+
+    //Seguimientos:
+    @OneToMany(mappedBy = "follower")
+    private List<CompanyFollowsCompany> companiesFollowed = new ArrayList<>();
+
+    @OneToMany(mappedBy = "followed")
+    private List<CompanyFollowsCompany> companyFollowings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "followed")
+    private List<DeveloperFollowsCompany> developerFollowings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "follower")
+    private List<CompanyFollowsDeveloper> developersFollowed = new ArrayList<>();
 }
