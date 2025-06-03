@@ -4,10 +4,7 @@ import TP_Final.devhire.Assemblers.PublicationAssembler;
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.PublicationEntity;
 import TP_Final.devhire.Entities.DeveloperEntity;
-import TP_Final.devhire.Exceptions.DeveloperNotFoundException;
-import TP_Final.devhire.Exceptions.IdRequiredException;
-import TP_Final.devhire.Exceptions.PublicationNotFoundException;
-import TP_Final.devhire.Exceptions.UnauthorizedException;
+import TP_Final.devhire.Exceptions.*;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.PublicationsRepository;
 import TP_Final.devhire.Repositories.DeveloperRepository;
@@ -38,6 +35,9 @@ public class PublicationService{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<CompanyEntity> companyOpt = companyRepository.findByCredentials_Email(email);
         Optional<DeveloperEntity> devOpt = developerRepository.findByCredentials_Email(email);
+        if(publicationEntity.getContent()==null){
+            throw new ContentRequiredException("Publication content required");
+        }
         if (companyOpt.isPresent()) {
             publicationEntity.setCompany(companyOpt.get());
         } else devOpt.ifPresent(publicationEntity::setDeveloper);
@@ -99,17 +99,16 @@ public class PublicationService{
         if(publicationsRepository.findById(publicationEntity.getId()).isEmpty()){
             throw new PublicationNotFoundException("Publication not found");
         }
+        PublicationEntity publication = publicationsRepository.findById(publicationEntity.getId()).get();
         if(publicationEntity.getContent()==null){
             throw new RuntimeException("Publication content required");
         }
-        Optional<PublicationEntity> publicationOpt = publicationsRepository.findById(publicationEntity.getId());
-        if(publicationOpt.get().getDeveloper() != null && devOpt.isPresent() && devOpt.get().equals(publicationOpt.get().getDeveloper())) {
-            publicationEntity.setDeveloper(publicationOpt.get().getDeveloper());
+        if(publication.getDeveloper() != null && devOpt.isPresent() && devOpt.get().equals(publication.getDeveloper())) {
             publicationsRepository.updateContent(publicationEntity.getContent(), publicationEntity.getId());
-        }else if(publicationOpt.get().getCompany() != null && companyOpt.isPresent() && companyOpt.get().equals(publicationOpt.get().getCompany())){
-            publicationEntity.setCompany(publicationOpt.get().getCompany());
+        }else if(publication.getCompany() != null && companyOpt.isPresent() && companyOpt.get().equals(publication.getCompany())){
+            publicationEntity.setCompany(publication.getCompany());
             publicationsRepository.updateContent(publicationEntity.getContent(), publicationEntity.getId());
         }else throw new UnauthorizedException("You don't have permission to update this publication");
-        return publicationAssembler.toModel(publicationEntity);
+        return publicationAssembler.toModel(publicationsRepository.findById(publicationEntity.getId()).get());
     }
 }

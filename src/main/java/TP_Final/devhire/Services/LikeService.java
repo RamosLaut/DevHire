@@ -95,6 +95,7 @@ public class LikeService {
                 .map(assembler::toModel)
                 .toList());
     }
+
     public String findLikesQuantityByPublicationId(long publicationId)throws PublicationNotFoundException{
         if(publicationsRepository.findById(publicationId).isEmpty()){
             throw new PublicationNotFoundException("Publication not found");
