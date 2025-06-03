@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @Builder
 public class CompanyPublicationDTO {
     Long id;
-    String CompanyName;
+    String companyName;
     Timestamp date;
     String content;
 }
