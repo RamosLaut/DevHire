@@ -23,4 +23,32 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> runtimeExceptionHandler(RuntimeException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+    @ExceptionHandler(CompanyNotFound.class)
+    public ResponseEntity<String> companyNotFoundHandler(CompanyNotFound ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+    @ExceptionHandler(CompanyAlreadyExistsException.class)
+    public ResponseEntity<String> companyAlreadyExistsHandler(CompanyAlreadyExistsException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+    @ExceptionHandler(JobNotFoundException.class)
+    public ResponseEntity<String> jobNotFoundHandler(JobNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+    @ExceptionHandler(IdRequiredException.class)
+    public ResponseEntity<String> idRequiredHandler(IdRequiredException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<String> unauthorizedHandler(UnauthorizedException ex){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
+    @ExceptionHandler(CredentialsRequiredException.class)
+    public ResponseEntity<String> credentialsRequiredHandler(CredentialsRequiredException ex){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
+    @ExceptionHandler(ContentRequiredException.class)
+    public ResponseEntity<String> contentRequiredHandler(ContentRequiredException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }

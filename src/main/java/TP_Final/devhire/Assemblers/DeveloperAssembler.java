@@ -25,7 +25,6 @@ public class DeveloperAssembler implements RepresentationModelAssembler<Develope
         DeveloperDTO dto = developerMapper.convertToDto(entity);
         return EntityModel.of(dto,
                 linkTo(methodOn(DeveloperController.class).getDevById(entity.getId())).withSelfRel(),
-                linkTo(methodOn(DeveloperController.class).listAllDevs()).withRel("all users"),
                 linkTo(methodOn(DeveloperController.class).updateDev(entity.getId(), null)).withRel("update"),
                 linkTo(methodOn(DeveloperController.class).deleteDev(entity.getId())).withRel("delete"));
     }

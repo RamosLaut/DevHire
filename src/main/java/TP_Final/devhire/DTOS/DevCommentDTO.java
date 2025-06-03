@@ -5,10 +5,10 @@ import lombok.Setter;
 import java.sql.Timestamp;
 @Getter
 @Setter
-public class CommentDTO {
+public class DevCommentDTO {
     private long id;
-    private long dev_id;
-    private long publication_id;
+    private String DeveloperName;
+    private long publicationID;
     private String content;
-    private Timestamp commentDate;
+    private Timestamp date;
 }

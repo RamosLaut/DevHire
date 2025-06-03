@@ -6,6 +6,6 @@ import lombok.Builder;
 import org.springframework.hateoas.EntityModel;
 
 @Builder
-public record AuthResponse(String token, EntityModel<DeveloperDTO> usuario, EntityModel<CompanyDTO> company) {
+public record AuthResponse(String token, EntityModel<DeveloperDTO> developer, EntityModel<CompanyDTO> company) {
 
 }

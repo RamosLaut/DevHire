@@ -25,13 +25,17 @@ public class PublicationController {
     public ResponseEntity<CollectionModel<EntityModel<Object>>> findAll() {
         return ResponseEntity.ok(publicationService.findAll());
     }
+    @GetMapping("/ownPublications")
+    public ResponseEntity<CollectionModel<EntityModel<Object>>> findOwnPublications(){
+        return ResponseEntity.ok(publicationService.findOwnPublications());
+    }
     @GetMapping("/{publicationId}")
     public ResponseEntity<EntityModel<Object>> findById(@PathVariable Long publicationId){
         return ResponseEntity.ok(publicationService.findById(publicationId));
     }
     @GetMapping("/user/{userId}")
-    public ResponseEntity<CollectionModel<EntityModel<Object>>>findAllByDevId(@PathVariable Long userId){
-        return ResponseEntity.ok(publicationService.findByuserId(userId));
+    public ResponseEntity<CollectionModel<EntityModel<Object>>>findAllByDevId(@PathVariable Long devId){
+        return ResponseEntity.ok(publicationService.findByDevId(devId));
     }
     @PatchMapping
     public ResponseEntity<EntityModel<Object>>updateContent(@RequestBody PublicationEntity publicationEntity){
