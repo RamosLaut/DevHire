@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class UserPasswordDTO {
+public class DeveloperPasswordDTO {
 //    private Long user_id;
 //    private String username;
     @NotBlank

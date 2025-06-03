@@ -9,7 +9,7 @@ import lombok.Data;
 
 import java.util.List;
 @Data
-public class UserUpdateDTO {
+public class DeveloperUpdateDTO {
         private String name;
         private String lastName;
         private String email;

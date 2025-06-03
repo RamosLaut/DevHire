@@ -3,7 +3,7 @@ package TP_Final.devhire.Mappers;
 import TP_Final.devhire.DTOS.*;
 import TP_Final.devhire.Entities.AcademicInfo;
 import TP_Final.devhire.Entities.JobExperience;
-import TP_Final.devhire.Entities.UserEntity;
+import TP_Final.devhire.Entities.DeveloperEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class UserMapper {
+public class DeveloperMapper {
     @Autowired
     private ModelMapper modelMapper;
 
     //  DTO to Entity
-    public UserEntity convertToEntity(UserDTO dto) {
-        UserEntity entity = modelMapper.map(dto, UserEntity.class);
+    public DeveloperEntity convertToEntity(DeveloperDTO dto) {
+        DeveloperEntity entity = modelMapper.map(dto, DeveloperEntity.class);
 
         entity.setAcademicInfo(convertToAcademicInfoList(dto.getAcademicInfo()));
         entity.setJobExperience(convertToJobExperienceList(dto.getJobExperience()));
@@ -27,20 +27,20 @@ public class UserMapper {
         return entity;
     }
 
-    public UserEntity convertRegisterDTOToEntity(UserRegisterDTO dto){
-        return modelMapper.map(dto, UserEntity.class);
+    public DeveloperEntity convertRegisterDTOToEntity(DeveloperRegisterDTO dto){
+        return modelMapper.map(dto, DeveloperEntity.class);
     }
 
-    public UserEntity convertUpdateDTOToEntity(UserUpdateDTO dto){
-        return modelMapper.map(dto, UserEntity.class);
+    public DeveloperEntity convertUpdateDTOToEntity(DeveloperUpdateDTO dto){
+        return modelMapper.map(dto, DeveloperEntity.class);
     }
 
     public AcademicInfo convertToAcademicInfo(AcademicInfoDTO dto) {
         return modelMapper.map(dto, AcademicInfo.class);
     }
 
-    public UserEntity convertCredentialDTOToEntity(UserPasswordDTO dto){
-        return modelMapper.map(dto, UserEntity.class);
+    public DeveloperEntity convertCredentialDTOToEntity(DeveloperPasswordDTO dto){
+        return modelMapper.map(dto, DeveloperEntity.class);
     }
 
     public JobExperience convertToJobExperience(JobExperienceDTO dto) {
@@ -48,8 +48,8 @@ public class UserMapper {
     }
 
     // Entity to DTO
-    public UserDTO convertToDto(UserEntity user){
-        UserDTO dto = modelMapper.map(user, UserDTO.class);
+    public DeveloperDTO convertToDto(DeveloperEntity user){
+        DeveloperDTO dto = modelMapper.map(user, DeveloperDTO.class);
         dto.setAcademicInfo(convertToAcademicInfoDTOList(user.getAcademicInfo()));
         dto.setJobExperience(convertToJobExperienceDTOList(user.getJobExperience()));
         return dto;
@@ -63,14 +63,14 @@ public class UserMapper {
         return modelMapper.map(entity, JobExperienceDTO.class);
     }
 
-    public UserRegisterDTO convertToRegisterDTO(UserEntity user){
-        return modelMapper.map(user, UserRegisterDTO.class);
+    public DeveloperRegisterDTO convertToRegisterDTO(DeveloperEntity user){
+        return modelMapper.map(user, DeveloperRegisterDTO.class);
     }
-    public UserPasswordDTO convertToCredentialsDTO(UserEntity user){
-        return modelMapper.map(user, UserPasswordDTO.class);
+    public DeveloperPasswordDTO convertToCredentialsDTO(DeveloperEntity user){
+        return modelMapper.map(user, DeveloperPasswordDTO.class);
     }
-    public UserUpdateDTO convertToUpdateDTO(UserEntity user){
-        return modelMapper.map(user, UserUpdateDTO.class);
+    public DeveloperUpdateDTO convertToUpdateDTO(DeveloperEntity user){
+        return modelMapper.map(user, DeveloperUpdateDTO.class);
     }
 
     // List

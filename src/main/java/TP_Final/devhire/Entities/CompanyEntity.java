@@ -1,5 +1,6 @@
 package TP_Final.devhire.Entities;
 
+import TP_Final.devhire.Security.Entities.CredentialsEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -21,20 +22,13 @@ public class CompanyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
     @NotEmpty
     private String name;
     @NotNull
     private String location;
-    @Email
-    @NotEmpty
-    @Column(unique = true)
-    private String email;
-
     private String description;
     @NotNull
-    private Boolean state = true;
-
+    private Boolean state;
     @OneToMany(mappedBy = "company")
     private List<JobEntity> jobs;
     @OneToMany(mappedBy = "company")
@@ -43,5 +37,7 @@ public class CompanyEntity {
     private List<CommentEntity>comments;
     @OneToMany(mappedBy = "company")
     private List<LikeEntity>likes;
-
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private CredentialsEntity credentials;
 }

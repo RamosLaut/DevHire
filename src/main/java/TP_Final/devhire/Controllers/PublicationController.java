@@ -1,6 +1,5 @@
 package TP_Final.devhire.Controllers;
 
-import TP_Final.devhire.DTOS.UserPublicationDTO;
 import TP_Final.devhire.Entities.PublicationEntity;
 import TP_Final.devhire.Services.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class PublicationController {
         return ResponseEntity.ok(publicationService.findById(publicationId));
     }
     @GetMapping("/user/{userId}")
-    public ResponseEntity<CollectionModel<EntityModel<Object>>>findAllByUserId(@PathVariable Long userId){
+    public ResponseEntity<CollectionModel<EntityModel<Object>>>findAllByDevId(@PathVariable Long userId){
         return ResponseEntity.ok(publicationService.findByuserId(userId));
     }
     @PatchMapping

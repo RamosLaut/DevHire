@@ -18,8 +18,8 @@ public class LikeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_like"))
-    private UserEntity user;
+    @JoinColumn(name = "dev_id", foreignKey = @ForeignKey(name = "FK_user_like"))
+    private DeveloperEntity developer;
     @ManyToOne
     @JoinColumn(name = "company_id", foreignKey = @ForeignKey(name = "FK_company_like"))
     private CompanyEntity company;

@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 
-public class UserPublicationDTO {
+public class DeveloperPublicationDTO {
     Long id;
     String content;
     Timestamp publicationDate;

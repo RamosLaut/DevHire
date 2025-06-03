@@ -21,6 +21,6 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
     @Transactional
     @Query("UPDATE CompanyEntity c SET c.state = false WHERE c.id = :id")
     void logicDown(@Param("id")long id);
-
-    Optional<CompanyEntity> findByEmail(String email);
+//    @Query("SELECT c FROM CompanyEntity c WHERE c.getCredentials.email = :email")
+   Optional<CompanyEntity> findByCredentials_Email(@Param("email") String email);
 }

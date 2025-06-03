@@ -28,16 +28,16 @@ public class CompanyService {
         this.passwordEncoder = passwordEncoder;
         this.credentialsRepository = credentialsRepository;
     }
-    public EntityModel<CompanyDTO> register(CompanyEntity company){
-        companyRepository.save(company);
-        CredentialsEntity credentialsEntity = CredentialsEntity.builder()
-                .email(company.getEmail())
-                .password(passwordEncoder.encode("password"))
-                .company(company)
-                .build();
-        credentialsRepository.save(credentialsEntity);
-        return companyAssembler.toModel(company);
-    }
+//    public EntityModel<CompanyDTO> register(CompanyEntity company){
+//        companyRepository.save(company);
+//        CredentialsEntity credentialsEntity = CredentialsEntity.builder()
+//                .email(company.getEmail())
+//                .password(passwordEncoder.encode("password"))
+//                .company(company)
+//                .build();
+//        credentialsRepository.save(credentialsEntity);
+//        return companyAssembler.toModel(company);
+//    }
     public CollectionModel<EntityModel<CompanyDTO>> findAll(){
         List<EntityModel<CompanyDTO>> companys = companyRepository.findAll().stream()
                 .map(companyAssembler::toModel)
