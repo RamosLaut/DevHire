@@ -15,22 +15,36 @@ public class CompanyController {
     public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
     }
+
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<CompanyDTO>>> findAll(){
         return ResponseEntity.ok(companyService.findAll());
     }
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<CompanyDTO>> findById(@PathVariable  Long id){
+    public ResponseEntity<EntityModel<CompanyDTO>> findById(@PathVariable Long id){
         return ResponseEntity.ok(companyService.findById(id));
     }
-    @PatchMapping
-    public ResponseEntity<EntityModel<CompanyDTO>> updateCompany(@RequestBody CompanyDTO company){
-        return ResponseEntity.ok(companyService.updateById(company));
+    @GetMapping("/filter/{location}")
+    public ResponseEntity<CollectionModel<EntityModel<CompanyDTO>>>findByLocation(@PathVariable String location){
+        return ResponseEntity.ok((companyService.findByLocation(location)));
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable long id){
-        companyService.deleteById(id);
+    @PatchMapping
+    public ResponseEntity<EntityModel<CompanyDTO>> updateOwnCompany(@RequestBody CompanyDTO company){
+        return ResponseEntity.ok(companyService.update(company));
+    }
+    @DeleteMapping()
+    public ResponseEntity<?> deleteOwnCompany(){
+        companyService.deleteOwnAccount();
         return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/{name}")
+    public ResponseEntity<?> deleteByName(@PathVariable String name){
+            boolean deleted = companyService.deleteByName(name);
+            if (deleted) {
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
     }
 }
 

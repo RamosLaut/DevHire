@@ -21,11 +21,11 @@ public class CompanyAssembler implements RepresentationModelAssembler<CompanyEnt
         this.mapper = mapper;
     }
     @Override
-    public EntityModel<CompanyDTO> toModel(@NonNull CompanyEntity entity) {
+    public @NonNull EntityModel<CompanyDTO> toModel(@NonNull CompanyEntity entity) {
         CompanyDTO companyDTO = mapper.convertToDTO(entity);
             return EntityModel.of(companyDTO,
                     linkTo(methodOn(CompanyController.class).findById(entity.getId())).withSelfRel(),
-                    linkTo(methodOn(CompanyController.class).deleteById(entity.getId())).withRel("Delete"),
-                    linkTo(methodOn(CompanyController.class).updateCompany(companyDTO)).withRel("Update"));
+                    linkTo(methodOn(CompanyController.class).deleteOwnCompany()).withRel("Delete"),
+                    linkTo(methodOn(CompanyController.class).updateOwnCompany(companyDTO)).withRel("Update"));
         }
 }

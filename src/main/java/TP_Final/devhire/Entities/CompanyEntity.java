@@ -23,6 +23,7 @@ public class CompanyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @NotEmpty
+    @Column(unique = true)
     private String name;
     @NotNull
     private String location;
