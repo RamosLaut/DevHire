@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     @Modifying
     @Transactional
-    @Query("UPDATE CommentEntity c SET c.content = :content WHERE c.id = :id")
+    @Query("UPDATE CommentEntity SET content = :content WHERE id = :id")
     void updateContent(@Param("content") String content, @Param("id") Long id);
     Optional<List<CommentEntity>> findByPublicationId(Long publicationId);
 }

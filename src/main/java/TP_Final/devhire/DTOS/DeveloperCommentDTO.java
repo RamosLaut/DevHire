@@ -8,9 +8,9 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CompanyCommentDTO {
+public class DeveloperCommentDTO {
     private long id;
-    private String CompanyName;
+    private String Name;
     private long publicationID;
     private String Content;
     private Timestamp Date;

@@ -43,4 +43,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> unauthorizedHandler(UnauthorizedException ex){
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
+    @ExceptionHandler(CredentialsRequiredException.class)
+    public ResponseEntity<String> credentialsRequiredHandler(CredentialsRequiredException ex){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    }
+    @ExceptionHandler(ContentRequiredException.class)
+    public ResponseEntity<String> contentRequiredHandler(ContentRequiredException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }

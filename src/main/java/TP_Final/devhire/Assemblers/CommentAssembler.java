@@ -21,18 +21,15 @@ public class CommentAssembler implements RepresentationModelAssembler<CommentEnt
     public @NonNull EntityModel<Object> toModel(CommentEntity entity) {
         if (entity.getCompany() != null) {
             CompanyCommentDTO companyComment = commentMapper.convertToCompanyCommentDTO(entity);
-            companyComment.setCompanyName(entity.getCompany().getName());
-            companyComment.setPublication_id(entity.getPublication().getId());
             return EntityModel.of(companyComment, linkTo(methodOn(CommentController.class).findById(entity.getId())).withSelfRel(),
                     linkTo(methodOn(CommentController.class).updateContent(entity)).withRel("Update content"),
                     linkTo(methodOn(CommentController.class).deleteById(entity.getId())).withRel("Delete"));
-        } else{
+        } else if (entity.getDeveloper() != null){
             DevCommentDTO devCommentDTO = commentMapper.convertToDevCommentDTO(entity);
-            devCommentDTO.setDevName(entity.getDeveloper().getName());
-            devCommentDTO.setPublication_id(entity.getPublication().getId());
             return EntityModel.of(devCommentDTO, linkTo(methodOn(CommentController.class).findById(entity.getId())).withSelfRel(),
                     linkTo(methodOn(CommentController.class).updateContent(entity)).withRel("Update content"),
                     linkTo(methodOn(CommentController.class).deleteById(entity.getId())).withRel("Delete"));
-        }
+        }else throw new IllegalStateException("Comment is not associated with a developer or a company");
     }
 }
+

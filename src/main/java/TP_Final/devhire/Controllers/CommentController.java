@@ -1,5 +1,4 @@
 package TP_Final.devhire.Controllers;
-import TP_Final.devhire.DTOS.DevCommentDTO;
 import TP_Final.devhire.Entities.CommentEntity;
 import TP_Final.devhire.Services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,10 @@ public class CommentController {
     public ResponseEntity<CollectionModel<EntityModel<Object>>> findAll(){
         return ResponseEntity.ok(commentService.findAll());
     }
+    @GetMapping("/ownComments")
+    public ResponseEntity<CollectionModel<EntityModel<Object>>> findOwnComments(){
+        return ResponseEntity.ok(commentService.findOwnComments());
+    }
     @GetMapping("/{commentId}")
     public ResponseEntity<EntityModel<Object>> findById(@PathVariable Long commentId){
         return ResponseEntity.ok(commentService.findById(commentId));
@@ -36,14 +39,13 @@ public class CommentController {
     public ResponseEntity<CollectionModel<EntityModel<Object>>> findByPublicationId(@PathVariable long publicationId){
         return ResponseEntity.ok(commentService.findByPublicationId(publicationId));
     }
-    @PatchMapping
+    @PatchMapping("/update")
     public ResponseEntity<EntityModel<Object>> updateContent(@RequestBody CommentEntity comment){
-        commentService.updateContent(comment);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(commentService.updateContent(comment));
+        return ResponseEntity.ok().body(commentService.updateContent(comment));
     }
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/delete/{commentId}")
     public ResponseEntity<?> deleteById(@PathVariable Long commentId){
-        commentService.deleteById(commentId);
+        commentService.delete(commentId);
         return ResponseEntity.noContent().build();
     }
 }
