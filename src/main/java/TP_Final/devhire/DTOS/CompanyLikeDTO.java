@@ -11,6 +11,6 @@ import java.sql.Timestamp;
 public class CompanyLikeDTO {
     private long id;
     private long CompanyId;
-    private long publicationId;
+    private String publicationContent;
     private Timestamp date;
 }
