@@ -4,12 +4,14 @@ import TP_Final.devhire.Assemblers.CompanyAssembler;
 import TP_Final.devhire.DTOS.CompanyDTO;
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Exceptions.CompanyNotFound;
+import TP_Final.devhire.Exceptions.LocationEmptyException;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CompanyService {
@@ -35,6 +37,18 @@ public class CompanyService {
             throw new CompanyNotFound("Company not found");
         }
         companyRepository.deleteById(id);
+    }
+    public EntityModel<CompanyDTO> FilterByLocation(String location)throws LocationEmptyException {
+        return companyAssembler.toModel(companyRepository.FilterByLocation(location).orElseThrow(()->new LocationEmptyException("location empty of companys")));
+    }
+    public boolean deleteByName(String name) {
+        Optional<CompanyEntity> companyOpt = companyRepository.findByName(name);
+        if (companyOpt.isPresent()) {
+            companyRepository.delete(companyOpt.get());
+            return true;
+        } else {
+            return false;
+        }
     }
     public EntityModel<CompanyDTO> updateById(CompanyDTO companyDTO){
         if(companyDTO.getId()==null){

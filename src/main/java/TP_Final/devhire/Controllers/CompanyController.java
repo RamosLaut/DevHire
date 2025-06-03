@@ -23,6 +23,10 @@ public class CompanyController {
     public ResponseEntity<EntityModel<CompanyDTO>> findById(@PathVariable  Long id){
         return ResponseEntity.ok(companyService.findById(id));
     }
+    @GetMapping("/{location}")
+    public ResponseEntity<EntityModel<CompanyDTO>>FilterByLocation(@PathVariable String location){
+        return ResponseEntity.ok((companyService.FilterByLocation(location)));
+    }
     @PatchMapping
     public ResponseEntity<EntityModel<CompanyDTO>> updateCompany(@RequestBody CompanyDTO company){
         return ResponseEntity.ok(companyService.updateById(company));
@@ -31,6 +35,15 @@ public class CompanyController {
     public ResponseEntity<?> deleteById(@PathVariable long id){
         companyService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/{name}")
+    public ResponseEntity<?> deleteByname(@PathVariable String name){
+            boolean deleted = companyService.deleteByName(name);
+            if (deleted) {
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
     }
 }
 

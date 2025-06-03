@@ -23,4 +23,9 @@ public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
     void logicDown(@Param("id")long id);
 //    @Query("SELECT c FROM CompanyEntity c WHERE c.getCredentials.email = :email")
    Optional<CompanyEntity> findByCredentials_Email(@Param("email") String email);
+
+    Optional<CompanyEntity> findByName(String name);
+    void deleteByName(String name);
+
+    Optional<CompanyEntity> FilterByLocation(String location);
 }
