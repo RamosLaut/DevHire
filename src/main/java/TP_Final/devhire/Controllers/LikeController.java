@@ -38,7 +38,7 @@ public class LikeController {
     public ResponseEntity<CollectionModel<EntityModel<Object>>> findByPublicationId(@PathVariable long publicationId){
         return ResponseEntity.ok(likeService.findByPublicationId(publicationId));
     }
-    @GetMapping("/publication/{publicationId}/likesQuantity")
+    @GetMapping("/publication/{publicationId}/quantity")
     public ResponseEntity<String> likesQuantity(@PathVariable long publicationId){
         return ResponseEntity.ok(likeService.findLikesQuantityByPublicationId(publicationId));
     }
