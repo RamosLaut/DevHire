@@ -7,12 +7,12 @@ import lombok.Setter;
 @Setter
 public class FollowResponseDTO {
     private String type; //DEVELOPER_TO_DEVELOPER / COMPANY_TO_COMPANY / DEVELOPER_TO_COMPANY / COMPANY_TO_DEVELOPER
-    private long followerID;
-    private long followedID;
+    private Long followerId;
+    private Long followedId;
 
-    public FollowResponseDTO(String type, long followerID, long followedID) {
+    public FollowResponseDTO(String type, long followerId, long followedId) {
         this.type = type;
-        this.followerID = followerID;
-        this.followedID = followedID;
+        this.followerId = followerId;
+        this.followedId = followedId;
     }
 }

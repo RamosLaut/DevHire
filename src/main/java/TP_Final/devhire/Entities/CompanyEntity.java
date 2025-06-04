@@ -26,7 +26,7 @@ import java.util.List;
 public class CompanyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotEmpty
     private String name;
     @NotNull

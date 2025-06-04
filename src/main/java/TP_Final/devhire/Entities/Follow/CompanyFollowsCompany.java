@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "company_follows_company")
-public class CompanyFollowsCompany {
+public class CompanyFollowsCompany implements IFollowRelation {
     @EmbeddedId
     private CompanyFollowsCompanyId id;
 
