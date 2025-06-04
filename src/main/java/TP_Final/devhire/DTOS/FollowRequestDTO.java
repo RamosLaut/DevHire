@@ -13,11 +13,11 @@ public class FollowRequestDTO {
    @NotNull
    private Long followerId;
    @NotNull
-   private String followerType; //USER - COMPANY
+   private String followerType; //DEVELOPER - COMPANY
    @NotNull
    private Long followedId;
    @NotNull
-   private String followedType; //USER - COMPANY
+   private String followedType; //DEVELOPER - COMPANY
 
    public FollowRequestDTO(long followerId, String followerType, long followedId, String followedType) {
       this.followerId = followerId;

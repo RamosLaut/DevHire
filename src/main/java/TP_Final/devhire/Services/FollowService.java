@@ -75,7 +75,7 @@ public class FollowService {
         } else if (entity instanceof CompanyFollowsCompany) {
             savedEntity = companyFollowsCompanyRepo.save((CompanyFollowsCompany) entity);
         } else {
-            throw new IllegalArgumentException("Tipo de relación de seguimiento no reconocida");
+            throw new IllegalArgumentException("Invalid follow type");
         }
 
         FollowResponseDTO responseDTO = followMapper.toDTO(savedEntity);

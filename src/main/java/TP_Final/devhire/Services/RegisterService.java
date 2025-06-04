@@ -82,7 +82,7 @@ public class RegisterService {
                 .name(companyRegisterDTO.getName())
                 .location(companyRegisterDTO.getLocation())
                 .description(companyRegisterDTO.getDescription())
-                .state(true)
+                .enabled(true)
                 .build();
         CredentialsEntity credentials = CredentialsEntity.builder()
                 .email(companyRegisterDTO.getEmail())
