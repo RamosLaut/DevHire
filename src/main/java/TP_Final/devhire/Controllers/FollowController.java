@@ -26,12 +26,12 @@ public class FollowController {
         return ResponseEntity.status(HttpStatus.CREATED).body(followService.saveFollow(dto));
     }
 
-    @GetMapping("/{type}/{followerId}/{followedId}")
+    @GetMapping("/{typeOfFollow}/{followerId}/{followedId}")
     public ResponseEntity<EntityModel<FollowResponseDTO>> findById(
-            @PathVariable String type,
+            @PathVariable String typeOfFollow,
             @PathVariable Long followerId,
             @PathVariable Long followedId) {
-        return ResponseEntity.ok(followService.findById(type, followerId, followedId));
+        return ResponseEntity.ok(followService.findById(typeOfFollow, followerId, followedId));
     }
 
     @GetMapping
@@ -49,16 +49,16 @@ public class FollowController {
         return ResponseEntity.ok(followService.reactivate(dto));
     }
 
-    @GetMapping("/followers/{type}/{followedId}")
+    @GetMapping("/followers/{followedType}/{followedId}")
     public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> getFollowers(
-            @PathVariable String type,
+            @PathVariable String followedType,
             @PathVariable Long followedId) {
-        return ResponseEntity.ok(followService.getFollowers(type, followedId));
+        return ResponseEntity.ok(followService.getFollowers(followedType, followedId));
     }
 
-    @GetMapping("/followings/{type}/{followerId}")
-    public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> getFollowings(@PathVariable String type, @PathVariable Long followerId) {
-        return ResponseEntity.ok(followService.getFollowings(type, followerId));
+    @GetMapping("/followings/{followerType}/{followerId}")
+    public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> getFollowings(@PathVariable String followerType, @PathVariable Long followerId) {
+        return ResponseEntity.ok(followService.getFollowings(followerType, followerId));
     }
 
     @DeleteMapping
