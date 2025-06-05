@@ -49,18 +49,16 @@ public class FollowController {
         return ResponseEntity.ok(followService.reactivate(dto));
     }
 
-    @GetMapping("/followers")
+    @GetMapping("/followers/{type}/{followedId}")
     public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> getFollowers(
-            @RequestParam String type,
-            @RequestParam Long id) {
-        return ResponseEntity.ok(followService.getFollowers(type, id));
+            @PathVariable String type,
+            @PathVariable Long followedId) {
+        return ResponseEntity.ok(followService.getFollowers(type, followedId));
     }
 
-    @GetMapping("/followings")
-    public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> getFollowings(
-            @RequestParam String type,
-            @RequestParam Long id) {
-        return ResponseEntity.ok(followService.getFollowings(type, id));
+    @GetMapping("/followings/{type}/{followerId}")
+    public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> getFollowings(@PathVariable String type, @PathVariable Long followerId) {
+        return ResponseEntity.ok(followService.getFollowings(type, followerId));
     }
 
     @DeleteMapping
