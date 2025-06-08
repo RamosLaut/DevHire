@@ -4,12 +4,16 @@ import TP_Final.devhire.Assemblers.CompanyAssembler;
 import TP_Final.devhire.DTOS.CompanyDTO;
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Exceptions.CompanyNotFound;
+import TP_Final.devhire.Exceptions.LocationEmptyException;
+import TP_Final.devhire.Exceptions.UnauthorizedException;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CompanyService {
@@ -23,33 +27,50 @@ public class CompanyService {
     }
     public CollectionModel<EntityModel<CompanyDTO>> findAll(){
         List<EntityModel<CompanyDTO>> companies = companyRepository.findAll().stream()
+                .filter(CompanyEntity::getState)
                 .map(companyAssembler::toModel)
                 .toList();
         return CollectionModel.of(companies);
     }
-    public  EntityModel<CompanyDTO> findById(Long id)throws CompanyNotFound {
+    public EntityModel<CompanyDTO> findById(Long id)throws CompanyNotFound {
         return companyAssembler.toModel(companyRepository.findById(id).orElseThrow(()->new CompanyNotFound("Company not found")));
     }
-    public void deleteById(Long id){
-        if(companyRepository.findById(id).isEmpty()){
-            throw new CompanyNotFound("Company not found");
-        }
-        companyRepository.deleteById(id);
+    public String findCompaniesQuantity(){
+        long companiesQuantity = companyRepository.findAll().size();
+        return "Quantity of companies: " + companiesQuantity + ".";
     }
-    public EntityModel<CompanyDTO> updateById(CompanyDTO companyDTO){
-        if(companyDTO.getId()==null){
-            throw new RuntimeException("Company ID required");
-        }
-        CompanyEntity companyEntity = companyRepository.findById(companyDTO.getId()).orElseThrow(()->new CompanyNotFound("Company not found"));
+    public CollectionModel<EntityModel<CompanyDTO>> findByLocation(String location)throws LocationEmptyException {
+        List<CompanyEntity> companies = companyRepository.findAll().stream()
+                .filter(company -> company.getLocation().equalsIgnoreCase(location))
+                .toList();
+        return CollectionModel.of(companies.stream().map(companyAssembler::toModel).toList());
+    }
+    public EntityModel<CompanyDTO> update(CompanyDTO companyDTO)throws UnauthorizedException{
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        CompanyEntity company = companyRepository.findByCredentials_Email(email).orElseThrow(()->new UnauthorizedException("You don't have permission to update this account"));
         if(companyDTO.getName()!=null){
-            companyEntity.setName(companyDTO.getName());
-        }else if(companyDTO.getLocation()!=null){
-            companyEntity.setLocation(companyDTO.getLocation());
-        }else if(companyDTO.getDescription()!=null){
-            companyEntity.setDescription(companyDTO.getDescription());
+            company.setName(companyDTO.getName());
+        }if(companyDTO.getLocation()!=null){
+            company.setLocation(companyDTO.getLocation());
+        }if(companyDTO.getDescription()!=null){
+            company.setDescription(companyDTO.getDescription());
         }
-        companyRepository.update(companyEntity.getName(), companyEntity.getLocation(), companyEntity.getDescription(), companyEntity.getId());
-        return companyAssembler.toModel(companyEntity);
+        companyRepository.update(company.getName(), company.getLocation(), company.getDescription(), company.getId());
+        return companyAssembler.toModel(company);
+    }
+    public void deleteOwnAccount()throws UnauthorizedException{
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        CompanyEntity company = companyRepository.findByCredentials_Email(email).orElseThrow(()->new UnauthorizedException("You don't have permission to delete this account"));
+        companyRepository.logicDown(company.getId());
+    }
+    public boolean deleteByName(String name) {
+        Optional<CompanyEntity> companyOpt = companyRepository.findByName(name);
+        if (companyOpt.isPresent()) {
+            companyRepository.delete(companyOpt.get());
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

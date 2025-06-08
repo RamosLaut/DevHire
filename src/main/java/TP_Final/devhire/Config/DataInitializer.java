@@ -1,6 +1,5 @@
-package TP_Final.devhire.Services;
+package TP_Final.devhire.Config;
 
-import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Security.Entities.RoleEntity;
 import TP_Final.devhire.Security.Enums.Roles;
 import TP_Final.devhire.Security.Repositories.RolesRepository;
