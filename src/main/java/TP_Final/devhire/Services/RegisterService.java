@@ -5,7 +5,7 @@ import TP_Final.devhire.Assemblers.DeveloperAssembler;
 import TP_Final.devhire.DTOS.*;
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.DeveloperEntity;
-import TP_Final.devhire.Exceptions.ExistingEmailException;
+import TP_Final.devhire.Exceptions.AlreadyExistsException;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.DeveloperRepository;
 import TP_Final.devhire.Security.Entities.CredentialsEntity;
@@ -41,9 +41,9 @@ public class RegisterService {
         this.developerRepository = developerRepository;
     }
 
-    public EntityModel<DeveloperDTO> devRegister(@Valid DeveloperRegisterDTO developerDTO) {
+    public EntityModel<DeveloperDTO> devRegister(@Valid DeveloperRegisterDTO developerDTO)throws AlreadyExistsException {
         if(credentialRepository.findByEmail(developerDTO.getEmail()).isPresent()){
-            throw new ExistingEmailException("Email already exists");
+            throw new AlreadyExistsException("Email already exists");
         } else if (developerDTO.getEmail()==null) {
             throw new RuntimeException("Email can´t be null");
         } else if (developerDTO.getPassword()==null) {
@@ -70,9 +70,9 @@ public class RegisterService {
 
     }
 
-    public EntityModel<CompanyDTO> companyRegister(CompanyRegisterDTO companyRegisterDTO) {
+    public EntityModel<CompanyDTO> companyRegister(CompanyRegisterDTO companyRegisterDTO) throws AlreadyExistsException{
         if(credentialRepository.findByEmail(companyRegisterDTO.getEmail()).isPresent()){
-            throw new ExistingEmailException("Email already exists");
+            throw new AlreadyExistsException("Email already exists");
         } else if (companyRegisterDTO.getEmail()==null) {
             throw new RuntimeException("Email can´t be null");
         } else if (companyRegisterDTO.getPassword()==null) {
