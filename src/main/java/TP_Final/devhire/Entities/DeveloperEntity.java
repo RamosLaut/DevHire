@@ -1,5 +1,8 @@
 package TP_Final.devhire.Entities;
 
+import TP_Final.devhire.Entities.Follow.CompanyFollowsDeveloper;
+import TP_Final.devhire.Entities.Follow.DeveloperFollowsCompany;
+import TP_Final.devhire.Entities.Follow.DeveloperFollowsDeveloper;
 import TP_Final.devhire.Enums.HardSkills;
 import TP_Final.devhire.Enums.Seniority;
 import TP_Final.devhire.Enums.SoftSkills;
@@ -36,14 +39,14 @@ public class DeveloperEntity {
     private String dni;
     @Enumerated(EnumType.STRING)
     private Seniority seniority;
+    @NotNull
+    private Boolean enabled;
     @ElementCollection
     @CollectionTable(name = "dev_academic_info", joinColumns = @JoinColumn(name = "developer_id"))
     private List<AcademicInfo> academicInfo;
-
     @ElementCollection
     @CollectionTable(name = "dev_job_experience", joinColumns = @JoinColumn(name = "developer_id"))
     private List<JobExperience> jobExperience;
-
     @NotNull
     private String location;
 
@@ -59,8 +62,7 @@ public class DeveloperEntity {
     @Column(name = "skill")
     private List<HardSkills> hardSkills;
 
-    @NotNull
-    private Boolean state;
+
     @OneToMany(mappedBy = "developer")
     private List<PublicationEntity>publications;
     @OneToMany(mappedBy = "developer")
@@ -68,12 +70,20 @@ public class DeveloperEntity {
     @OneToMany(mappedBy = "developer")
     private List<CommentEntity>comments;
 
+    //Seguimientos:
     @OneToMany(mappedBy = "follower")
-    private List<FollowEntity> followed = new ArrayList<>();
+    private List<DeveloperFollowsDeveloper> developerFollowed = new ArrayList<>();
 
     @OneToMany(mappedBy = "followed")
-    private List<FollowEntity> followers = new ArrayList<>();
+    private List<DeveloperFollowsDeveloper> followings = new ArrayList<>();
 
+    @OneToMany(mappedBy = "follower")
+    private List<DeveloperFollowsCompany> companiesFollowed = new ArrayList<>();
+
+    @OneToMany(mappedBy = "followed")
+    private List<CompanyFollowsDeveloper> companyFollowings = new ArrayList<>();
+
+    //
     @ManyToMany (mappedBy = "devs")
     private Set<JobEntity> jobs;
 

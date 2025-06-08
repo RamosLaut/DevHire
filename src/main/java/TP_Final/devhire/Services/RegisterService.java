@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.Set;
 
@@ -55,7 +54,7 @@ public class RegisterService {
                 .lastName(developerDTO.getLastName())
                 .dni(developerDTO.getDni())
                 .location(developerDTO.getLocation())
-                .state(true)
+                .enabled(true)
                 .build();
         CredentialsEntity credentials = CredentialsEntity.builder()
                 .email(developerDTO.getEmail())
@@ -83,7 +82,7 @@ public class RegisterService {
                 .name(companyRegisterDTO.getName())
                 .location(companyRegisterDTO.getLocation())
                 .description(companyRegisterDTO.getDescription())
-                .state(true)
+                .enabled(true)
                 .build();
         CredentialsEntity credentials = CredentialsEntity.builder()
                 .email(companyRegisterDTO.getEmail())

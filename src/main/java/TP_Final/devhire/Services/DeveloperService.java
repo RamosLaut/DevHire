@@ -39,7 +39,7 @@ public class DeveloperService {
             throw new RuntimeException("The DNI is already registered");
         }
         DeveloperEntity entity = developerMapper.convertRegisterDTOToEntity(dto);
-        entity.setState(true);
+        entity.setEnabled(true);
         DeveloperEntity saved = developerRepository.save(entity);
         return developerAssembler.toModel(saved);
     }
@@ -121,14 +121,14 @@ public class DeveloperService {
 
     public EntityModel<DeveloperDTO> deactivate(Long userID) {
         DeveloperEntity user = developerRepository.findById(userID).orElseThrow(() -> new DeveloperNotFoundException("User not found"));
-        user.setState(false);
+        user.setEnabled(false);
         return developerAssembler.toModel(developerRepository.save(user));
     }
 
     public EntityModel<DeveloperDTO> reactivate(Long userID) {
         DeveloperEntity user = developerRepository.findById(userID)
                 .orElseThrow(() -> new DeveloperNotFoundException("User not found"));
-        user.setState(true);
+        user.setEnabled(true);
         return developerAssembler.toModel(developerRepository.save(user));
     }
 
