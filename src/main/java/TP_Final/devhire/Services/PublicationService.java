@@ -1,13 +1,11 @@
 package TP_Final.devhire.Services;
 
 import TP_Final.devhire.Assemblers.PublicationAssembler;
+import TP_Final.devhire.DTOS.PublicationDTO;
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.PublicationEntity;
 import TP_Final.devhire.Entities.DeveloperEntity;
-import TP_Final.devhire.Exceptions.DeveloperNotFoundException;
-import TP_Final.devhire.Exceptions.IdRequiredException;
-import TP_Final.devhire.Exceptions.PublicationNotFoundException;
-import TP_Final.devhire.Exceptions.UnauthorizedException;
+import TP_Final.devhire.Exceptions.*;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.PublicationsRepository;
 import TP_Final.devhire.Repositories.DeveloperRepository;
@@ -34,7 +32,7 @@ public class PublicationService{
         this.developerRepository = developerRepository;
     }
 
-    public EntityModel<Object> save(PublicationEntity publicationEntity) {
+    public EntityModel<PublicationDTO> save(PublicationEntity publicationEntity) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<CompanyEntity> companyOpt = companyRepository.findByCredentials_Email(email);
         Optional<DeveloperEntity> devOpt = developerRepository.findByCredentials_Email(email);
@@ -44,52 +42,52 @@ public class PublicationService{
         publicationsRepository.save(publicationEntity);
         return publicationAssembler.toModel(publicationEntity);
     }
-    public CollectionModel<EntityModel<Object>> findAll(){
+    public CollectionModel<EntityModel<PublicationDTO>> findAll(){
         return CollectionModel.of(publicationsRepository.findAll().stream()
                 .map(publicationAssembler::toModel)
                 .toList());
     }
-    public CollectionModel<EntityModel<Object>> findOwnPublications(){
+    public CollectionModel<EntityModel<PublicationDTO>> findOwnPublications(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isPresent()){
             CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
-            List<EntityModel<Object>> publications = publicationsRepository.findByCompanyId(company.getId()).stream()
+            List<EntityModel<PublicationDTO>> publications = publicationsRepository.findByCompanyId(company.getId()).stream()
                     .map(publicationAssembler::toModel)
                     .toList();
             return CollectionModel.of(publications);
         }else {
             DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
-            List<EntityModel<Object>> publications = publicationsRepository.findByDeveloperId(developer.getId()).stream()
+            List<EntityModel<PublicationDTO>> publications = publicationsRepository.findByDeveloperId(developer.getId()).stream()
                     .map(publicationAssembler::toModel)
                     .toList();
             return CollectionModel.of(publications);
         }
     }
-    public EntityModel<Object> findById(Long id)throws PublicationNotFoundException{
+    public EntityModel<PublicationDTO> findById(Long id)throws NotFoundException{
         if(publicationsRepository.findById(id).isEmpty()){
-            throw new PublicationNotFoundException("Publication not found");
+            throw new NotFoundException("Publication not found");
         }
         return publicationAssembler.toModel(publicationsRepository.findById(id).get());
     }
-    public CollectionModel<EntityModel<Object>> findByDevId(Long id)throws DeveloperNotFoundException {
+    public CollectionModel<EntityModel<PublicationDTO>> findByDevId(Long id)throws NotFoundException {
         return CollectionModel.of(publicationsRepository.findByDeveloperId(id).stream()
                 .map(publicationAssembler::toModel)
                 .toList());
     }
-    public void deleteById(Long id)throws UnauthorizedException, PublicationNotFoundException{
+    public void deleteById(Long id)throws UnauthorizedException, NotFoundException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<CompanyEntity> companyOpt = companyRepository.findByCredentials_Email(email);
         Optional<DeveloperEntity> devOpt = developerRepository.findByCredentials_Email(email);
         Optional<PublicationEntity> publicationOpt = publicationsRepository.findById(id);
         if(publicationOpt.isEmpty()){
-            throw new PublicationNotFoundException("Publication not found");
+            throw new NotFoundException("Publication not found");
         } else if (publicationOpt.get().getDeveloper() != null && devOpt.isPresent() && devOpt.get().equals(publicationOpt.get().getDeveloper())) {
             publicationsRepository.deleteById(id);
         }else if(publicationOpt.get().getCompany() != null && companyOpt.isPresent() && companyOpt.get().equals(publicationOpt.get().getCompany())){
             publicationsRepository.deleteById(id);
         }else throw new UnauthorizedException("You don't have permission to delete this publication");
     }
-    public EntityModel<Object> updateContent(PublicationEntity publicationEntity)throws UnauthorizedException, PublicationNotFoundException, IdRequiredException{
+    public EntityModel<PublicationDTO> updateContent(PublicationEntity publicationEntity)throws UnauthorizedException, NotFoundException, IdRequiredException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<CompanyEntity> companyOpt = companyRepository.findByCredentials_Email(email);
         Optional<DeveloperEntity> devOpt = developerRepository.findByCredentials_Email(email);
@@ -97,7 +95,7 @@ public class PublicationService{
             throw new IdRequiredException("Publication ID required");
         }
         if(publicationsRepository.findById(publicationEntity.getId()).isEmpty()){
-            throw new PublicationNotFoundException("Publication not found");
+            throw new NotFoundException("Publication not found");
         }
         if(publicationEntity.getContent()==null){
             throw new RuntimeException("Publication content required");

@@ -1,4 +1,5 @@
 package TP_Final.devhire.Controllers;
+import TP_Final.devhire.DTOS.CommentDTO;
 import TP_Final.devhire.Entities.CommentEntity;
 import TP_Final.devhire.Services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,23 +25,23 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.save(comment, publicationId));
     }
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<Object>>> findAll(){
+    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findAll(){
         return ResponseEntity.ok(commentService.findAll());
     }
     @GetMapping("/ownComments")
-    public ResponseEntity<CollectionModel<EntityModel<Object>>> findOwnComments(){
+    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findOwnComments(){
         return ResponseEntity.ok(commentService.findOwnComments());
     }
     @GetMapping("/{commentId}")
-    public ResponseEntity<EntityModel<Object>> findById(@PathVariable Long commentId){
+    public ResponseEntity<EntityModel<CommentDTO>> findById(@PathVariable Long commentId){
         return ResponseEntity.ok(commentService.findById(commentId));
     }
     @GetMapping("/publication/{publicationId}")
-    public ResponseEntity<CollectionModel<EntityModel<Object>>> findByPublicationId(@PathVariable long publicationId){
+    public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findByPublicationId(@PathVariable long publicationId){
         return ResponseEntity.ok(commentService.findByPublicationId(publicationId));
     }
     @PatchMapping("/update")
-    public ResponseEntity<EntityModel<Object>> updateContent(@RequestBody CommentEntity comment){
+    public ResponseEntity<EntityModel<CommentDTO>> updateContent(@RequestBody CommentEntity comment){
         return ResponseEntity.ok().body(commentService.updateContent(comment));
     }
     @DeleteMapping("/delete/{commentId}")

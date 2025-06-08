@@ -3,7 +3,7 @@ package TP_Final.devhire.Services;
 import TP_Final.devhire.Assemblers.DeveloperAssembler;
 import TP_Final.devhire.DTOS.*;
 import TP_Final.devhire.Entities.DeveloperEntity;
-import TP_Final.devhire.Exceptions.DeveloperNotFoundException;
+import TP_Final.devhire.Exceptions.NotFoundException;
 import TP_Final.devhire.Mappers.DeveloperMapper;
 import TP_Final.devhire.Repositories.DeveloperRepository;
 import org.springframework.data.domain.Page;
@@ -68,7 +68,7 @@ public class DeveloperService {
 
     public DeveloperEntity updateUserFields (Long userID, DeveloperDTO dto){
         DeveloperEntity existingUser = developerRepository.findById(userID)
-                .orElseThrow(() -> new DeveloperNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         DeveloperEntity updatedData = developerMapper.convertToEntity(dto);
 
@@ -96,7 +96,7 @@ public class DeveloperService {
 
     public EntityModel<DeveloperDTO> updateSkills(Long userID, SkillsDTO dto) {
         DeveloperEntity user = developerRepository.findById(userID)
-                .orElseThrow(() -> new DeveloperNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
         user.setSoftSkills(dto.getSoftSkills());
         user.setHardSkills(dto.getHardSkills());
         return developerAssembler.toModel(developerRepository.save(user));
@@ -104,7 +104,7 @@ public class DeveloperService {
 
     public EntityModel<DeveloperDTO> updateAcademicInfo(Long id, List<AcademicInfoDTO> dtos) {
         DeveloperEntity user = developerRepository.findById(id)
-                .orElseThrow(() -> new DeveloperNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
         user.setAcademicInfo(dtos.stream()
                 .map(developerMapper::convertToAcademicInfo)
                 .collect(Collectors.toList()));
@@ -112,7 +112,7 @@ public class DeveloperService {
     }
     public EntityModel<DeveloperDTO> updateJobExperience(Long userID, List<JobExperienceDTO> dtos) {
         DeveloperEntity user = developerRepository.findById(userID)
-                .orElseThrow(() -> new DeveloperNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
         user.setJobExperience(dtos.stream()
                 .map(developerMapper::convertToJobExperience)
                 .collect(Collectors.toList()));
@@ -120,14 +120,14 @@ public class DeveloperService {
     }
 
     public EntityModel<DeveloperDTO> deactivate(Long userID) {
-        DeveloperEntity user = developerRepository.findById(userID).orElseThrow(() -> new DeveloperNotFoundException("User not found"));
+        DeveloperEntity user = developerRepository.findById(userID).orElseThrow(() -> new NotFoundException("User not found"));
         user.setEnabled(false);
         return developerAssembler.toModel(developerRepository.save(user));
     }
 
     public EntityModel<DeveloperDTO> reactivate(Long userID) {
         DeveloperEntity user = developerRepository.findById(userID)
-                .orElseThrow(() -> new DeveloperNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
         user.setEnabled(true);
         return developerAssembler.toModel(developerRepository.save(user));
     }

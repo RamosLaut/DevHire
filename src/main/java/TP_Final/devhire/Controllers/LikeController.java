@@ -1,5 +1,6 @@
 package TP_Final.devhire.Controllers;
 
+import TP_Final.devhire.DTOS.LikeDTO;
 import TP_Final.devhire.Services.LikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -23,19 +24,19 @@ public class LikeController {
         return ResponseEntity.noContent().build();
     }
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<Object>>>findAll(){
+    public ResponseEntity<CollectionModel<EntityModel<LikeDTO>>>findAll(){
         return ResponseEntity.ok(likeService.findAll());
     }
     @GetMapping("/ownLikes")
-    public ResponseEntity<CollectionModel<EntityModel<Object>>>findOwnLikes(){
+    public ResponseEntity<CollectionModel<EntityModel<LikeDTO>>>findOwnLikes(){
         return ResponseEntity.ok(likeService.findOwnLikes());
     }
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<Object>>findById(@PathVariable long id){
+    public ResponseEntity<EntityModel<LikeDTO>>findById(@PathVariable long id){
         return ResponseEntity.ok(likeService.findById(id));
     }
     @GetMapping("/publication/{publicationId}")
-    public ResponseEntity<CollectionModel<EntityModel<Object>>> findByPublicationId(@PathVariable long publicationId){
+    public ResponseEntity<CollectionModel<EntityModel<LikeDTO>>> findByPublicationId(@PathVariable long publicationId){
         return ResponseEntity.ok(likeService.findByPublicationId(publicationId));
     }
     @GetMapping("/publication/{publicationId}/quantity")

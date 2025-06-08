@@ -1,8 +1,7 @@
 package TP_Final.devhire.Services;
-
 import TP_Final.devhire.Assemblers.CommentAssembler;
+import TP_Final.devhire.DTOS.CommentDTO;
 import TP_Final.devhire.Entities.CommentEntity;
-
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.DeveloperEntity;
 import TP_Final.devhire.Entities.PublicationEntity;
@@ -38,7 +37,7 @@ public class CommentService {
         this.developerRepository = developerRepository;
         this.publicationsRepository = publicationsRepository;
     }
-    public EntityModel<Object> save(CommentEntity comment, @NonNull Long publicationId)throws PublicationNotFoundException, ContentRequiredException, CredentialsRequiredException{
+    public EntityModel<CommentDTO> save(CommentEntity comment, @NonNull Long publicationId)throws NotFoundException, ContentRequiredException, CredentialsRequiredException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isPresent())
         {
@@ -48,7 +47,7 @@ public class CommentService {
         }else throw new CredentialsRequiredException("Credentials required");
         Optional<PublicationEntity> publicationOpt = publicationsRepository.findById(publicationId);
         if(publicationOpt.isEmpty()){
-            throw new PublicationNotFoundException("Publication not found");
+            throw new NotFoundException("Publication not found");
         }
         if(comment.getContent()==null){
             throw new ContentRequiredException("Comment content required");
@@ -57,12 +56,12 @@ public class CommentService {
         commentRepository.save(comment);
         return assembler.toModel(comment);
     }
-    public CollectionModel<EntityModel<Object>> findAll(){
+    public CollectionModel<EntityModel<CommentDTO>> findAll(){
         return CollectionModel.of(commentRepository.findAll().stream()
                 .map(assembler::toModel)
                 .toList());
     }
-    public CollectionModel<EntityModel<Object>> findOwnComments(){
+    public CollectionModel<EntityModel<CommentDTO>> findOwnComments(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isPresent()){
             return CollectionModel.of(companyRepository.findByCredentials_Email(email).get()
@@ -80,12 +79,12 @@ public class CommentService {
             throw new RuntimeException("Credentials required");
         }
     }
-    public EntityModel<Object>findById(Long commentId)throws CommentNotFoundException {
+    public EntityModel<CommentDTO>findById(Long commentId)throws NotFoundException {
         Optional<CommentEntity> comment = commentRepository.findById(commentId);
-        return assembler.toModel(comment.orElseThrow(()->new CommentNotFoundException("Comment not found")));
+        return assembler.toModel(comment.orElseThrow(()->new NotFoundException("Comment not found")));
     }
     @Transactional
-    public EntityModel<Object> updateContent(CommentEntity comment)throws IdRequiredException, CommentNotFoundException, UnauthorizedException, ContentRequiredException{
+    public EntityModel<CommentDTO> updateContent(CommentEntity comment)throws IdRequiredException, NotFoundException, UnauthorizedException, ContentRequiredException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(comment.getId()==null){
             throw new IdRequiredException("Comment ID required");
@@ -93,28 +92,26 @@ public class CommentService {
         if(comment.getContent()==null){
             throw new ContentRequiredException("Comment content required");
         }
-        CommentEntity commentEntity = commentRepository.findById(comment.getId()).orElseThrow(()->new CommentNotFoundException("Comment not found"));
-        if(companyRepository.findByCredentials_Email(email).isPresent()){
-            CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
-            if(company.getComments().contains(commentEntity)){
-                commentEntity.setContent(comment.getContent());
-                commentRepository.updateContent(comment.getContent(), comment.getId());
-                return assembler.toModel(commentEntity);
-            }
-        }else if(developerRepository.findByCredentials_Email(email).isPresent()) {
-            DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
-            if (developer.getComments().contains(commentEntity)) {
-                commentEntity.setContent(comment.getContent());
-                commentRepository.updateContent(comment.getContent(), comment.getId());
-                return assembler.toModel(commentEntity);
-            }
-        }else throw new CredentialsRequiredException("Credentials required");
-        throw new UnauthorizedException("You don't have permission to update this comment");
+        CommentEntity commentEntity = commentRepository.findById(comment.getId())
+                .orElseThrow(()->new NotFoundException("Comment not found"));
+        Optional<CompanyEntity> companyOpt = companyRepository.findByCredentials_Email(email);
+        Optional<DeveloperEntity> devOpt = developerRepository.findByCredentials_Email(email);
+        if (companyOpt.isPresent() && companyOpt.get().getComments().contains(commentEntity)) {
+            commentEntity.setContent(comment.getContent());
+            commentRepository.updateContent(comment.getContent(), comment.getId());
+            return assembler.toModel(commentEntity);
+        }
+        if (devOpt.isPresent() && devOpt.get().getComments().contains(commentEntity)) {
+            commentEntity.setContent(comment.getContent());
+            commentRepository.updateContent(comment.getContent(), comment.getId());
+            return assembler.toModel(commentEntity);
+        }
+        throw new UnauthorizedException("You are not authorized to update this comment");
     }
-    public void delete(Long commentId)throws CommentNotFoundException{
+    public void delete(Long commentId)throws NotFoundException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(commentRepository.findById(commentId).isEmpty()){
-            throw new CommentNotFoundException("Comment not found");
+            throw new NotFoundException("Comment not found");
         }
         CommentEntity commentEntity = commentRepository.findById(commentId).get();
         if(companyRepository.findByCredentials_Email(email).isPresent() &&
@@ -124,10 +121,9 @@ public class CommentService {
                     commentEntity.getDeveloper().equals(developerRepository.findByCredentials_Email(email).get())){
             commentRepository.deleteById(commentId);
         }else throw new UnauthorizedException("You don't have permission to delete this comment");
-        commentRepository.deleteById(commentId);
     }
-    public CollectionModel<EntityModel<Object>> findByPublicationId(Long publicationId)throws PublicationNotFoundException {
-        return CollectionModel.of(commentRepository.findByPublicationId(publicationId).orElseThrow(()->new PublicationNotFoundException("Publication not found"))
+    public CollectionModel<EntityModel<CommentDTO>> findByPublicationId(Long publicationId)throws NotFoundException {
+        return CollectionModel.of(commentRepository.findByPublicationId(publicationId).orElseThrow(()->new NotFoundException("Publication not found"))
                 .stream()
                 .map(assembler::toModel)
                 .toList());

@@ -3,14 +3,15 @@ package TP_Final.devhire.DTOS;
 import lombok.*;
 
 import java.sql.Timestamp;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CompanyPublicationDTO {
+public class PublicationDTO {
     Long id;
-    String CompanyName;
+    String name;
     Timestamp date;
     String content;
 }

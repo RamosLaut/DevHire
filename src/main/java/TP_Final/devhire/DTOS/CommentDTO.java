@@ -1,13 +1,17 @@
 package TP_Final.devhire.DTOS;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 
 import java.sql.Timestamp;
+
 @Getter
 @Setter
-public class DevCommentDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CommentDTO {
     private long id;
-    private String DeveloperName;
+    private String name;
     private long publicationID;
     private String content;
     private Timestamp date;
