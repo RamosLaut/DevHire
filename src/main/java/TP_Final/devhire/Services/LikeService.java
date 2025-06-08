@@ -105,6 +105,6 @@ public class LikeService {
             throw new NotFoundException("Publication not found");
         }
         PublicationEntity publication = publicationsRepository.findById(publicationId).get();
-        return "Likes: " + publication.getLikes().size();
+        return "Total likes of publication"+ publication.getId()+ ": " + publication.getLikes().size();
     }
 }

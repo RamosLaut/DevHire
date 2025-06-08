@@ -10,8 +10,8 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 public class PublicationDTO {
-    Long id;
-    String name;
-    Timestamp date;
-    String content;
+    private Long id;
+    private String name;
+    private Timestamp date;
+    private String content;
 }

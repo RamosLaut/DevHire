@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 public class CommentDTO {
-    private long id;
+    private Long id;
     private String name;
     private long publicationID;
     private String content;
