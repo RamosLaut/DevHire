@@ -1,5 +1,4 @@
 package TP_Final.devhire.Security.Config;
-
 import TP_Final.devhire.Security.Filters.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,10 +36,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain (HttpSecurity http) throws
             Exception {
-
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/register/**").permitAll()
+                        .requestMatchers("/job/post").hasRole("COMPANY")
                         .anyRequest().authenticated())
                 .cors(Customizer.withDefaults())
                 .csrf(
