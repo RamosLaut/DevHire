@@ -19,13 +19,4 @@ public class FollowController {
         this.followService = followService;
     }
 
-    @PostMapping("/dev/{devId}")
-    public ResponseEntity<EntityModel<Object>> followDev(@PathVariable Long devId){
-        return ResponseEntity.status(HttpStatus.CREATED).body(followService.followDev(devId));
-    }
-
-    @PostMapping("/company/{companyId}")
-    public ResponseEntity<EntityModel<Object>> followCompany(@PathVariable Long companyId){
-        return ResponseEntity.status(HttpStatus.CREATED).body(followService.followCompany(companyId));
-    }
 }
