@@ -14,7 +14,4 @@ public class SkillModel extends RepresentationModel<SkillModel> {
         this.nombre = nombre;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
 }

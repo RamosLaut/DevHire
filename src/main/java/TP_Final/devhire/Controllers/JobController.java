@@ -56,6 +56,10 @@ public class JobController {
     public ResponseEntity<CollectionModel<EntityModel<JobDTO>>> findBySkill(@PathVariable String skill){
         return ResponseEntity.ok(jobService.findBySkill(skill));
     }
+    @GetMapping("findByCompany/{companyName}")
+    public ResponseEntity<CollectionModel<EntityModel<JobDTO>>> findByCompany(@PathVariable String companyName){
+        return ResponseEntity.ok(jobService.findByCompanyName(companyName));
+    }
     @PatchMapping("/update/{jobId}")
     public ResponseEntity<?> updateJobOffer(@PathVariable long jobId, @RequestBody JobDTO job){
         return ResponseEntity.ok(jobService.update(jobId, job));

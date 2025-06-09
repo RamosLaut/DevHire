@@ -171,20 +171,20 @@ public class JobService {
 
         return CollectionModel.of(filteredJobs.stream().map(jobAssembler::toModel).toList());
     }
+    public CollectionModel<EntityModel<JobDTO>> findByCompanyName(String name)throws NotFoundException{
+        Optional<CompanyEntity> companyOpt = companyRepository.findAll().stream()
+                .filter(company -> company.getName().equalsIgnoreCase(name))
+                .findFirst();
+        if(companyOpt.isPresent()){
+            return CollectionModel.of(companyOpt.get().getJobs().stream().map(jobAssembler::toModel).toList());
+        }else throw new NotFoundException("Company not found");
+    }
 }
 
 //    public EntityModel<JobDTO> FilterByLocation(String location)throws NotFoundJobLocationException {
 //        return assembler.toModel(jobRepository.FilterByLocation(location).orElseThrow(()->new NotFoundJobLocationException("location empty of companys")));
 //    }
-//    public boolean deleteByCompanyName(String name) {
-//        Optional<JobEntity> Jobopt = jobRepository.findByName(name);
-//        if (Jobopt.isPresent()) {
-//            jobRepository.deleteByCompanyName(Jobopt.get().getCompany().getName());
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
+
 
 
 
