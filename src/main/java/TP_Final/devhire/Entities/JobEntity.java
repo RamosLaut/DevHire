@@ -25,6 +25,9 @@ public class JobEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @NotNull
+    private String position;
+
     @NotEmpty
     private String description;
 

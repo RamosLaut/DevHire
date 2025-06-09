@@ -1,10 +1,17 @@
 package TP_Final.devhire.Services;
 
 import TP_Final.devhire.Assemblers.JobAssembler;
+import TP_Final.devhire.Assemblers.SkillAssembler;
 import TP_Final.devhire.DTOS.JobDTO;
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.JobEntity;
+import TP_Final.devhire.Entities.SkillModel;
+import TP_Final.devhire.Enums.HardSkills;
+import TP_Final.devhire.Enums.SoftSkills;
+import TP_Final.devhire.Exceptions.AlreadyExistsException;
 import TP_Final.devhire.Exceptions.NotFoundException;
+import TP_Final.devhire.Exceptions.UnauthorizedException;
+import TP_Final.devhire.Mappers.JobMapper;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,61 +19,173 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-
 @Service
 public class JobService {
     private final JobRepository jobRepository;
-    private final JobAssembler assembler;
+    private final JobAssembler jobAssembler;
     private final CompanyRepository companyRepository;
-
+    private final SkillAssembler skillAssembler;
+    private final JobMapper jobMapper;
 
     @Autowired
-    public JobService(JobRepository jobRepository, JobAssembler assembler, CompanyRepository companyRepository) {
+    public JobService(JobRepository jobRepository, JobAssembler jobAssembler, CompanyRepository companyRepository, SkillAssembler skillAssembler, JobMapper jobMapper) {
         this.jobRepository = jobRepository;
-        this.assembler = assembler;
+        this.jobAssembler = jobAssembler;
         this.companyRepository = companyRepository;
+        this.skillAssembler = skillAssembler;
+        this.jobMapper = jobMapper;
     }
-
-    public void save(JobEntity job) {
+    public EntityModel<JobDTO> save(JobDTO jobDTO) throws NotFoundException{
+        JobEntity jobEntity = jobMapper.convertToEntity(jobDTO);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        job.setCompany(companyRepository.findByCredentials_Email(email).orElseThrow());
-        jobRepository.save(job);
+        jobEntity.setCompany(companyRepository.findByCredentials_Email(email).orElseThrow(()->new NotFoundException("Company not found")));
+        jobRepository.save(jobEntity);
+        return jobAssembler.toModel(jobEntity);
     }
-
     public CollectionModel<EntityModel<JobDTO>> findAll() {
         List<EntityModel<JobDTO>> jobs = jobRepository.findAll().stream()
-                .map(assembler::toModel)
+                .map(jobAssembler::toModel)
                 .toList();
         return CollectionModel.of(jobs);
     }
-
     public EntityModel<JobDTO> findById(Long jobId) throws NotFoundException {
-        return assembler.toModel(jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Job not found")));
+        return jobAssembler.toModel(jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Job not found")));
     }
-
-    public CollectionModel<EntityModel<JobDTO>> findOwnOffers() {
+    public CollectionModel<EntityModel<JobDTO>> findOwnOffers() throws NotFoundException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<CompanyEntity> optCompany = companyRepository.findByCredentials_Email(email);
-        List<EntityModel<JobDTO>> jobs = jobRepository.findAll().stream()
-                .filter(job -> job.getCompany().equals(optCompany.orElseThrow()))
-                .map(assembler::toModel)
+        CompanyEntity company = companyRepository.findByCredentials_Email(email)
+                .orElseThrow(()->new NotFoundException("Company not found"));
+
+        List<EntityModel<JobDTO>> jobs = company.getJobs().stream()
+                .map(jobAssembler::toModel)
                 .toList();
         return CollectionModel.of(jobs);
     }
+    public CollectionModel<SkillModel> getSkills(long id)throws NotFoundException {
+        if(jobRepository.findById(id).isEmpty()){
+            throw new NotFoundException("Job not found");
+        }
+        List<String> hardSkills = Arrays.stream(HardSkills.values()).map(Enum::name).toList();
+        List<String> softSkills = Arrays.stream(SoftSkills.values()).map(Enum::name).toList();
+        List<String> skills = Stream.concat(hardSkills.stream(), softSkills.stream())
+                .toList();
+        return skillAssembler.toCollection(skills, id);
+    }
+    public void addRequirement(long id, String skill)throws NotFoundException, UnauthorizedException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        CompanyEntity company = companyRepository.findByCredentials_Email(email)
+                .orElseThrow(()->new NotFoundException("Company not found"));
+        if(jobRepository.findById(id).isEmpty()){
+            throw new NotFoundException("Job not found");
+        }
+        JobEntity job = jobRepository.findById(id).get();
 
-    public List<String> getRequirements(long id)throws NotFoundException {
-        JobEntity job = jobRepository.findById(id).orElseThrow(() -> new NotFoundException("Job not found"));
+        List<String> hardSkills = Arrays.stream(HardSkills.values()).map(Enum::name).toList();
+        List<String> softSkills = Arrays.stream(SoftSkills.values()).map(Enum::name).toList();
+        if(company.getJobs().contains(job)){
+            if(hardSkills.contains(skill)){
+                if(job.getHardSkills().contains(HardSkills.valueOf(skill))){
+                    throw new AlreadyExistsException("Hard skill already exists");
+                }else {
+                    job.getHardSkills().add(HardSkills.valueOf(skill));
+                    jobRepository.save(job);
+                }
+            }else if(softSkills.contains(skill)) {
+                if (job.getSoftSkills().contains(SoftSkills.valueOf(skill))) {
+                    throw new AlreadyExistsException("Soft skill already exists");
+                }else {
+                    job.getSoftSkills().add(SoftSkills.valueOf(skill));
+                    jobRepository.save(job);
+                }
+                }else throw new NotFoundException("Skill not found");
+            }else throw new UnauthorizedException("You don't have permission to update this job offer");
+    }
+    public List<String> findJobRequirements(long jobId)throws NotFoundException {
+        if (jobRepository.findById(jobId).isEmpty()){
+            throw new NotFoundException("Job not found");
+        }
+        JobEntity job = jobRepository.findById(jobId).get();
         List<String> hardSkills = job.getHardSkills().stream().map(Enum::name).toList();
         List<String> softSkills = job.getSoftSkills().stream().map(Enum::name).toList();
         return Stream.concat(hardSkills.stream(), softSkills.stream())
                 .toList();
     }
+    public EntityModel<JobDTO> update(long jobId, JobDTO jobDTO)throws NotFoundException, UnauthorizedException {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        CompanyEntity company = companyRepository.findByCredentials_Email(email)
+                .orElseThrow(()->new NotFoundException("Company not found"));
+        if(jobRepository.findById(jobId).isEmpty()){
+            throw new NotFoundException("Job not found");
+        }
+        JobEntity job = jobRepository.findById(jobId).get();
+        if(company.getJobs().contains(job)){
+            if(jobDTO.getDescription()!=null){
+                job.setDescription(jobDTO.getDescription());
+            }
+            if(jobDTO.getPosition()!=null){
+                job.setPosition(jobDTO.getPosition());
+            }
+            if(jobDTO.getLocation()!=null){
+                job.setLocation(jobDTO.getLocation());
+            }
+            jobRepository.save(job);
+        }else throw new UnauthorizedException("You don't have permission to update this job offer");
+        return jobAssembler.toModel(job);
     }
+    public void deleteById(Long id)throws NotFoundException, UnauthorizedException{
+        if(jobRepository.findById(id).isEmpty()){
+            throw new NotFoundException("Job not found");
+        }
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        CompanyEntity company = companyRepository.findByCredentials_Email(email)
+                .orElseThrow(()->new NotFoundException("Company not found"));
+        JobEntity job = jobRepository.findById(id).get();
+        if(company.getJobs().contains(job)){
+            jobRepository.deleteById(id);
+        }else throw new UnauthorizedException("You don't have permission to delete this job offer");
+    }
+    public CollectionModel<EntityModel<JobDTO>> findBySkill(String skill)throws NotFoundException{
+        String normalized = skill.trim().replaceAll("[-\\s]", "_").toUpperCase();
+
+        Optional<HardSkills> maybeHardSkill = Arrays.stream(HardSkills.values())
+                .filter(hs -> hs.name().equalsIgnoreCase(normalized))
+                .findFirst();
+
+        Optional<SoftSkills> maybeSoftSkill = Arrays.stream(SoftSkills.values())
+                .filter(ss -> ss.name().equalsIgnoreCase(normalized))
+                .findFirst();
+
+        if (maybeHardSkill.isEmpty() && maybeSoftSkill.isEmpty()) {
+            throw new NotFoundException("Skill not found");
+        }
+
+        List<JobEntity> filteredJobs = jobRepository.findAll().stream()
+                .filter(job -> maybeHardSkill.map(job.getHardSkills()::contains).orElse(false)
+                        || maybeSoftSkill.map(job.getSoftSkills()::contains).orElse(false))
+                .toList();
+
+        return CollectionModel.of(filteredJobs.stream().map(jobAssembler::toModel).toList());
+    }
+}
+
+//    public EntityModel<JobDTO> FilterByLocation(String location)throws NotFoundJobLocationException {
+//        return assembler.toModel(jobRepository.FilterByLocation(location).orElseThrow(()->new NotFoundJobLocationException("location empty of companys")));
+//    }
+//    public boolean deleteByCompanyName(String name) {
+//        Optional<JobEntity> Jobopt = jobRepository.findByName(name);
+//        if (Jobopt.isPresent()) {
+//            jobRepository.deleteByCompanyName(Jobopt.get().getCompany().getName());
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+
 
 
 
