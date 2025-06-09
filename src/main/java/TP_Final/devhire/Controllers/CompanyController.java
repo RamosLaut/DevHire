@@ -34,7 +34,7 @@ public class CompanyController {
             }
     )
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<CompanyDTO>>> findAll() {
+    public ResponseEntity<CollectionModel<EntityModel<CompanyDTO>>> findAll(){
         return ResponseEntity.ok(companyService.findAll());
     }
 
@@ -66,7 +66,7 @@ public class CompanyController {
             }
     )
     @PatchMapping
-    public ResponseEntity<EntityModel<CompanyDTO>> updateCompany(@RequestBody CompanyDTO company) {
+    public ResponseEntity<EntityModel<CompanyDTO>> updateCompany(@RequestBody CompanyDTO company){
         return ResponseEntity.ok(companyService.updateById(company));
     }
 
@@ -80,7 +80,7 @@ public class CompanyController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable long id) {
+    public ResponseEntity<?> deleteById(@PathVariable long id){
         companyService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

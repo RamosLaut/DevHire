@@ -4,6 +4,7 @@ import TP_Final.devhire.Entities.FollowEntity;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Component
 public class FollowMapper {
     @Autowired
     private ModelMapper modelMapper;
