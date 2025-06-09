@@ -47,10 +47,8 @@ public class JobEntity {
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
 
-    @ManyToMany
-    @JoinTable(name = "dev_job", joinColumns = @JoinColumn(name = "job_id"),
-    inverseJoinColumns = @JoinColumn(name = "dev_id"))
-    private Set<DeveloperEntity> devs = new HashSet<>();
+    @OneToMany(mappedBy = "job")
+    private Set<Dev_JobEntity> devJobs;
 
     @NotNull
     private Boolean state;

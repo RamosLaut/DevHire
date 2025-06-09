@@ -84,8 +84,8 @@ public class DeveloperEntity {
     private List<CompanyFollowsDeveloper> companyFollowings = new ArrayList<>();
 
     //
-    @ManyToMany (mappedBy = "devs")
-    private Set<JobEntity> jobs;
+    @OneToMany(mappedBy = "dev")
+    private Set<Dev_JobEntity> devJobs;
 
     @OneToOne
     @JoinColumn(name = "user_id")
