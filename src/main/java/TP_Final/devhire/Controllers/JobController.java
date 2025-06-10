@@ -1,7 +1,13 @@
 package TP_Final.devhire.Controllers;
 
+import TP_Final.devhire.DTOS.ApplicationDTO;
 import TP_Final.devhire.DTOS.JobDTO;
+
+import TP_Final.devhire.Entities.JobEntity;
+import TP_Final.devhire.Services.ApplicationService;
+
 import TP_Final.devhire.Entities.SkillModel;
+
 import TP_Final.devhire.Services.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -16,9 +22,11 @@ import java.util.List;
 @RequestMapping("/job")
 public class JobController {
     private final JobService jobService;
+    private final ApplicationService applicationService;
     @Autowired
-    public JobController(JobService jobService) {
+    public JobController(JobService jobService, ApplicationService applicationService) {
         this.jobService = jobService;
+        this.applicationService = applicationService;
     }
     @PostMapping("/post")
     public ResponseEntity<?> save(@RequestBody JobDTO jobDTO){
@@ -69,4 +77,10 @@ public class JobController {
         jobService.deleteById(jobId);
         return ResponseEntity.noContent().build();
     }
+    @PostMapping("/{jobId}/apply")
+    public ResponseEntity<EntityModel<ApplicationDTO>> apply(@PathVariable Long jobId){
+        return ResponseEntity.ok(applicationService.apply(jobId));
+    }
+
+
 }

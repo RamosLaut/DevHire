@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,11 +49,9 @@ public class JobEntity {
     @JoinColumn(name = "company_id")
     private CompanyEntity company;
 
-    @ManyToMany
-    @JoinTable(name = "dev_job", joinColumns = @JoinColumn(name = "job_id"),
-    inverseJoinColumns = @JoinColumn(name = "dev_id"))
-    private Set<DeveloperEntity> devs = new HashSet<>();
+    @OneToMany(mappedBy = "job")
+    private Set<ApplicationEntity> applicants;
 
     @NotNull
-    private Boolean state;
+    private Boolean state = true;
 }
