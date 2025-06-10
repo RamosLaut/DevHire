@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,39 +16,30 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "followers")
 public class FollowEntity {
-    @EmbeddedId
-    private FollowId id;
-
-    private LocalDateTime followUpDate;
+//    @EmbeddedId
+//    private FollowId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private LocalDateTime followUpDate = LocalDateTime.now();
     @NotNull
     private Boolean state;
 
     @ManyToOne
-    @MapsId("follower_id")
-    @JoinColumn(name = "follower_id")
-    private DeveloperEntity follower;
+    @JoinColumn(name = "DevFollower_id")
+    private DeveloperEntity devFollower;
+    @ManyToOne
+    @JoinColumn(name = "DevFollowed_id")
+    private DeveloperEntity devFollowed;
 
     @ManyToOne
-    @MapsId("followed_id")
-    @JoinColumn(name = "followed_id")
-    private DeveloperEntity followed;
-
+    @JoinColumn(name = "CompanyFollower_id")
+    private CompanyEntity companyFollower;
+    @ManyToOne
+    @JoinColumn(name = "CompanyFollowed_id")
+    private CompanyEntity companyFollowed;
     @NotNull
     private Boolean acepted;
 
-    public FollowEntity(Boolean acepted, Boolean state, Timestamp followUpDate) {
-        this.acepted = false;
-        this.state = true;
-        this.followUpDate = LocalDateTime.now();
-    }
-
-    public FollowEntity(DeveloperEntity follower, DeveloperEntity followed) {
-        this.id = new FollowId(follower.getId(), followed.getId());
-        this.followUpDate = LocalDateTime.now();
-        this.state = true;
-        this.follower = follower;
-        this.followed = followed;
-        this.acepted = false;
-    }
 
 }

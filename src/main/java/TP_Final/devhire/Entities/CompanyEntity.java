@@ -2,11 +2,11 @@ package TP_Final.devhire.Entities;
 
 import TP_Final.devhire.Security.Entities.CredentialsEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -29,6 +29,12 @@ public class CompanyEntity {
     private String description;
     @NotNull
     private Boolean state;
+    @OneToMany(mappedBy = "companyFollower")
+    private List<FollowEntity> followed = new ArrayList<>();
+
+    @OneToMany(mappedBy = "companyFollowed")
+    private List<FollowEntity> followers = new ArrayList<>();
+
     @OneToMany(mappedBy = "company")
     private List<JobEntity> jobs;
     @OneToMany(mappedBy = "company")

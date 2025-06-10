@@ -68,10 +68,10 @@ public class DeveloperEntity {
     @OneToMany(mappedBy = "developer")
     private List<CommentEntity>comments;
 
-    @OneToMany(mappedBy = "follower")
+    @OneToMany(mappedBy = "devFollower")
     private List<FollowEntity> followed = new ArrayList<>();
 
-    @OneToMany(mappedBy = "followed")
+    @OneToMany(mappedBy = "devFollowed")
     private List<FollowEntity> followers = new ArrayList<>();
 
     @ManyToMany (mappedBy = "devs")
