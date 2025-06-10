@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -48,8 +47,8 @@ public class JobEntity {
     private CompanyEntity company;
 
     @OneToMany(mappedBy = "job")
-    private Set<Dev_JobEntity> devJobs;
+    private Set<ApplicationEntity> applicants;
 
     @NotNull
-    private Boolean state;
+    private Boolean state = true;
 }

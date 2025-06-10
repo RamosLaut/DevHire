@@ -23,10 +23,11 @@ public class DeveloperAssembler implements RepresentationModelAssembler<Develope
             throw new IllegalArgumentException("DeveloperEntity can't be null");
         }
         DeveloperDTO dto = developerMapper.convertToDto(entity);
+        dto.setEmail(entity.getCredentials().getEmail());
         return EntityModel.of(dto,
                 linkTo(methodOn(DeveloperController.class).getDevById(entity.getId())).withSelfRel(),
-                linkTo(methodOn(DeveloperController.class).updateDev(entity.getId(), null)).withRel("update"),
-                linkTo(methodOn(DeveloperController.class).deleteDev(entity.getId())).withRel("delete"));
+                linkTo(methodOn(DeveloperController.class).updateDev(entity.getId(), null)).withRel("Update"),
+                linkTo(methodOn(DeveloperController.class).deleteDev(entity.getId())).withRel("Delete"));
     }
 
 }

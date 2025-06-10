@@ -62,7 +62,6 @@ public class DeveloperEntity {
     @Column(name = "skill")
     private List<HardSkills> hardSkills;
 
-
     @OneToMany(mappedBy = "developer")
     private List<PublicationEntity>publications;
     @OneToMany(mappedBy = "developer")
@@ -85,7 +84,7 @@ public class DeveloperEntity {
 
     //
     @OneToMany(mappedBy = "dev")
-    private Set<Dev_JobEntity> devJobs;
+    private Set<ApplicationEntity> postulatedJobs;
 
     @OneToOne
     @JoinColumn(name = "user_id")

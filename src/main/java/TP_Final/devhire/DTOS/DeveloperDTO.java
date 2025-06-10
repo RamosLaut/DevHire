@@ -20,4 +20,5 @@ private List<HardSkills> hardSkills;
 private List<AcademicInfoDTO> academicInfo;
 private List<JobExperienceDTO> jobExperience;
 private Boolean state;
+private String email;
 }
