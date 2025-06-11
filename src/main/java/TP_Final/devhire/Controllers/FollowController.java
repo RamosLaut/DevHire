@@ -2,6 +2,8 @@ package TP_Final.devhire.Controllers;
 
 import TP_Final.devhire.DTOS.FollowRequestDTO;
 import TP_Final.devhire.DTOS.FollowResponseDTO;
+import TP_Final.devhire.Enums.EntityType;
+import TP_Final.devhire.Enums.FollowType;
 import TP_Final.devhire.Services.FollowService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -56,12 +58,12 @@ public class FollowController {
                     @ApiResponse(responseCode = "404", description = "Seguimiento no encontrado")
             }
     )
-    @GetMapping("/{typeOfFollow}/{followerId}/{followedId}")
+    @GetMapping("/{followType}/{followerId}/{followedId}")
     public ResponseEntity<EntityModel<FollowResponseDTO>> findById(
-            @PathVariable String typeOfFollow,
+            @PathVariable FollowType followType,
             @PathVariable Long followerId,
             @PathVariable Long followedId) {
-        return ResponseEntity.ok(followService.findById(typeOfFollow, followerId, followedId));
+        return ResponseEntity.ok(followService.findById(followType, followerId, followedId));
     }
 
     @Operation(
@@ -112,7 +114,7 @@ public class FollowController {
     )
     @GetMapping("/followers/{followedType}/{followedId}")
     public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> getFollowers(
-            @PathVariable String followedType,
+            @PathVariable EntityType followedType,
             @PathVariable Long followedId) {
         return ResponseEntity.ok(followService.getFollowers(followedType, followedId));
     }
@@ -122,7 +124,7 @@ public class FollowController {
             description = "Devuelve todas las entidades que sigue el usuario o empresa indicado."
     )
     @GetMapping("/followings/{followerType}/{followerId}")
-    public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> getFollowings(@PathVariable String followerType, @PathVariable Long followerId) {
+    public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> getFollowings(@PathVariable EntityType followerType, @PathVariable Long followerId) {
         return ResponseEntity.ok(followService.getFollowings(followerType, followerId));
     }
 

@@ -1,5 +1,6 @@
 package TP_Final.devhire.DTOS;
 
+import TP_Final.devhire.Enums.FollowType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +13,7 @@ public class FollowResponseDTO {
             description = "Tipo de relación de seguimiento",
             example = "DEVELOPER_TO_COMPANY"
     )
-    private String type; //DEVELOPER_TO_DEVELOPER / COMPANY_TO_COMPANY / DEVELOPER_TO_COMPANY / COMPANY_TO_DEVELOPER
+    private FollowType type; //DEVELOPER_TO_DEVELOPER / COMPANY_TO_COMPANY / DEVELOPER_TO_COMPANY / COMPANY_TO_DEVELOPER
 
     @Schema(
             description = "ID del seguidor",
@@ -26,7 +27,7 @@ public class FollowResponseDTO {
     )
     private Long followedId;
 
-    public FollowResponseDTO(String type, long followerId, long followedId) {
+    public FollowResponseDTO(FollowType type, long followerId, long followedId) {
         this.type = type;
         this.followerId = followerId;
         this.followedId = followedId;
