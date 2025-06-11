@@ -2,6 +2,8 @@ package TP_Final.devhire.Services;
 
 import TP_Final.devhire.Assemblers.LikeAssembler;
 import TP_Final.devhire.DTOS.LikeDTO;
+import TP_Final.devhire.Entities.CompanyEntity;
+import TP_Final.devhire.Entities.DeveloperEntity;
 import TP_Final.devhire.Entities.LikeEntity;
 import TP_Final.devhire.Entities.PublicationEntity;
 import TP_Final.devhire.Exceptions.AlreadyExistsException;
@@ -18,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class LikeService {
@@ -54,29 +57,72 @@ public class LikeService {
         return assembler.toModel(like);
     }
     public CollectionModel<EntityModel<LikeDTO>> findAll(){
-        List<EntityModel<LikeDTO>> likes = likeRepository.findAll().stream()
-                .map(assembler::toModel)
-                .toList();
-        return CollectionModel.of(likes);
+        List<LikeEntity> likes = likeRepository.findAll();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(companyRepository.findByCredentials_Email(email).isPresent()){
+            CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+            List<EntityModel<LikeDTO>> ownLikes = likes.stream()
+                    .filter(like -> company.equals(like.getCompany()))
+                    .map(assembler::toOwnLikeModel)
+                    .toList();
+            List<EntityModel<LikeDTO>> otherLikes = likes.stream().map(assembler::toModel).toList();
+            List <EntityModel<LikeDTO>> allLikes = Stream.concat(ownLikes.stream(), otherLikes.stream()).toList();
+            if (allLikes.isEmpty()) {
+                throw new NotFoundException("No likes found");
+            }
+            return CollectionModel.of(allLikes);
+        }
+        else if(developerRepository.findByCredentials_Email(email).isPresent()){
+            DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
+            List<EntityModel<LikeDTO>> ownLikes = likes.stream()
+                    .filter(like -> like.getDeveloper().equals(developer))
+                    .map(assembler::toOwnLikeModel)
+                    .toList();
+            List<EntityModel<LikeDTO>> otherLikes = likes.stream().map(assembler::toModel).toList();
+            return CollectionModel.of(Stream.concat(ownLikes.stream(), otherLikes.stream()).toList());
+        }else throw new CredentialsRequiredException("You need to be logged in to see likes list");
     }
     public CollectionModel<EntityModel<LikeDTO>> findOwnLikes(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isPresent()){
-            return CollectionModel.of(companyRepository.findByCredentials_Email(email).get()
+            List<EntityModel<LikeDTO>> likes = companyRepository.findByCredentials_Email(email).get()
                     .getLikes()
                     .stream()
-                    .map(assembler::toModel)
-                    .toList());
+                    .map(assembler::toOwnLikeModel)
+                    .toList();
+            if (likes.isEmpty()) {
+                throw new NotFoundException("No likes found");
+            }
+            return CollectionModel.of(likes);
         }else if(developerRepository.findByCredentials_Email(email).isPresent()){
-            return CollectionModel.of(developerRepository.findByCredentials_Email(email).get()
+            List<EntityModel<LikeDTO>> likes = developerRepository.findByCredentials_Email(email).get()
                     .getLikes()
                     .stream()
-                    .map(assembler::toModel)
-                    .toList());
-        }else throw new CredentialsRequiredException("Credentials required");
+                    .map(assembler::toOwnLikeModel)
+                    .toList();
+            if(likes.isEmpty()){
+                throw new NotFoundException("No likes found");
+            }
+            return CollectionModel.of(likes);
+        }else throw new CredentialsRequiredException("You need to be logged in to see your likes");
     }
     public EntityModel<LikeDTO> findById(long id)throws NotFoundException, CredentialsRequiredException{
-        return assembler.toModel(likeRepository.findById(id).orElseThrow(()->new NotFoundException("Like not found")));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(likeRepository.findById(id).isEmpty()){
+            throw new NotFoundException("Like not found");
+        }
+        LikeEntity like = likeRepository.findById(id).get();
+        if(companyRepository.findByCredentials_Email(email).isPresent()){
+            CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+            if(company.getLikes().contains(like)){
+                return assembler.toOwnLikeModel(like);
+            }else return assembler.toModel(like);
+        }else if(developerRepository.findByCredentials_Email(email).isPresent()){
+            DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
+            if(developer.getLikes().contains(like)){
+                return assembler.toOwnLikeModel(like);
+            }else return assembler.toModel(like);
+        }else throw new CredentialsRequiredException("You need to be logged in to see likes list");
     }
     public void deleteById(long id)throws NotFoundException {
         if(likeRepository.findById(id).isEmpty()) {
@@ -96,15 +142,19 @@ public class LikeService {
             throw new NotFoundException("Publication not found");
         }
         PublicationEntity publication = publicationsRepository.findById(publicationId).get();
-        return CollectionModel.of(publication.getLikes().stream()
+        List<EntityModel<LikeDTO>> likes = publication.getLikes().stream()
                 .map(assembler::toModel)
-                .toList());
+                .toList();
+        if(likes.isEmpty()){
+            throw new NotFoundException("No likes found for this publication");
+        }
+        return CollectionModel.of(likes);
     }
     public String findLikesQuantityByPublicationId(long publicationId)throws NotFoundException{
         if(publicationsRepository.findById(publicationId).isEmpty()){
             throw new NotFoundException("Publication not found");
         }
         PublicationEntity publication = publicationsRepository.findById(publicationId).get();
-        return "Total likes of publication"+ publication.getId()+ ": " + publication.getLikes().size();
+        return "Total likes of publication "+ publication.getId()+ ": " + publication.getLikes().size();
     }
 }

@@ -1,10 +1,13 @@
 package TP_Final.devhire.DTOS;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
 public class JobDTO {
     Long id;
     String position;

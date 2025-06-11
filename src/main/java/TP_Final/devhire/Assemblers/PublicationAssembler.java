@@ -29,10 +29,21 @@ public class PublicationAssembler implements RepresentationModelAssembler<Public
             publicationDTO.setName(publication.getDeveloper().getName());
         }
         return EntityModel.of(publicationDTO, linkTo(methodOn(PublicationController.class).findById(publicationDTO.getId())).withSelfRel(),
+                linkTo(methodOn(CommentController.class).save(null, publication.getId())).withRel("Comment"),
+                linkTo(methodOn(LikeController.class).save(publicationDTO.getId())).withRel("Like"));
+    }
+    public @NonNull EntityModel<PublicationDTO> toOwnPublicationModel(@NonNull PublicationEntity publication){
+        PublicationDTO publicationDTO = mapper.converToPublicationDTO(publication);
+        if(publication.getCompany() != null) {
+            publicationDTO.setName(publication.getCompany().getName());
+        }
+        if(publication.getDeveloper() != null){
+            publicationDTO.setName(publication.getDeveloper().getName());
+        }
+        return EntityModel.of(publicationDTO, linkTo(methodOn(PublicationController.class).findById(publicationDTO.getId())).withSelfRel(),
                 linkTo(methodOn(PublicationController.class).deleteById(publicationDTO.getId())).withRel("Delete publication"),
                 linkTo(methodOn(PublicationController.class).updateContent(publication)).withRel("Update content"),
                 linkTo(methodOn(CommentController.class).save(null, publication.getId())).withRel("Comment"),
                 linkTo(methodOn(LikeController.class).save(publicationDTO.getId())).withRel("Like"));
-
     }
 }

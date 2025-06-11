@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class PublicationService{
@@ -43,23 +44,65 @@ public class PublicationService{
         return publicationAssembler.toModel(publicationEntity);
     }
     public CollectionModel<EntityModel<PublicationDTO>> findAll(){
-        return CollectionModel.of(publicationsRepository.findAll().stream()
-                .map(publicationAssembler::toModel)
-                .toList());
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<PublicationEntity> publications = publicationsRepository.findAll();
+        if(publications.isEmpty()){
+            throw new NotFoundException("No publications found");
+        }
+        if(companyRepository.findByCredentials_Email(email).isPresent()){
+            CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+            List<EntityModel<PublicationDTO>> ownPublications = publications.stream()
+                    .filter(pub -> company.equals(pub.getCompany()))
+                    .map(publicationAssembler::toOwnPublicationModel)
+                    .toList();
+
+            List<EntityModel<PublicationDTO>> otherPublications = publications.stream()
+                    .filter(pub -> !company.equals(pub.getCompany()))
+                    .map(publicationAssembler::toModel)
+                    .toList();
+            List<EntityModel<PublicationDTO>> allPublications = Stream.concat(otherPublications.stream(),ownPublications.stream()).toList();
+            if(allPublications.isEmpty()){
+                throw new NotFoundException("No publications found");
+            }
+            return CollectionModel.of(allPublications);
+
+        } else if (developerRepository.findByCredentials_Email(email).isPresent()) {
+            DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
+            List<EntityModel<PublicationDTO>> ownPublications = publications.stream()
+                    .filter(pub -> developer.equals(pub.getDeveloper()))
+                    .map(publicationAssembler::toOwnPublicationModel)
+                    .toList();
+
+            List<EntityModel<PublicationDTO>> otherPublications = publications.stream()
+                    .filter(pub -> !developer.equals(pub.getDeveloper()))
+                    .map(publicationAssembler::toModel)
+                    .toList();
+            List<EntityModel<PublicationDTO>> allPublications = Stream.concat(ownPublications.stream(), otherPublications.stream()).toList();
+            if(allPublications.isEmpty()){
+                throw new NotFoundException("No publications found");
+            }
+            return CollectionModel.of(allPublications);
+        }else throw new CredentialsRequiredException("You need to be logged in to see publications");
     }
     public CollectionModel<EntityModel<PublicationDTO>> findOwnPublications(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isPresent()){
             CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
             List<EntityModel<PublicationDTO>> publications = publicationsRepository.findByCompanyId(company.getId()).stream()
-                    .map(publicationAssembler::toModel)
+                    .map(publicationAssembler::toOwnPublicationModel)
                     .toList();
+            if(publications.isEmpty()){
+                throw new NotFoundException("No publications found");
+            }
             return CollectionModel.of(publications);
         }else {
-            DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
+            DeveloperEntity developer = developerRepository.findByCredentials_Email(email).orElseThrow(()-> new NotFoundException("Developer not found"));
             List<EntityModel<PublicationDTO>> publications = publicationsRepository.findByDeveloperId(developer.getId()).stream()
-                    .map(publicationAssembler::toModel)
+                    .map(publicationAssembler::toOwnPublicationModel)
                     .toList();
+            if(publications.isEmpty()){
+                throw new NotFoundException("No publications found");
+            }
             return CollectionModel.of(publications);
         }
     }
@@ -67,10 +110,26 @@ public class PublicationService{
         if(publicationsRepository.findById(id).isEmpty()){
             throw new NotFoundException("Publication not found");
         }
-        return publicationAssembler.toModel(publicationsRepository.findById(id).get());
+        PublicationEntity publication = publicationsRepository.findById(id).get();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(companyRepository.findByCredentials_Email(email).isPresent()){
+            CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+            if(company.equals(publication.getCompany())){
+                return publicationAssembler.toOwnPublicationModel(publication);
+            }else return publicationAssembler.toModel(publication);
+        } else if (developerRepository.findByCredentials_Email(email).isPresent()) {
+            DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
+            if(developer.equals(publication.getDeveloper())){
+                return publicationAssembler.toOwnPublicationModel(publication);
+            }else return publicationAssembler.toModel(publication);
+        }else throw new CredentialsRequiredException("You need to be logged in to see publications");
     }
     public CollectionModel<EntityModel<PublicationDTO>> findByDevId(Long id)throws NotFoundException {
-        return CollectionModel.of(publicationsRepository.findByDeveloperId(id).stream()
+        List<PublicationEntity> publications = publicationsRepository.findByDeveloperId(id);
+        if(publications.isEmpty()){
+            throw new NotFoundException("No publications found");
+        }
+        return CollectionModel.of(publications.stream()
                 .map(publicationAssembler::toModel)
                 .toList());
     }
@@ -108,6 +167,6 @@ public class PublicationService{
             publicationEntity.setCompany(publicationOpt.get().getCompany());
             publicationsRepository.updateContent(publicationEntity.getContent(), publicationEntity.getId());
         }else throw new UnauthorizedException("You don't have permission to update this publication");
-        return publicationAssembler.toModel(publicationEntity);
+        return publicationAssembler.toOwnPublicationModel(publicationEntity);
     }
 }

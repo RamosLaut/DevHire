@@ -1,6 +1,8 @@
 package TP_Final.devhire.Assemblers;
 
+import TP_Final.devhire.Controllers.ApplicationController;
 import TP_Final.devhire.Controllers.DeveloperController;
+import TP_Final.devhire.DTOS.DeveloperApplicantDTO;
 import TP_Final.devhire.DTOS.DeveloperDTO;
 import TP_Final.devhire.Entities.DeveloperEntity;
 import TP_Final.devhire.Mappers.DeveloperMapper;
@@ -29,6 +31,11 @@ public class DeveloperAssembler implements RepresentationModelAssembler<Develope
                 linkTo(methodOn(DeveloperController.class).updateDev(entity.getId(), null)).withRel("Update"),
                 linkTo(methodOn(DeveloperController.class).deleteDev(entity.getId())).withRel("Delete"));
     }
-
+    public EntityModel<DeveloperApplicantDTO> toModelApplication(DeveloperEntity entity, Long jobId) {
+        DeveloperApplicantDTO applicantDTO = developerMapper.convertToApplicantDTO(entity);
+        return EntityModel.of(applicantDTO,
+                linkTo(methodOn(DeveloperController.class).getDevById(entity.getId())).withRel("View profile"),
+                linkTo(methodOn(ApplicationController.class).discardApplicantByDevId(entity.getId(), jobId)).withRel("Discard application"));
+    }
 }
 

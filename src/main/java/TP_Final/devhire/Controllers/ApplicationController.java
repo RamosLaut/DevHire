@@ -1,7 +1,6 @@
 package TP_Final.devhire.Controllers;
 
-import TP_Final.devhire.DTOS.ApplicationDTO;
-import TP_Final.devhire.DTOS.DeveloperDTO;
+import TP_Final.devhire.DTOS.DeveloperApplicantDTO;
 import TP_Final.devhire.Services.ApplicationService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -27,8 +26,8 @@ public class ApplicationController {
     public ResponseEntity<?> findById(@PathVariable Long applicationId){
         return ResponseEntity.ok(applicationService.findById(applicationId));
     }
-    @GetMapping("/applicants/{jobId}")
-    public ResponseEntity<CollectionModel<EntityModel<ApplicationDTO>>> getApplicantsByJobId(@PathVariable Long jobId){
+    @GetMapping("/applicantsByJob/{jobId}")
+    public ResponseEntity<CollectionModel<EntityModel<DeveloperApplicantDTO>>> getApplicantsByJobId(@PathVariable Long jobId){
         return ResponseEntity.ok(applicationService.findApplicantsByJobId(jobId));
     }
     @DeleteMapping("/delete/{applicationId}")
@@ -37,16 +36,20 @@ public class ApplicationController {
         return ResponseEntity.noContent().build();
     }
     @GetMapping("/applicantsWithAllHardRequirements/{jobId}")
-    public ResponseEntity<CollectionModel<EntityModel<DeveloperDTO>>> getApplicantsWithAllHardRequirements(@PathVariable Long jobId){
+    public ResponseEntity<CollectionModel<EntityModel<DeveloperApplicantDTO>>> getApplicantsWithAllHardRequirements(@PathVariable Long jobId){
         return ResponseEntity.ok(applicationService.findApplicantsWithAllHardRequirements(jobId));
     }
     @GetMapping("applicantsWithAnyHardRequirement/{jobId}")
-    public ResponseEntity<CollectionModel<EntityModel<DeveloperDTO>>> getApplicantsWithAnyHardRequirement(@PathVariable Long jobId){
+    public ResponseEntity<CollectionModel<EntityModel<DeveloperApplicantDTO>>> getApplicantsWithAnyHardRequirement(@PathVariable Long jobId){
         return ResponseEntity.ok(applicationService.findApplicantsWithAnyHardRequirements(jobId));
     }
     @GetMapping("applicantsWithMinHardRequirement/{jobId}")
-    public ResponseEntity<CollectionModel<EntityModel<DeveloperDTO>>> getApplicantsWithMinHardRequirement(@PathVariable Long jobId, @RequestParam int min){
+    public ResponseEntity<CollectionModel<EntityModel<DeveloperApplicantDTO>>> getApplicantsWithMinHardRequirement(@PathVariable Long jobId, @RequestParam int min){
         return ResponseEntity.ok(applicationService.findApplicantsWithMinHardRequirements(jobId, min));
     }
-
+    @DeleteMapping("/job/{jobId}/discardApplicant/{devId}")
+    public ResponseEntity<?> discardApplicantByDevId(@PathVariable Long devId, @PathVariable Long jobId){
+        applicationService.discardApplicantByDevId(devId, jobId);
+        return ResponseEntity.noContent().build();
+    }
 }

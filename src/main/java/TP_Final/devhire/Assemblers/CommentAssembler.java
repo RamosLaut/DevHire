@@ -25,6 +25,16 @@ public class CommentAssembler implements RepresentationModelAssembler<CommentEnt
         if(entity.getDeveloper()!=null){
             commentDTO.setName(entity.getDeveloper().getName());
         }
+        return EntityModel.of(commentDTO, linkTo(methodOn(CommentController.class).findById(entity.getId())).withSelfRel());
+    }
+    public @NonNull EntityModel<CommentDTO> toOwnCommentModel(CommentEntity entity) {
+        CommentDTO commentDTO = commentMapper.convertCommentDTO(entity);
+        if (entity.getCompany() != null) {
+            commentDTO.setName(entity.getCompany().getName());
+        }
+        if(entity.getDeveloper()!=null){
+            commentDTO.setName(entity.getDeveloper().getName());
+        }
         return EntityModel.of(commentDTO, linkTo(methodOn(CommentController.class).findById(entity.getId())).withSelfRel(),
                 linkTo(methodOn(CommentController.class).updateContent(entity)).withRel("Update content"),
                 linkTo(methodOn(CommentController.class).deleteById(entity.getId())).withRel("Delete"));

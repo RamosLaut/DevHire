@@ -3,7 +3,7 @@ package TP_Final.devhire.Services;
 import TP_Final.devhire.Assemblers.ApplicationAssembler;
 import TP_Final.devhire.Assemblers.DeveloperAssembler;
 import TP_Final.devhire.DTOS.ApplicationDTO;
-import TP_Final.devhire.DTOS.DeveloperDTO;
+import TP_Final.devhire.DTOS.DeveloperApplicantDTO;
 import TP_Final.devhire.Entities.ApplicationEntity;
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.DeveloperEntity;
@@ -65,7 +65,7 @@ public class ApplicationService {
         application.setJob(job);
         application.setDev(developer);
         applicantsRepository.save(application);
-        return applicationAssembler.toModel(application);
+        return applicationAssembler.toDevModel(application);
     }
     public void deleteApplicationById(Long id){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -100,9 +100,26 @@ public class ApplicationService {
         if(applicantsRepository.findById(id).isEmpty()){
             throw new NotFoundException("Application not found");
         }
-        return applicationAssembler.toModel(applicantsRepository.findById(id).get());
+        ApplicationEntity application = applicantsRepository.findById(id).get();
+        JobEntity job = application.getJob();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(developerRepository.findByCredentials_Email(email).isPresent()){
+            DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
+            if(developer.getPostulatedJobs().contains(application)){
+                return applicationAssembler.toDevModel(application);
+            }else{
+                return applicationAssembler.toModel(application);
+            }
+        } else if (companyRepository.findByCredentials_Email(email).isPresent()){
+            CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+            if(company.getJobs().contains(job)){
+                return applicationAssembler.toCompanyModel(application, job.getId());
+            }else{
+                return applicationAssembler.toModel(application);
+            }
+        }else throw new CredentialsRequiredException("You need to login to view applications");
     }
-    public CollectionModel<EntityModel<ApplicationDTO>> findApplicantsByJobId(Long jobId){
+    public CollectionModel<EntityModel<DeveloperApplicantDTO>> findApplicantsByJobId(Long jobId)throws NotFoundException, UnauthorizedException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isEmpty()){
             throw new UnauthorizedException("You don't have permission to view applicants to this job");
@@ -115,12 +132,16 @@ public class ApplicationService {
         if(!company.getJobs().contains(job)){
             throw new UnauthorizedException("You don't have permission to view applicants to this job");
         }
-        List<EntityModel<ApplicationDTO>> applicants = job.getApplicants().stream()
-                .map(applicationAssembler::toModel)
+        List<EntityModel<DeveloperApplicantDTO>> applicants = job.getApplicants().stream()
+                .map(ApplicationEntity::getDev)
+                .map(dev->developerAssembler.toModelApplication(dev, jobId))
                 .toList();
+        if(applicants.isEmpty()){
+            throw new NotFoundException("No applicants found for this job");
+        }
         return CollectionModel.of(applicants);
     }
-    public CollectionModel<EntityModel<DeveloperDTO>> findApplicantsWithAllHardRequirements(Long jobId)throws NotFoundException{
+    public CollectionModel<EntityModel<DeveloperApplicantDTO>> findApplicantsWithAllHardRequirements(Long jobId)throws NotFoundException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isEmpty()){
             throw new UnauthorizedException("You don't have permission to view applicants to this job");
@@ -145,9 +166,12 @@ public class ApplicationService {
                 }
             }
         }else throw new UnauthorizedException("You don't have permission to view applicants to this job");
-        return CollectionModel.of(filtered.stream().map(developerAssembler::toModel).toList());
+        if(filtered.isEmpty()){
+            throw new NotFoundException("No applicants were found with all the required qualifications for this job.");
+        }
+        return CollectionModel.of(filtered.stream().map(dev->developerAssembler.toModelApplication(dev,jobId)).toList());
     }
-    public CollectionModel<EntityModel<DeveloperDTO>> findApplicantsWithAnyHardRequirements(Long jobId)throws NotFoundException{
+    public CollectionModel<EntityModel<DeveloperApplicantDTO>> findApplicantsWithAnyHardRequirements(Long jobId)throws NotFoundException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isEmpty()){
             throw new UnauthorizedException("You don't have permission to view applicants to this job");
@@ -172,9 +196,12 @@ public class ApplicationService {
                 }
             }
         }else throw new UnauthorizedException("You don't have permission to view applicants to this job");
-        return CollectionModel.of(filtered.stream().map(developerAssembler::toModel).toList());
+        if(filtered.isEmpty()){
+            throw new NotFoundException("No applicants were found with any of the required qualifications for this job.");
+        }
+        return CollectionModel.of(filtered.stream().map(dev->developerAssembler.toModelApplication(dev, jobId)).toList());
     }
-    public CollectionModel<EntityModel<DeveloperDTO>> findApplicantsWithMinHardRequirements(Long jobId, int minRequirements)throws NotFoundException{
+    public CollectionModel<EntityModel<DeveloperApplicantDTO>> findApplicantsWithMinHardRequirements(Long jobId, int minRequirements)throws NotFoundException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isEmpty()){
             throw new UnauthorizedException("You don't have permission to view applicants to this job");
@@ -199,7 +226,35 @@ public class ApplicationService {
                 }
             }
         }else throw new UnauthorizedException("You don't have permission to view applicants to this job");
-        return CollectionModel.of(filtered.stream().map(developerAssembler::toModel).toList());
+        if(filtered.isEmpty()){
+            throw new NotFoundException("No applicants were found with at least " + minRequirements + " of the required qualifications for this job.");
+        }
+        return CollectionModel.of(filtered.stream().map(dev -> developerAssembler.toModelApplication(dev, jobId)).toList());
+    }
+    public void discardApplicantByDevId(Long devId, Long jobId)throws NotFoundException, UnauthorizedException{
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(companyRepository.findByCredentials_Email(email).isEmpty()){
+            throw new UnauthorizedException("You don't have permission to delete applicants to this job");
+        }
+        CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+        if(developerRepository.findById(devId).isEmpty()){
+            throw new NotFoundException("Developer not found");
+        }
+        DeveloperEntity developer = developerRepository.findById(devId).get();
+        if(jobRepository.findById(jobId).isEmpty()){
+            throw new NotFoundException("Job not found");
+        }
+        JobEntity job = jobRepository.findById(jobId).get();
+        if(!company.getJobs().contains(job)){
+            throw new UnauthorizedException("You don't have permission to delete applicants to this job");
+        }
+        if(job.getApplicants().isEmpty()){
+            throw new NotFoundException("No applicants found for this job");
+        }
+        job.getApplicants().stream()
+                .filter(app -> app.getDev().equals(developer))
+                .findAny()
+                .ifPresent(applicantsRepository::delete);
     }
 
 }
