@@ -44,9 +44,11 @@ public class RegisterService {
     public EntityModel<DeveloperDTO> devRegister(@Valid DeveloperRegisterDTO developerDTO)throws AlreadyExistsException {
         if(credentialRepository.findByEmail(developerDTO.getEmail()).isPresent()){
             throw new AlreadyExistsException("Email already exists");
-        } else if (developerDTO.getEmail()==null) {
+        }
+        if (developerDTO.getEmail()==null) {
             throw new RuntimeException("Email can´t be null");
-        } else if (developerDTO.getPassword()==null) {
+        }
+        if (developerDTO.getPassword()==null) {
             throw new RuntimeException("Password can´t be null");
         }
         DeveloperEntity developer = DeveloperEntity.builder()
@@ -64,8 +66,8 @@ public class RegisterService {
         RoleEntity devRole = roleRepository.findByRole(Roles.ROLE_DEV)
                 .orElseThrow(() -> new RuntimeException("Dev rol not found"));
         credentials.setRoles(Set.of(devRole));
-        developer.setCredentials(credentials);
         credentialRepository.save(credentials);
+        developer.setCredentials(credentials);
         return developerAssembler.toModel(developerRepository.save(developer));
 
     }
@@ -73,10 +75,15 @@ public class RegisterService {
     public EntityModel<CompanyDTO> companyRegister(CompanyRegisterDTO companyRegisterDTO) throws AlreadyExistsException{
         if(credentialRepository.findByEmail(companyRegisterDTO.getEmail()).isPresent()){
             throw new AlreadyExistsException("Email already exists");
-        } else if (companyRegisterDTO.getEmail()==null) {
+        }
+        if (companyRegisterDTO.getEmail()==null) {
             throw new RuntimeException("Email can´t be null");
-        } else if (companyRegisterDTO.getPassword()==null) {
+        }
+        if (companyRegisterDTO.getPassword()==null) {
             throw new RuntimeException("Password can´t be null");
+        }
+        if(companyRepository.findByName(companyRegisterDTO.getName()).isPresent()){
+            throw new AlreadyExistsException("Company name already exists");
         }
         CompanyEntity company = CompanyEntity.builder()
                 .name(companyRegisterDTO.getName())
@@ -92,8 +99,8 @@ public class RegisterService {
         RoleEntity companyRole = roleRepository.findByRole(Roles.ROLE_COMPANY)
                 .orElseThrow(() -> new RuntimeException("Company rol not found"));
         credentials.setRoles(Set.of(companyRole));
-        company.setCredentials(credentials);
         credentialRepository.save(credentials);
+        company.setCredentials(credentials);
         return companyAssembler.toModel(companyRepository.save(company));
     }
 }

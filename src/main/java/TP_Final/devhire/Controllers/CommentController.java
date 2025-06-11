@@ -21,7 +21,7 @@ public class CommentController {
         this.commentService = commentService;
     }
     @PostMapping("/publication/{publicationId}")
-    public ResponseEntity<?> save(@RequestBody CommentEntity comment, @PathVariable Long publicationId){
+    public ResponseEntity<?>    save(@RequestBody CommentEntity comment, @PathVariable Long publicationId){
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.save(comment, publicationId));
     }
     @GetMapping

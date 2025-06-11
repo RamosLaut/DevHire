@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class CompanyService {
@@ -25,14 +26,45 @@ public class CompanyService {
         this.companyAssembler = companyAssembler;
     }
     public CollectionModel<EntityModel<CompanyDTO>> findAll(){
-        List<EntityModel<CompanyDTO>> companies = companyRepository.findAll().stream()
-                .filter(CompanyEntity::getEnabled)
-                .map(companyAssembler::toModel)
-                .toList();
-        return CollectionModel.of(companies);
+        if(companyRepository.findAll().isEmpty()){
+            throw new NotFoundException("No companies found");
+        }
+        List<CompanyEntity> companies = companyRepository.findAll();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(companyRepository.findByCredentials_Email(email).isPresent()){
+            CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+            EntityModel<CompanyDTO> ownCompanyModel = companyAssembler.toOwnCompanyModel(company);
+            List<EntityModel<CompanyDTO>> otherCompanies = companies.stream()
+                    .filter(companyEntity -> !companyEntity.equals(company))
+                    .map(companyAssembler::toModel)
+                    .toList();
+            List<EntityModel<CompanyDTO>> allCompanies = Stream.concat(otherCompanies.stream(), Stream.of(ownCompanyModel)).toList();
+            if(allCompanies.isEmpty()){
+                throw new NotFoundException("No companies found");
+            }
+            return CollectionModel.of(allCompanies);
+        }else {
+            List<EntityModel<CompanyDTO>> companiesModels = companies.stream()
+                    .map(companyAssembler::toModel)
+                    .toList();
+            if(companiesModels.isEmpty()){
+                throw new NotFoundException("No companies found");
+            }
+            return CollectionModel.of(companiesModels);
+        }
     }
     public EntityModel<CompanyDTO> findById(Long id)throws NotFoundException {
-        return companyAssembler.toModel(companyRepository.findById(id).orElseThrow(()->new NotFoundException("Company not found")));
+        if(companyRepository.findById(id).isEmpty()){
+            throw new NotFoundException("Company not found");
+        }
+        CompanyEntity company = companyRepository.findById(id).get();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(companyRepository.findByCredentials_Email(email).isPresent()){
+            CompanyEntity ownCompany = companyRepository.findByCredentials_Email(email).get();
+            if(ownCompany.equals(company)){
+                return companyAssembler.toOwnCompanyModel(company);
+            }else return companyAssembler.toModel(company);
+        }else return companyAssembler.toModel(company);
     }
     public String findCompaniesQuantity(){
         long companiesQuantity = companyRepository.findAll().size();
@@ -40,8 +72,11 @@ public class CompanyService {
     }
     public CollectionModel<EntityModel<CompanyDTO>> findByLocation(String location)throws LocationEmptyException {
         List<CompanyEntity> companies = companyRepository.findAll().stream()
-                .filter(company -> company.getLocation().equalsIgnoreCase(location))
+                .filter(company -> location.equals(company.getLocation()))
                 .toList();
+        if(companies.isEmpty()){
+            throw new LocationEmptyException("There are no companies in this location: " + location + ".");
+        }
         return CollectionModel.of(companies.stream().map(companyAssembler::toModel).toList());
     }
     public EntityModel<CompanyDTO> update(CompanyDTO companyDTO)throws UnauthorizedException{

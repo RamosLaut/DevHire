@@ -106,5 +106,7 @@ public class DeveloperMapper {
                 .map(this::convertToJobExperienceDTO)
                 .toList();
     }
-
+    public DeveloperApplicantDTO convertToApplicantDTO(DeveloperEntity dev){
+        return modelMapper.map(dev, DeveloperApplicantDTO.class);
+    }
 }

@@ -26,7 +26,18 @@ public class LikeAssembler implements RepresentationModelAssembler<LikeEntity, E
         if(like.getDeveloper()!=null){
             likeDTO.setName(like.getDeveloper().getName());
         }
+        return EntityModel.of(likeDTO, linkTo(methodOn(LikeController.class).findById(likeDTO.getId())).withSelfRel());
+    }
+    public @NonNull EntityModel<LikeDTO> toOwnLikeModel(@NonNull LikeEntity like){
+        LikeDTO likeDTO = likeMapper.convertToLikeDTO(like);
+        if(like.getCompany()!=null){
+            likeDTO.setName(like.getCompany().getName());
+        }
+        if(like.getDeveloper()!=null){
+            likeDTO.setName(like.getDeveloper().getName());
+        }
         return EntityModel.of(likeDTO, linkTo(methodOn(LikeController.class).findById(likeDTO.getId())).withSelfRel(),
                 linkTo(methodOn(LikeController.class).deleteById(like.getId())).withRel("Unlike"));
+
     }
 }

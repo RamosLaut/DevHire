@@ -34,15 +34,15 @@ public class PublicationController {
     public ResponseEntity<EntityModel<PublicationDTO>> findById(@PathVariable Long publicationId){
         return ResponseEntity.ok(publicationService.findById(publicationId));
     }
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user/{devId}")
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>>findAllByDevId(@PathVariable Long devId){
         return ResponseEntity.ok(publicationService.findByDevId(devId));
     }
-    @PatchMapping
+    @PatchMapping("/update")
     public ResponseEntity<EntityModel<PublicationDTO>>updateContent(@RequestBody PublicationEntity publicationEntity){
         return ResponseEntity.ok(publicationService.updateContent(publicationEntity));
     }
-    @DeleteMapping("/{publicationId}")
+    @DeleteMapping("/delete/{publicationId}")
     public ResponseEntity<?> deleteById(@PathVariable Long publicationId){
         publicationService.deleteById(publicationId);
         return ResponseEntity.noContent().build();
