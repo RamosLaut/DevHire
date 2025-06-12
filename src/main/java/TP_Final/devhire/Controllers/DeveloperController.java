@@ -36,24 +36,6 @@ public class DeveloperController {
         this.developerAssembler = developerAssembler;
     }
 
-    @Operation(
-            summary = "Registrar un nuevo programador",
-            description = "Registra un nuevo usuario programador en la plataforma.",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Datos del nuevo programador",
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = DeveloperRegisterDTO.class))
-            ),
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Registro exitoso", content = @Content(schema = @Schema(implementation = DeveloperDTO.class))),
-                    @ApiResponse(responseCode = "400", description = "Datos inválidos")
-            }
-    )
-    @PostMapping("/register")
-    public ResponseEntity<EntityModel<DeveloperDTO>> register(@RequestBody @Valid DeveloperRegisterDTO dto) {
-        return ResponseEntity.ok(developerService.register(dto));
-
-    }
 
     @Operation(
             summary = "Obtener programador por ID",

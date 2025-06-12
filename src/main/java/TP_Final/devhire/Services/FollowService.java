@@ -286,6 +286,9 @@ public class FollowService {
     // Métodos auxiliares:
 
     private void validateFollowRequest(FollowRequestDTO dto) {
+        System.out.println("Follower type: '" + dto.getFollowerType() + "'");
+        System.out.println("Followed type: '" + dto.getFollowedType() + "'");
+
         if (dto.getFollowerId() == null || dto.getFollowedId() == null) {
             throw new IllegalArgumentException("IDs cannot be null");
         }
@@ -299,7 +302,7 @@ public class FollowService {
             throw new IllegalArgumentException("A developer or company cannot follow itself");
         }
 
-        Set<String> validTypes = Set.of("DEVELOPER", "COMPANY");
+        Set<EntityType> validTypes = Set.of(EntityType.DEVELOPER, EntityType.COMPANY);
         if (!validTypes.contains(dto.getFollowerType()) || !validTypes.contains(dto.getFollowedType())) {
             throw new IllegalArgumentException("Invalid types");
         }
@@ -367,7 +370,7 @@ public class FollowService {
             if (dto.getFollowerId() == null) dto.setFollowerId(developer.getId());
             if (dto.getFollowerType() == null) dto.setFollowerType(DEVELOPER);
 
-            if (!dto.getFollowerType().equals("DEVELOPER") || !dto.getFollowerId().equals(developer.getId())) {
+            if (!dto.getFollowerType().equals(EntityType.DEVELOPER) || !dto.getFollowerId().equals(developer.getId())) {
                 throw new AccessDeniedException("You can only perform the action as an authenticated developer");
             }
 
@@ -377,7 +380,7 @@ public class FollowService {
             if (dto.getFollowerId() == null) dto.setFollowerId(company.getId());
             if (dto.getFollowerType() == null) dto.setFollowerType(COMPANY);
 
-            if (!dto.getFollowerType().equals("COMPANY") || !dto.getFollowerId().equals(company.getId())) {
+            if (!dto.getFollowerType().equals(EntityType.COMPANY) || !dto.getFollowerId().equals(company.getId())) {
                 throw new AccessDeniedException("You can only perform the action as an authenticated company");
             }
 
@@ -390,15 +393,21 @@ public class FollowService {
         if (dto.getFollowerId() == null || dto.getFollowerType() == null) {
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-            companyRepository.findByCredentials_Email(email).ifPresentOrElse(company -> {
-                dto.setFollowerId(company.getId());
+            Optional<CompanyEntity> companyOpt = companyRepository.findByCredentials_Email(email);
+            if (companyOpt.isPresent()) {
+                dto.setFollowerId(companyOpt.get().getId());
                 dto.setFollowerType(COMPANY);
-            }, () -> {
-                developerRepository.findByCredentials_Email(email).ifPresent(developer -> {
-                    dto.setFollowerId(developer.getId());
-                    dto.setFollowerType(DEVELOPER);
-                });
-            });
+                return;
+            }
+
+            Optional<DeveloperEntity> developerOpt = developerRepository.findByCredentials_Email(email);
+            if (developerOpt.isPresent()) {
+                dto.setFollowerId(developerOpt.get().getId());
+                dto.setFollowerType(DEVELOPER);
+                return;
+            }
+
+            throw new IllegalStateException("Authenticated user not found as company or developer");
         }
     }
 

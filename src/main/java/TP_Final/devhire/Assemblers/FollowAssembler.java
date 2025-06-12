@@ -27,6 +27,9 @@ public class FollowAssembler implements RepresentationModelAssembler<FollowRespo
 
     @Override
     public @NonNull EntityModel<FollowResponseDTO> toModel(FollowResponseDTO dto) {
+        if (dto.getType() == null) {
+            throw new IllegalArgumentException("Follow type cannot be null");
+        }
         return switch (dto.getType()) {
             case DEVELOPER_TO_DEVELOPER -> EntityModel.of(dto,
                     linkTo(methodOn(FollowController.class).findById(dto.getType(), dto.getFollowerId(), dto.getFollowedId())).withSelfRel(),

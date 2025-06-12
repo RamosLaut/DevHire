@@ -4,13 +4,13 @@ import TP_Final.devhire.Entities.Follow.DeveloperFollowsDeveloperId;
 import TP_Final.devhire.Enums.EntityType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @Schema(description = "Datos requeridos para crear o modificar una relación de seguimiento")
 public class FollowRequestDTO {
 
