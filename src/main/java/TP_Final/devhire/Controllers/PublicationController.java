@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/publication")
+@Tag(name = "Publications", description = "Operaciones relacionadas con publicaciones de desarrolladores y empresas")
 public class PublicationController {
     private final PublicationService publicationService;
     @Autowired
@@ -42,81 +44,63 @@ public class PublicationController {
     }
 
 
+    @Operation(
+            summary = "Listar todas las publicaciones",
+            description = "Devuelve una lista con todas las publicaciones públicas registradas"
+    )
+    @ApiResponse(responseCode = "200", description = "Listado de publicaciones obtenido correctamente")
     @GetMapping
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>> findAll() {
         return ResponseEntity.ok(publicationService.findAll());
     }
 
-//    @Operation(
-//            summary = "Obtener todas las publicaciones propias",
-//            description = "Permite a un programador o empresa autenticado ver todas sus publicaciones.",
-//            security = @SecurityRequirement(name = "bearerAuth")
-//    )
-//    @ApiResponses(value = {
-//            @ApiResponse(
-//                    responseCode = "200",
-//                    description = "Listado de publicaciones propias obtenido correctamente",
-//                    content = @Content(
-//                            mediaType = "application/json",
-//                            array = @ArraySchema(schema = @Schema(oneOf = {CompanyPublicationDTO.class, DeveloperPublicationDTO.class}))
-//                    )
-//            ),
-//            @ApiResponse(responseCode = "403", description = "No autorizado, se requiere autenticación")
-//    })
+    @Operation(
+            summary = "Listar publicaciones propias",
+            description = "Devuelve las publicaciones creadas por el usuario autenticado"
+    )
+    @ApiResponse(responseCode = "200", description = "Publicaciones propias obtenidas correctamente")
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/ownPublications")
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>> findOwnPublications(){
         return ResponseEntity.ok(publicationService.findOwnPublications());
     }
 
-//    @Operation(
-//            summary = "Obtener publicación por ID",
-//            description = "Permite a un desarrollador o empresa autenticado ver una publicación específica por su ID.",
-//            security = @SecurityRequirement(name = "bearerAuth")
-//    )
-//    @ApiResponse(
-//            responseCode = "200",
-//            description = "Publicación encontrada exitosamente",
-//            content = @Content(
-//                    mediaType = "application/json",
-//                    schema = @Schema(oneOf = {CompanyPublicationDTO.class, DeveloperPublicationDTO.class})
-//            )
-//    )
+    @Operation(
+            summary = "Buscar publicación por ID",
+            description = "Permite obtener una publicación específica según su ID",
+            parameters = {
+                    @Parameter(name = "publicationId", description = "ID de la publicación", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Publicación encontrada"),
+            @ApiResponse(responseCode = "404", description = "Publicación no encontrada")
+    })
     @GetMapping("/{publicationId}")
     public ResponseEntity<EntityModel<PublicationDTO>> findById(@PathVariable Long publicationId){
         return ResponseEntity.ok(publicationService.findById(publicationId));
     }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>>findAllByDevId(@PathVariable Long devId){
         return ResponseEntity.ok(publicationService.findByDevId(devId));
     }
 
-//    @Operation(
-//            summary = "Actualizar contenido de una publicación propia",
-//            description = "Permite a un programador o empresa autenticado modificar el contenido de una publicación propia.",
-//            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-//                    description = "JSON con el id de la publicación y el nuevo contenido",
-//                    required = true,
-//                    content = @Content(
-//                            mediaType = "application/json",
-//                            schema = @Schema(
-//                                    example = "{\"id\": 123, \"content\": \"Nuevo contenido\"}",
-//                                    implementation = PublicationEntity.class
-//                            )
-//                    )
-//            ),
-//            responses = {
-//                    @ApiResponse(
-//                            responseCode = "200",
-//                            description = "Publicación actualizada correctamente",
-//                            content = @Content(
-//                                    mediaType = "application/json",
-//                                    schema = @Schema(oneOf = {CompanyPublicationDTO.class, DeveloperPublicationDTO.class})
-//                            )
-//                    ),
-//                    @ApiResponse(responseCode = "403", description = "No autorizado, se requiere autenticación")
-//            },
-//            security = @SecurityRequirement(name = "bearerAuth")
-//    )
+    @Operation(
+            summary = "Actualizar contenido de una publicación",
+            description = "Permite actualizar el contenido de una publicación propia. Solo se permite si el usuario autenticado es el autor.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Entidad con ID y nuevo contenido",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = PublicationEntity.class))
+            )
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Publicación actualizada correctamente"),
+            @ApiResponse(responseCode = "403", description = "No autorizado"),
+            @ApiResponse(responseCode = "404", description = "Publicación no encontrada")
+    })
+    @SecurityRequirement(name = "bearerAuth")
     @PatchMapping
     public ResponseEntity<EntityModel<PublicationDTO>>updateContent(@RequestBody PublicationEntity publicationEntity){
         return ResponseEntity.ok(publicationService.updateContent(publicationEntity));

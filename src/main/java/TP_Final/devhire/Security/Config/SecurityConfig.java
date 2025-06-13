@@ -40,6 +40,9 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/register/**").permitAll()
                         .requestMatchers("/job/post").hasRole("COMPANY")
+                        .requestMatchers("/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated())
                 .cors(Customizer.withDefaults())
                 .csrf(
@@ -48,7 +51,7 @@ public class SecurityConfig {
                 )
                 .sessionManagement(manager ->
                         manager.sessionCreationPolicy(STATELESS))
-                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
