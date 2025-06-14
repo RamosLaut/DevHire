@@ -14,7 +14,7 @@ public class ApplicationController {
     public ApplicationController(ApplicationService applicationService) {
         this.applicationService = applicationService;
     }
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<?> findAll(){
         return ResponseEntity.ok(applicationService.findAll());
     }

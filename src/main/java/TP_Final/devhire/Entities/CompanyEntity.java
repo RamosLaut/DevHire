@@ -28,7 +28,7 @@ public class CompanyEntity {
     @NotEmpty
     @Column(unique = true)
     private String name;
-    @NotNull
+
     private String location;
     private String description;
     @NotNull

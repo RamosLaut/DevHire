@@ -38,7 +38,7 @@ public class PublicationController {
             @ApiResponse(responseCode = "403", description = "No autorizado, se requiere autenticación")
     })
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping
+    @PostMapping("/post")
     public ResponseEntity<EntityModel<PublicationDTO>> save(@RequestBody PublicationEntity publicationEntity) {
         return ResponseEntity.status(HttpStatus.CREATED).body(publicationService.save(publicationEntity));
     }
@@ -49,7 +49,7 @@ public class PublicationController {
             description = "Devuelve una lista con todas las publicaciones públicas registradas"
     )
     @ApiResponse(responseCode = "200", description = "Listado de publicaciones obtenido correctamente")
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>> findAll() {
         return ResponseEntity.ok(publicationService.findAll());
     }
@@ -81,7 +81,7 @@ public class PublicationController {
         return ResponseEntity.ok(publicationService.findById(publicationId));
     }
 
-    @GetMapping("/user/{devId}")
+    @GetMapping("/dev/{devId}")
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>>findAllByDevId(@PathVariable Long devId){
         return ResponseEntity.ok(publicationService.findByDevId(devId));
     }

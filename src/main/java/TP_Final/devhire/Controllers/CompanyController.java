@@ -32,7 +32,7 @@ public class CompanyController {
                     @ApiResponse(responseCode = "200", description = "Listado exitoso", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CompanyDTO.class))))
             }
     )
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<CollectionModel<EntityModel<CompanyDTO>>> findAll(){
         return ResponseEntity.ok(companyService.findAll());
     }
@@ -59,7 +59,7 @@ public class CompanyController {
                     @ApiResponse(responseCode = "200", description = "Listado exitoso", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CompanyDTO.class))))
             }
     )
-    @GetMapping("/filter/{location}")
+    @GetMapping("/location/{location}")
     public ResponseEntity<CollectionModel<EntityModel<CompanyDTO>>>findByLocation(@PathVariable String location){
         return ResponseEntity.ok((companyService.findByLocation(location)));
     }
@@ -87,7 +87,7 @@ public class CompanyController {
                     )
             }
     )
-    @PatchMapping
+    @PatchMapping("/update")
     public ResponseEntity<EntityModel<CompanyDTO>> updateOwnCompany(@RequestBody CompanyDTO company){
         return ResponseEntity.ok(companyService.update(company));
     }
@@ -100,7 +100,7 @@ public class CompanyController {
                     @ApiResponse(responseCode = "403", description = "No autorizado")
             }
     )
-    @DeleteMapping()
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteOwnCompany(){
         companyService.deleteOwnAccount();
         return ResponseEntity.noContent().build();
