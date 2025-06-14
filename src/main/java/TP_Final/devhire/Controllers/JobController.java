@@ -32,7 +32,7 @@ public class JobController {
     public ResponseEntity<?> save(@RequestBody JobDTO jobDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(jobService.save(jobDTO));
     }
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<CollectionModel<EntityModel<JobDTO>>> findAll(){
         return ResponseEntity.ok(jobService.findAll());
     }

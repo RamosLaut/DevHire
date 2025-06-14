@@ -3,7 +3,6 @@ package TP_Final.devhire.Security.Entities;
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.DeveloperEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -52,9 +51,14 @@ public class CredentialsEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
-        roles.forEach(rol -> authorities.add(
-                new SimpleGrantedAuthority(rol.getRole().name())));
 
+        for (RoleEntity role : roles) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRole().name().replace("ROLE_", "")));
+
+            for (PermitEntity permit : role.getPermits()) {
+                authorities.add(new SimpleGrantedAuthority(permit.getPermit().name()));
+            }
+        }
         return authorities;
     }
     @Override

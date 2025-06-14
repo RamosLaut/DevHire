@@ -45,7 +45,7 @@ public class FollowController {
                     @ApiResponse(responseCode = "400", description = "Datos inválidos")
             }
     )
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<EntityModel<FollowResponseDTO>> saveFollow(@RequestBody @Valid FollowRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(followService.saveFollow(dto));
     }
@@ -70,7 +70,7 @@ public class FollowController {
             summary = "Listar todos los seguimientos",
             description = "Devuelve todos los seguimientos registrados en la plataforma."
     )
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> findAll() {
         return ResponseEntity.ok(followService.findAll());
     }
@@ -157,7 +157,7 @@ public class FollowController {
                     )
             )
     )
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteById(@RequestBody @Valid FollowRequestDTO dto) {
         return followService.deleteById(dto);
     }

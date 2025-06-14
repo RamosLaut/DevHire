@@ -25,7 +25,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Tag(name = "Developers", description = "Operaciones relacionadas con programadores registrados en la plataforma")
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/dev")
 public class DeveloperController {
     private final DeveloperService developerService;
     private final DeveloperAssembler developerAssembler;
@@ -56,7 +56,7 @@ public class DeveloperController {
             summary = "Listar todos los programadores",
             responses = @ApiResponse(responseCode = "200", description = "Lista de programadores", content = @Content(array = @ArraySchema(schema = @Schema(implementation = DeveloperDTO.class))))
     )
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<CollectionModel<EntityModel<DeveloperDTO>>> listAllDevs() {
         List<EntityModel<DeveloperDTO>> users = developerService.findAll();
        return ResponseEntity.ok(
@@ -140,7 +140,7 @@ public class DeveloperController {
                     content = @Content(schema = @Schema(implementation = DeveloperDTO.class))
             )
     )
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<EntityModel<DeveloperDTO>> updateDev(@PathVariable Long id, @RequestBody DeveloperDTO dto) {
         return ResponseEntity.ok(developerAssembler.toModel(developerService.updateUserFields(id, dto)));
     }

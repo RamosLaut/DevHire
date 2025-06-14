@@ -62,7 +62,7 @@ public class LikeController {
         likeService.save(publicationId);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<CollectionModel<EntityModel<LikeDTO>>>findAll(){
         return ResponseEntity.ok(likeService.findAll());
     }
@@ -227,7 +227,7 @@ public class LikeController {
             }
 
     )
-    @DeleteMapping("/{id}")
+    @DeleteMapping("unlike/{id}")
     public ResponseEntity<?>deleteById(@PathVariable long id) {
         likeService.deleteById(id);
         return ResponseEntity.noContent().build();

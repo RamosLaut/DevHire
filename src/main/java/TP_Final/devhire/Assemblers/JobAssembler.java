@@ -1,5 +1,6 @@
 package TP_Final.devhire.Assemblers;
 
+import TP_Final.devhire.Controllers.ApplicationController;
 import TP_Final.devhire.Controllers.JobController;
 import TP_Final.devhire.DTOS.JobDTO;
 import TP_Final.devhire.Entities.JobEntity;
@@ -24,7 +25,8 @@ public class JobAssembler implements RepresentationModelAssembler<JobEntity, Ent
               linkTo(methodOn(JobController.class).findById(entity.getId())).withSelfRel(),
               linkTo(methodOn(JobController.class).findJobOfferRequirements(entity.getId())).withRel("Requirements"),
               linkTo(methodOn(JobController.class).deleteJobOffer(entity.getId())).withRel("Delete"),
-              linkTo(methodOn(JobController.class).findAvailableSkills(entity.getId())).withRel("Skills to add"));
+              linkTo(methodOn(JobController.class).findAvailableSkills(entity.getId())).withRel("Skills to add"),
+              linkTo(methodOn(ApplicationController.class).getApplicantsByJobId(entity.getId())).withRel("See applicants"));
     }
     public @NonNull EntityModel<JobDTO> toDevModel(@NonNull JobEntity entity) {
         JobDTO jobDTO = mapper.convertToDTO(entity);
