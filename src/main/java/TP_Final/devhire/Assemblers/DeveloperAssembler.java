@@ -33,6 +33,7 @@ public class DeveloperAssembler implements RepresentationModelAssembler<Develope
     }
     public EntityModel<DeveloperApplicantDTO> toModelApplication(DeveloperEntity entity, Long jobId) {
         DeveloperApplicantDTO applicantDTO = developerMapper.convertToApplicantDTO(entity);
+        applicantDTO.setEmail(entity.getCredentials().getEmail());
         return EntityModel.of(applicantDTO,
                 linkTo(methodOn(DeveloperController.class).getDevById(entity.getId())).withRel("View profile"),
                 linkTo(methodOn(ApplicationController.class).discardApplicantByDevId(entity.getId(), jobId)).withRel("Discard application"));

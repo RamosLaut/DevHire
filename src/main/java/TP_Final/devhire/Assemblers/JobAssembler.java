@@ -31,7 +31,6 @@ public class JobAssembler implements RepresentationModelAssembler<JobEntity, Ent
     public @NonNull EntityModel<JobDTO> toDevModel(@NonNull JobEntity entity) {
         JobDTO jobDTO = mapper.convertToDTO(entity);
         return EntityModel.of(jobDTO,
-                linkTo(methodOn(JobController.class).findById(entity.getId())).withRel("View this job"),
                 linkTo(methodOn(JobController.class).apply(entity.getId())).withRel("Apply to this job"),
                 linkTo(methodOn(JobController.class).findJobOfferRequirements(entity.getId())).withRel("Requirements"));
     }

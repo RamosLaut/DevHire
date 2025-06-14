@@ -28,11 +28,9 @@ public class CompanyEntity {
     @NotEmpty
     @Column(unique = true)
     private String name;
-
     private String location;
     private String description;
-    @NotNull
-    private Boolean enabled;
+    private Boolean enabled = true;
     @OneToMany(mappedBy = "company")
     private List<JobEntity> jobs;
     @OneToMany(mappedBy = "company")

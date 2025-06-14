@@ -77,13 +77,13 @@ public class JobService {
         }
     }
     public EntityModel<JobDTO> findById(Long jobId) throws NotFoundException {
+        if(jobRepository.findById(jobId).isEmpty()){
+            throw new NotFoundException("Job not found");
+        }
+        JobEntity job = jobRepository.findById(jobId).get();
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isPresent()){
             CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
-            if(jobRepository.findById(jobId).isEmpty()){
-                throw new NotFoundException("Job not found");
-            }
-            JobEntity job = jobRepository.findById(jobId).get();
             if(company.getJobs().contains(job)){
                 return jobAssembler.toModel(job);
             }else {
@@ -95,9 +95,10 @@ public class JobService {
     }
     public CollectionModel<EntityModel<JobDTO>> findOwnOffers() throws NotFoundException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        CompanyEntity company = companyRepository.findByCredentials_Email(email)
-                .orElseThrow(()->new NotFoundException("Company not found"));
-
+        if(companyRepository.findByCredentials_Email(email).isEmpty()){
+            throw new UnauthorizedException("You need to be registered as a company to view your own job offers");
+        }
+        CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
         List<EntityModel<JobDTO>> jobs = company.getJobs().stream()
                 .map(jobAssembler::toModel)
                 .toList();

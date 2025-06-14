@@ -36,7 +36,7 @@ public class CommentAssembler implements RepresentationModelAssembler<CommentEnt
             commentDTO.setName(entity.getDeveloper().getName());
         }
         return EntityModel.of(commentDTO, linkTo(methodOn(CommentController.class).findById(entity.getId())).withSelfRel(),
-                linkTo(methodOn(CommentController.class).updateContent(entity)).withRel("Update content"),
+                linkTo(methodOn(CommentController.class).updateContent(commentDTO)).withRel("Update content"),
                 linkTo(methodOn(CommentController.class).deleteById(entity.getId())).withRel("Delete"));
     }
 }

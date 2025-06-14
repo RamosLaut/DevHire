@@ -1,13 +1,12 @@
 package TP_Final.devhire.Entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 @Getter
@@ -23,10 +22,8 @@ public class PublicationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotEmpty
     private String content;
-    private Timestamp publicationDate = Timestamp.valueOf(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
-    @NotNull
+    private LocalDateTime publicationDate;
     private Boolean state = true;
     @ManyToOne
     @JoinColumn(name = "dev_id", foreignKey = @ForeignKey(name = "FK_dev_publication"))

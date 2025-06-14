@@ -9,10 +9,10 @@ import lombok.Setter;
 public class CompanyDTO {
     @NotNull
     Long id;
-    @NotEmpty
+    @NotEmpty(message = "Company name cannot be empty")
     String name;
-    @NotEmpty
+    @NotEmpty(message = "Company location cannot be empty")
     String location;
-    @NotEmpty
+    @NotEmpty(message = "Company description cannot be empty")
     String description;
 }

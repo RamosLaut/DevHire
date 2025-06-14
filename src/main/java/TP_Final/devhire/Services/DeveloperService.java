@@ -30,7 +30,6 @@ public class DeveloperService {
         this.developerAssembler = developerAssembler;
     }
 
-
     public EntityModel<DeveloperDTO> register(DeveloperRegisterDTO dto) {
         if (developerRepository.findByCredentials_Email(dto.getEmail()).isPresent()) {
             throw new RuntimeException("The email is already registered");

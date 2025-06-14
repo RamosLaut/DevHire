@@ -1,11 +1,11 @@
 package TP_Final.devhire.Entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Getter
@@ -29,9 +29,7 @@ public class CommentEntity {
     @ManyToOne
     @JoinColumn(name = "company_id", foreignKey = @ForeignKey(name = "FK_company_comment"))
     private CompanyEntity company;
-    @NotEmpty
     private String content;
-    private Timestamp commentDate = Timestamp.valueOf(LocalDateTime.now());
-    @NotNull
+    private LocalDateTime commentDate = LocalDateTime.now();
     private Boolean state = true;
 }
