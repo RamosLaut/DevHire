@@ -16,16 +16,24 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
 public class CompanyAssembler implements RepresentationModelAssembler<CompanyEntity, EntityModel<CompanyDTO>> {
     CompanyMapper mapper;
+
     @Autowired
     public CompanyAssembler(CompanyMapper mapper) {
         this.mapper = mapper;
     }
+
     @Override
     public @NonNull EntityModel<CompanyDTO> toModel(@NonNull CompanyEntity entity) {
         CompanyDTO companyDTO = mapper.convertToDTO(entity);
-            return EntityModel.of(companyDTO,
-                    linkTo(methodOn(CompanyController.class).findById(entity.getId())).withSelfRel(),
-                    linkTo(methodOn(CompanyController.class).deleteOwnCompany()).withRel("Delete"),
-                    linkTo(methodOn(CompanyController.class).updateOwnCompany(companyDTO)).withRel("Update"));
-        }
+        return EntityModel.of(companyDTO,
+                linkTo(methodOn(CompanyController.class).findById(entity.getId())).withSelfRel());
+    }
+
+    public @NonNull EntityModel<CompanyDTO> toOwnCompanyModel(@NonNull CompanyEntity entity) {
+        CompanyDTO companyDTO = mapper.convertToDTO(entity);
+        return EntityModel.of(companyDTO,
+                linkTo(methodOn(CompanyController.class).findById(entity.getId())).withSelfRel(),
+                linkTo(methodOn(CompanyController.class).deleteOwnCompany()).withRel("Delete"),
+                linkTo(methodOn(CompanyController.class).updateOwnCompany(companyDTO)).withRel("Update"));
+    }
 }

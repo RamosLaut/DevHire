@@ -19,6 +19,8 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -48,13 +50,48 @@ public class JobService {
         return jobAssembler.toModel(jobEntity);
     }
     public CollectionModel<EntityModel<JobDTO>> findAll() {
-        List<EntityModel<JobDTO>> jobs = jobRepository.findAll().stream()
-                .map(jobAssembler::toModel)
-                .toList();
-        return CollectionModel.of(jobs);
+        List<EntityModel<JobDTO>> jobs = List.of();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (companyRepository.findByCredentials_Email(email).isPresent()){
+            CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+            List<EntityModel<JobDTO>> ownOffers = jobRepository.findAll().stream()
+                    .filter(job -> company.equals(job.getCompany()))
+                    .map(jobAssembler::toModel)
+                    .toList();
+            List<EntityModel<JobDTO>> otherOffers = jobRepository.findAll().stream()
+                    .filter(job -> !company.equals(job.getCompany()))
+                    .map(jobAssembler::toDevModel)
+                    .toList();
+            List<EntityModel<JobDTO>> allOffers = Stream.concat(ownOffers.stream(), otherOffers.stream()).toList();
+            if(allOffers.isEmpty()){
+                throw new NotFoundException("No jobs were found");
+            }
+            return CollectionModel.of(allOffers);
+        }else {
+            if(jobRepository.findAll().isEmpty()){
+                throw new NotFoundException("No jobs were found");
+            }
+            return CollectionModel.of(jobRepository.findAll().stream()
+                    .map(jobAssembler::toDevModel)
+                    .toList());
+        }
     }
     public EntityModel<JobDTO> findById(Long jobId) throws NotFoundException {
-        return jobAssembler.toModel(jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Job not found")));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(companyRepository.findByCredentials_Email(email).isPresent()){
+            CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+            if(jobRepository.findById(jobId).isEmpty()){
+                throw new NotFoundException("Job not found");
+            }
+            JobEntity job = jobRepository.findById(jobId).get();
+            if(company.getJobs().contains(job)){
+                return jobAssembler.toModel(job);
+            }else {
+                return jobAssembler.toDevModel(job);
+            }
+        } else{
+            return jobAssembler.toDevModel(jobRepository.findById(jobId).orElseThrow(() -> new NotFoundException("Job not found")));
+        }
     }
     public CollectionModel<EntityModel<JobDTO>> findOwnOffers() throws NotFoundException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -64,6 +101,9 @@ public class JobService {
         List<EntityModel<JobDTO>> jobs = company.getJobs().stream()
                 .map(jobAssembler::toModel)
                 .toList();
+        if(jobs.isEmpty()){
+            throw new NotFoundException("No jobs were found");
+        }
         return CollectionModel.of(jobs);
     }
     public CollectionModel<SkillModel> getSkills(long id)throws NotFoundException {
@@ -112,8 +152,12 @@ public class JobService {
         JobEntity job = jobRepository.findById(jobId).get();
         List<String> hardSkills = job.getHardSkills().stream().map(Enum::name).toList();
         List<String> softSkills = job.getSoftSkills().stream().map(Enum::name).toList();
-        return Stream.concat(hardSkills.stream(), softSkills.stream())
+        List<String> allSkills = Stream.concat(hardSkills.stream(), softSkills.stream())
                 .toList();
+        if(allSkills.isEmpty()){
+            throw new NotFoundException("No skills required were found for this job");
+        }
+        return allSkills;
     }
     public EntityModel<JobDTO> update(long jobId, JobDTO jobDTO)throws NotFoundException, UnauthorizedException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -168,15 +212,32 @@ public class JobService {
                 .filter(job -> maybeHardSkill.map(job.getHardSkills()::contains).orElse(false)
                         || maybeSoftSkill.map(job.getSoftSkills()::contains).orElse(false))
                 .toList();
-
-        return CollectionModel.of(filteredJobs.stream().map(jobAssembler::toModel).toList());
+        if (filteredJobs.isEmpty()) {
+            throw new NotFoundException("No jobs were found with this skill requirement.");
+        }
+        return CollectionModel.of(filteredJobs.stream().map(jobAssembler::toDevModel).toList());
     }
     public CollectionModel<EntityModel<JobDTO>> findByCompanyName(String name)throws NotFoundException{
         Optional<CompanyEntity> companyOpt = companyRepository.findAll().stream()
                 .filter(company -> company.getName().equalsIgnoreCase(name))
                 .findFirst();
         if(companyOpt.isPresent()){
-            return CollectionModel.of(companyOpt.get().getJobs().stream().map(jobAssembler::toModel).toList());
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            if(companyRepository.findByCredentials_Email(email).isPresent()){
+                CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+                if(company.equals(companyOpt.get())){
+                    if(companyOpt.get().getJobs().isEmpty()){
+                        throw new NotFoundException("Company has no jobs available");
+                    }
+                    return CollectionModel.of(companyOpt.get().getJobs().stream().map(jobAssembler::toModel).toList());
+                }else {
+                    return CollectionModel.of(companyOpt.get().getJobs().stream().map(jobAssembler::toDevModel).toList());
+                }
+            }
+            if(companyOpt.get().getJobs().isEmpty()){
+                throw new NotFoundException("Company has no jobs available");
+            }
+            return CollectionModel.of(companyOpt.get().getJobs().stream().map(jobAssembler::toDevModel).toList());
         }else throw new NotFoundException("Company not found");
     }
 }

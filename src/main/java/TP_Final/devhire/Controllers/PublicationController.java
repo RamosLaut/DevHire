@@ -80,6 +80,7 @@ public class PublicationController {
     public ResponseEntity<EntityModel<PublicationDTO>> findById(@PathVariable Long publicationId){
         return ResponseEntity.ok(publicationService.findById(publicationId));
     }
+<<<<<<< Feature/FollowCorrections
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>>findAllByDevId(@PathVariable Long devId){
@@ -130,6 +131,17 @@ public class PublicationController {
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @DeleteMapping("/{publicationId}")
+=======
+    @GetMapping("/user/{devId}")
+    public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>>findAllByDevId(@PathVariable Long devId){
+        return ResponseEntity.ok(publicationService.findByDevId(devId));
+    }
+    @PatchMapping("/update")
+    public ResponseEntity<EntityModel<PublicationDTO>>updateContent(@RequestBody PublicationEntity publicationEntity){
+        return ResponseEntity.ok(publicationService.updateContent(publicationEntity));
+    }
+    @DeleteMapping("/delete/{publicationId}")
+>>>>>>> Develop
     public ResponseEntity<?> deleteById(@PathVariable Long publicationId){
         publicationService.deleteById(publicationId);
         return ResponseEntity.noContent().build();
