@@ -47,7 +47,7 @@ public class ApplicationController {
     public ResponseEntity<CollectionModel<EntityModel<DeveloperApplicantDTO>>> getApplicantsWithMinHardRequirement(@PathVariable Long jobId, @RequestParam int min){
         return ResponseEntity.ok(applicationService.findApplicantsWithMinHardRequirements(jobId, min));
     }
-    @DeleteMapping("/job/{jobId}/discardApplicant/{devId}")
+    @DeleteMapping("discardApplicant/{devId}/job/{jobId}")
     public ResponseEntity<?> discardApplicantByDevId(@PathVariable Long devId, @PathVariable Long jobId){
         applicationService.discardApplicantByDevId(devId, jobId);
         return ResponseEntity.noContent().build();

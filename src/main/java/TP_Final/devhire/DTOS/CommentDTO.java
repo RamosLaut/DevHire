@@ -1,8 +1,9 @@
 package TP_Final.devhire.DTOS;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -12,7 +13,8 @@ import java.sql.Timestamp;
 public class CommentDTO {
     private Long id;
     private String name;
-    private long publicationID;
+    private String publicationContent;
+    @NotBlank(message = "Comment content cannot be empty")
     private String content;
-    private Timestamp date;
+    private LocalDateTime commentDate = LocalDateTime.now();
 }

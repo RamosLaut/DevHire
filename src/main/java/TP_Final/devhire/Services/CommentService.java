@@ -6,6 +6,7 @@ import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.DeveloperEntity;
 import TP_Final.devhire.Entities.PublicationEntity;
 import TP_Final.devhire.Exceptions.*;
+import TP_Final.devhire.Mappers.CommentMapper;
 import TP_Final.devhire.Repositories.CommentRepository;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.DeveloperRepository;
@@ -31,15 +32,18 @@ public class CommentService {
     private final CompanyRepository companyRepository;
     private final DeveloperRepository developerRepository;
     private final PublicationsRepository publicationsRepository;
+    private final CommentMapper mapper;
     @Autowired
-    public CommentService(CommentRepository commentRepository, CommentAssembler assembler, CompanyRepository companyRepository, DeveloperRepository developerRepository, PublicationsRepository publicationsRepository) {
+    public CommentService(CommentRepository commentRepository, CommentAssembler assembler, CompanyRepository companyRepository, DeveloperRepository developerRepository, PublicationsRepository publicationsRepository, CommentMapper mapper) {
         this.commentRepository = commentRepository;
         this.assembler = assembler;
         this.companyRepository = companyRepository;
         this.developerRepository = developerRepository;
         this.publicationsRepository = publicationsRepository;
+        this.mapper = mapper;
     }
-    public EntityModel<CommentDTO> save(CommentEntity comment, @NonNull Long publicationId)throws NotFoundException, ContentRequiredException, CredentialsRequiredException{
+    public EntityModel<CommentDTO> save(CommentDTO commentDTO, @NonNull Long publicationId)throws NotFoundException, ContentRequiredException, CredentialsRequiredException{
+        CommentEntity comment = mapper.convertToEntity(commentDTO);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isPresent())
         {
@@ -50,9 +54,6 @@ public class CommentService {
         Optional<PublicationEntity> publicationOpt = publicationsRepository.findById(publicationId);
         if(publicationOpt.isEmpty()){
             throw new NotFoundException("Publication not found");
-        }
-        if(comment.getContent()==null){
-            throw new ContentRequiredException("Comment content required");
         }
         comment.setPublication(publicationOpt.get());
         commentRepository.save(comment);
@@ -136,26 +137,23 @@ public class CommentService {
         }else throw new CredentialsRequiredException("You need to be logged in to see comments");
     }
     @Transactional
-    public EntityModel<CommentDTO> updateContent(CommentEntity comment)throws IdRequiredException, NotFoundException, UnauthorizedException, ContentRequiredException{
+    public EntityModel<CommentDTO> updateContent(CommentDTO commentDTO)throws IdRequiredException, NotFoundException, UnauthorizedException, ContentRequiredException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(comment.getId()==null){
+        if(commentDTO.getId()==null){
             throw new IdRequiredException("Comment ID required");
         }
-        if(comment.getContent()==null){
-            throw new ContentRequiredException("Comment content required");
-        }
-        CommentEntity commentEntity = commentRepository.findById(comment.getId())
+        CommentEntity commentEntity = commentRepository.findById(commentDTO.getId())
                 .orElseThrow(()->new NotFoundException("Comment not found"));
         Optional<CompanyEntity> companyOpt = companyRepository.findByCredentials_Email(email);
         Optional<DeveloperEntity> devOpt = developerRepository.findByCredentials_Email(email);
         if (companyOpt.isPresent() && companyOpt.get().getComments().contains(commentEntity)) {
-            commentEntity.setContent(comment.getContent());
-            commentRepository.updateContent(comment.getContent(), comment.getId());
+            commentEntity.setContent(commentDTO.getContent());
+            commentRepository.updateContent(commentDTO.getContent(), commentDTO.getId());
             return assembler.toModel(commentEntity);
         }
         if (devOpt.isPresent() && devOpt.get().getComments().contains(commentEntity)) {
-            commentEntity.setContent(comment.getContent());
-            commentRepository.updateContent(comment.getContent(), comment.getId());
+            commentEntity.setContent(commentDTO.getContent());
+            commentRepository.updateContent(commentDTO.getContent(), commentDTO.getId());
             return assembler.toModel(commentEntity);
         }
         throw new UnauthorizedException("You are not authorized to update this comment");

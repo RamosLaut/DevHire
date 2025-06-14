@@ -1,8 +1,9 @@
 package TP_Final.devhire.DTOS;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -12,6 +13,7 @@ import java.sql.Timestamp;
 public class PublicationDTO {
     private Long id;
     private String name;
-    private Timestamp date;
+    private LocalDateTime publicationDate = LocalDateTime.now();
+    @NotBlank(message = "Publication content cannot be empty")
     private String content;
 }

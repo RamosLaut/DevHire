@@ -59,7 +59,7 @@ public class SecurityConfig {
                         .requestMatchers("/publication/update").hasAuthority("UPDATE_PUBLICATION")
                         .requestMatchers("/publication/delete/*").hasAuthority("DELETE_PUBLICATION")
                         .requestMatchers("/publication/ownPublications").hasAuthority("READ_PUBLICATIONS")
-                        .requestMatchers("/comment/publication/*").hasAuthority("CREATE_COMMENTS")
+                        .requestMatchers("/comment/publication/*").hasAuthority("CREATE_COMMENT")
                         .requestMatchers("/comment/all").hasAuthority("READ_COMMENTS")
                         .requestMatchers("/comment/ownComments").hasAuthority("FILTER_COMMENTS")
                         .requestMatchers("/comment/*").hasAuthority("FILTER_COMMENTS")

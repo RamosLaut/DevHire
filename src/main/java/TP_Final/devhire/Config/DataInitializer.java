@@ -44,8 +44,8 @@ public class DataInitializer implements CommandLineRunner {
                 Permits.FILTER_COMMENTS, Permits.UPDATE_COMMENT,
                 Permits.DELETE_COMMENT,
 
-                Permits.LIKE_PUBLICATION,
-                Permits.UNLIKE_PUBLICATION, Permits.FILTER_LIKES,
+                Permits.LIKE_PUBLICATION, Permits.UNLIKE_PUBLICATION,
+                Permits.FILTER_LIKES, Permits.READ_LIKES,
 
                 Permits.READ_JOBS, Permits.FILTER_JOBS,
                 Permits.READ_JOB_REQUIREMENTS, Permits.APPLY_TO_JOB,
@@ -74,7 +74,7 @@ public class DataInitializer implements CommandLineRunner {
                 Permits.DELETE_COMMENT,
 
                 Permits.LIKE_PUBLICATION, Permits.UNLIKE_PUBLICATION,
-                Permits.FILTER_LIKES,
+                Permits.FILTER_LIKES, Permits.READ_LIKES,
 
                 Permits.CREATE_JOB, Permits.UPDATE_JOB,
                 Permits.READ_JOBS, Permits.FILTER_JOBS,
@@ -86,7 +86,7 @@ public class DataInitializer implements CommandLineRunner {
                 Permits.FILTER_FOLLOWERS, Permits.FILTER_FOLLOWING,
 
                 Permits.READ_APPLICANTS, Permits.FILTER_APPLICANTS,
-                Permits.DISCARD_APPLICANTS
+                Permits.DISCARD_APPLICANT
 
         ));
 

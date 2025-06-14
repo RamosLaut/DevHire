@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -61,8 +62,8 @@ public class CommentController {
 //            }
 //    )
     @PostMapping("/publication/{publicationId}")
-    public ResponseEntity<?> save(@RequestBody CommentEntity comment, @PathVariable Long publicationId){
-        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.save(comment, publicationId));
+    public ResponseEntity<?> save(@RequestBody @Valid CommentDTO commentDTO, @PathVariable Long publicationId){
+        return ResponseEntity.status(HttpStatus.CREATED).body(commentService.save(commentDTO, publicationId));
     }
 
     @Operation(summary = "Obtener todos los comentarios")
@@ -196,8 +197,8 @@ public class CommentController {
 //            }
 //    )
     @PatchMapping("/update")
-    public ResponseEntity<EntityModel<CommentDTO>> updateContent(@RequestBody CommentEntity comment){
-        return ResponseEntity.ok().body(commentService.updateContent(comment));
+    public ResponseEntity<EntityModel<CommentDTO>> updateContent(@RequestBody CommentDTO commentDTO){
+        return ResponseEntity.ok().body(commentService.updateContent(commentDTO));
     }
 
     @Operation(

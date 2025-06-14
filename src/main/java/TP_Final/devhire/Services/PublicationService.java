@@ -6,6 +6,7 @@ import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.PublicationEntity;
 import TP_Final.devhire.Entities.DeveloperEntity;
 import TP_Final.devhire.Exceptions.*;
+import TP_Final.devhire.Mappers.PublicationMapper;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.PublicationsRepository;
 import TP_Final.devhire.Repositories.DeveloperRepository;
@@ -25,23 +26,26 @@ public class PublicationService{
     private final PublicationAssembler publicationAssembler;
     private final CompanyRepository companyRepository;
     private final DeveloperRepository developerRepository;
+    private final PublicationMapper mapper;
     @Autowired
-    public PublicationService(PublicationsRepository publicationsRepository, PublicationAssembler publicationAssembler, CompanyRepository companyRepository, DeveloperRepository developerRepository) {
+    public PublicationService(PublicationsRepository publicationsRepository, PublicationAssembler publicationAssembler, CompanyRepository companyRepository, DeveloperRepository developerRepository, PublicationMapper mapper) {
         this.publicationsRepository = publicationsRepository;
         this.publicationAssembler = publicationAssembler;
         this.companyRepository = companyRepository;
         this.developerRepository = developerRepository;
+        this.mapper = mapper;
     }
 
-    public EntityModel<PublicationDTO> save(PublicationEntity publicationEntity) {
+    public EntityModel<PublicationDTO> save(PublicationDTO publicationDTO) {
+        PublicationEntity publication = mapper.convertToPublicationEntity(publicationDTO);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<CompanyEntity> companyOpt = companyRepository.findByCredentials_Email(email);
         Optional<DeveloperEntity> devOpt = developerRepository.findByCredentials_Email(email);
         if (companyOpt.isPresent()) {
-            publicationEntity.setCompany(companyOpt.get());
-        } else devOpt.ifPresent(publicationEntity::setDeveloper);
-        publicationsRepository.save(publicationEntity);
-        return publicationAssembler.toModel(publicationEntity);
+            publication.setCompany(companyOpt.get());
+        } else devOpt.ifPresent(publication::setDeveloper);
+        publicationsRepository.save(publication);
+        return publicationAssembler.toModel(publication);
     }
     public CollectionModel<EntityModel<PublicationDTO>> findAll(){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -60,7 +64,7 @@ public class PublicationService{
                     .filter(pub -> !company.equals(pub.getCompany()))
                     .map(publicationAssembler::toModel)
                     .toList();
-            List<EntityModel<PublicationDTO>> allPublications = Stream.concat(otherPublications.stream(),ownPublications.stream()).toList();
+            List<EntityModel<PublicationDTO>> allPublications = Stream.concat(ownPublications.stream(), otherPublications.stream()).toList();
             if(allPublications.isEmpty()){
                 throw new NotFoundException("No publications found");
             }
@@ -77,7 +81,7 @@ public class PublicationService{
                     .filter(pub -> !developer.equals(pub.getDeveloper()))
                     .map(publicationAssembler::toModel)
                     .toList();
-            List<EntityModel<PublicationDTO>> allPublications = Stream.concat(ownPublications.stream(), otherPublications.stream()).toList();
+            List<EntityModel<PublicationDTO>> allPublications = Stream.concat(otherPublications.stream(), ownPublications.stream()).toList();
             if(allPublications.isEmpty()){
                 throw new NotFoundException("No publications found");
             }
@@ -146,27 +150,21 @@ public class PublicationService{
             publicationsRepository.deleteById(id);
         }else throw new UnauthorizedException("You don't have permission to delete this publication");
     }
-    public EntityModel<PublicationDTO> updateContent(PublicationEntity publicationEntity)throws UnauthorizedException, NotFoundException, IdRequiredException{
+    public EntityModel<PublicationDTO> updateContent(PublicationDTO publicationDTO)throws UnauthorizedException, NotFoundException, IdRequiredException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<CompanyEntity> companyOpt = companyRepository.findByCredentials_Email(email);
-        Optional<DeveloperEntity> devOpt = developerRepository.findByCredentials_Email(email);
-        if(publicationEntity.getId()==null){
-            throw new IdRequiredException("Publication ID required");
+        PublicationEntity publication = publicationsRepository.findById(publicationDTO.getId()).orElseThrow(()-> new NotFoundException("Publication not found"));
+        if(companyRepository.findByCredentials_Email(email).isPresent()){
+            CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+            if(publication.getCompany() != null && company.equals(publication.getCompany())){
+                publicationsRepository.updateContent(publicationDTO.getContent(), publicationDTO.getId());
+            }else throw new UnauthorizedException("You don't have permission to update this publication");
         }
-        if(publicationsRepository.findById(publicationEntity.getId()).isEmpty()){
-            throw new NotFoundException("Publication not found");
+        if(developerRepository.findByCredentials_Email(email).isPresent()){
+            DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
+            if(publication.getDeveloper() != null && developer.equals(publication.getDeveloper())){
+                publicationsRepository.updateContent(publicationDTO.getContent(), publicationDTO.getId());
+            }else throw new UnauthorizedException("You don't have permission to update this publication");
         }
-        if(publicationEntity.getContent()==null){
-            throw new RuntimeException("Publication content required");
-        }
-        Optional<PublicationEntity> publicationOpt = publicationsRepository.findById(publicationEntity.getId());
-        if(publicationOpt.get().getDeveloper() != null && devOpt.isPresent() && devOpt.get().equals(publicationOpt.get().getDeveloper())) {
-            publicationEntity.setDeveloper(publicationOpt.get().getDeveloper());
-            publicationsRepository.updateContent(publicationEntity.getContent(), publicationEntity.getId());
-        }else if(publicationOpt.get().getCompany() != null && companyOpt.isPresent() && companyOpt.get().equals(publicationOpt.get().getCompany())){
-            publicationEntity.setCompany(publicationOpt.get().getCompany());
-            publicationsRepository.updateContent(publicationEntity.getContent(), publicationEntity.getId());
-        }else throw new UnauthorizedException("You don't have permission to update this publication");
-        return publicationAssembler.toOwnPublicationModel(publicationEntity);
+        return publicationAssembler.toOwnPublicationModel(publication);
     }
 }

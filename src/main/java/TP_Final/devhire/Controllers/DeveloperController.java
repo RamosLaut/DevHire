@@ -36,7 +36,6 @@ public class DeveloperController {
         this.developerAssembler = developerAssembler;
     }
 
-
     @Operation(
             summary = "Obtener programador por ID",
             parameters = {
@@ -60,9 +59,7 @@ public class DeveloperController {
     public ResponseEntity<CollectionModel<EntityModel<DeveloperDTO>>> listAllDevs() {
         List<EntityModel<DeveloperDTO>> users = developerService.findAll();
        return ResponseEntity.ok(
-                CollectionModel.of(users,
-                        linkTo(methodOn(DeveloperController.class).listAllDevs()).withSelfRel())
-        );
+                CollectionModel.of(users));
     }
 
     @Operation(

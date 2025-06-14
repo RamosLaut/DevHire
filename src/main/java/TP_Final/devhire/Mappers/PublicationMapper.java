@@ -13,7 +13,7 @@ public class PublicationMapper {
     public PublicationDTO converToPublicationDTO(PublicationEntity publication){
         return modelMapper.map(publication, PublicationDTO.class);
     }
-    public PublicationEntity convertPublicationDTO(PublicationDTO publicationDto){
+    public PublicationEntity convertToPublicationEntity(PublicationDTO publicationDto){
         return modelMapper.map(publicationDto, PublicationEntity.class);
     }
 }

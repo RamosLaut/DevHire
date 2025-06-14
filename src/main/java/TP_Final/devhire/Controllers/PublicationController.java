@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -39,8 +40,8 @@ public class PublicationController {
     })
     @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/post")
-    public ResponseEntity<EntityModel<PublicationDTO>> save(@RequestBody PublicationEntity publicationEntity) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(publicationService.save(publicationEntity));
+    public ResponseEntity<EntityModel<PublicationDTO>> save(@RequestBody @Valid PublicationDTO publicationDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(publicationService.save(publicationDTO));
     }
 
 
@@ -102,8 +103,8 @@ public class PublicationController {
     })
     @SecurityRequirement(name = "bearerAuth")
     @PatchMapping("/update")
-    public ResponseEntity<EntityModel<PublicationDTO>>updateContent(@RequestBody PublicationEntity publicationEntity){
-        return ResponseEntity.ok(publicationService.updateContent(publicationEntity));
+    public ResponseEntity<EntityModel<PublicationDTO>>updateContent(@RequestBody PublicationDTO publicationDTO){
+        return ResponseEntity.ok(publicationService.updateContent(publicationDTO));
     }
 
     @Operation(

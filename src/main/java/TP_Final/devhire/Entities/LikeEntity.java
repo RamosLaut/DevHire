@@ -4,9 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+
 
 @Getter
 @Setter
@@ -29,7 +28,7 @@ public class LikeEntity {
     @ManyToOne
     @JoinColumn(name = "publication_id", foreignKey = @ForeignKey(name = "FK_publication_like"))
     private PublicationEntity publication;
-    private Timestamp likeDate = Timestamp.valueOf(LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires")));
+    private LocalDateTime likeDate = LocalDateTime.now();
     @NotNull
     private Boolean state = true;
 }

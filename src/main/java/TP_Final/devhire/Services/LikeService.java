@@ -9,6 +9,7 @@ import TP_Final.devhire.Entities.PublicationEntity;
 import TP_Final.devhire.Exceptions.AlreadyExistsException;
 import TP_Final.devhire.Exceptions.CredentialsRequiredException;
 import TP_Final.devhire.Exceptions.NotFoundException;
+import TP_Final.devhire.Exceptions.UnauthorizedException;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.DeveloperRepository;
 import TP_Final.devhire.Repositories.LikeRepository;
@@ -20,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -43,15 +45,26 @@ public class LikeService {
             throw new NotFoundException("Publication not found");
         }
         PublicationEntity publication = publicationsRepository.findById(publicationId).get();
-        if(publication.getLikes().contains(like)){
-            throw new AlreadyExistsException("Like already exists");
-        }
         like.setPublication(publicationsRepository.findById(publicationId).get());
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isPresent()){
-            like.setCompany(companyRepository.findByCredentials_Email(email).get());
+            CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+            Optional<LikeEntity> optLike = company.getLikes().stream()
+                    .filter(l -> publication.equals(like.getPublication()))
+                    .findFirst();
+            if(optLike.isPresent()){
+                throw new AlreadyExistsException("Like already exists");
+            }
+            like.setCompany(company);
         } else if (developerRepository.findByCredentials_Email(email).isPresent()) {
-            like.setDeveloper(developerRepository.findByCredentials_Email(email).get());
+            DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
+            Optional<LikeEntity> optLike = developer.getLikes().stream()
+                    .filter(l -> publication.equals(like.getPublication()))
+                    .findFirst();
+            if(optLike.isPresent()){
+                throw new AlreadyExistsException("Like already exists");
+            }
+            like.setDeveloper(developer);
         }else throw new CredentialsRequiredException("Credentials required");
         likeRepository.save(like);
         return assembler.toModel(like);
@@ -128,14 +141,20 @@ public class LikeService {
         if(likeRepository.findById(id).isEmpty()) {
             throw new NotFoundException("Like not found");
         }
+        LikeEntity like = likeRepository.findById(id).get();
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(companyRepository.findByCredentials_Email(email).isPresent()
-                && likeRepository.findById(id).get().getCompany().equals(companyRepository.findByCredentials_Email(email).get())){
-            likeRepository.deleteById(id);
-        } else if (developerRepository.findByCredentials_Email(email).isPresent()
-                && likeRepository.findById(id).get().getDeveloper().equals(developerRepository.findByCredentials_Email(email).get())) {
-            likeRepository.deleteById(id);
-        }else throw new CredentialsRequiredException("Credentials required");
+        if(companyRepository.findByCredentials_Email(email).isPresent()){
+            CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+            if(company.getLikes().contains(like)){
+                likeRepository.deleteById(id);
+            }else throw new UnauthorizedException("You don't have permission to unlike this publication");
+        }
+        if (developerRepository.findByCredentials_Email(email).isPresent()){
+            DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
+            if(developer.getLikes().contains(like)){
+                likeRepository.deleteById(id);
+            }else throw new UnauthorizedException("You don't have permission to unlike this publication");
+        }
     }
     public CollectionModel<EntityModel<LikeDTO>>findByPublicationId(long publicationId)throws NotFoundException{
         if(publicationsRepository.findById(publicationId).isEmpty()){
