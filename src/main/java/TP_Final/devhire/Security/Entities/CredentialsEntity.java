@@ -3,6 +3,7 @@ package TP_Final.devhire.Security.Entities;
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.DeveloperEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -28,8 +29,8 @@ public class CredentialsEntity implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
     @Column(nullable = false)
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$")
-    @NotEmpty
+//    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$")
+//    @NotEmpty
     private String password;
 
     @OneToOne(mappedBy = "credentials", cascade = CascadeType.ALL)

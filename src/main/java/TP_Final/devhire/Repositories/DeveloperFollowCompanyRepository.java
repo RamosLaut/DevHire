@@ -1,5 +1,7 @@
 package TP_Final.devhire.Repositories;
 
+import TP_Final.devhire.Entities.CompanyEntity;
+import TP_Final.devhire.Entities.DeveloperEntity;
 import TP_Final.devhire.Entities.Follow.CompanyFollowsDeveloper;
 import TP_Final.devhire.Entities.Follow.DeveloperFollowsCompany;
 import TP_Final.devhire.Entities.Follow.DeveloperFollowsCompanyId;
@@ -14,4 +16,7 @@ public interface DeveloperFollowCompanyRepository extends JpaRepository<Develope
     List<DeveloperFollowsCompany> findByIdCompanyFollowedIdAndEnabledTrue(Long companyId);
 
     List<DeveloperFollowsCompany> findByIdDeveloperFollowerIdAndEnabledTrue(Long developerId);
+
+    long countByFollowerAndEnabledTrue(DeveloperEntity follower);
+    long countByFollowedAndEnabledTrue(CompanyEntity followed);
 }

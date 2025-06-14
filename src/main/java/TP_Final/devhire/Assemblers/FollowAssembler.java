@@ -27,20 +27,23 @@ public class FollowAssembler implements RepresentationModelAssembler<FollowRespo
 
     @Override
     public @NonNull EntityModel<FollowResponseDTO> toModel(FollowResponseDTO dto) {
+        if (dto.getType() == null) {
+            throw new IllegalArgumentException("Follow type cannot be null");
+        }
         return switch (dto.getType()) {
-            case "DEVELOPER_TO_DEVELOPER" -> EntityModel.of(dto,
+            case DEVELOPER_TO_DEVELOPER -> EntityModel.of(dto,
                     linkTo(methodOn(FollowController.class).findById(dto.getType(), dto.getFollowerId(), dto.getFollowedId())).withSelfRel(),
                     linkTo(methodOn(DeveloperController.class).getDevById(dto.getFollowerId())).withRel("followerDeveloper"),
                     linkTo(methodOn(DeveloperController.class).getDevById(dto.getFollowedId())).withRel("followedDeveloper"));
-            case "COMPANY_TO_COMPANY" -> EntityModel.of(dto,
+            case COMPANY_TO_COMPANY -> EntityModel.of(dto,
                     linkTo(methodOn(FollowController.class).findById(dto.getType(), dto.getFollowerId(), dto.getFollowedId())).withSelfRel(),
                     linkTo(methodOn(CompanyController.class).findById(dto.getFollowerId())).withRel("followerCompany"),
                     linkTo(methodOn(CompanyController.class).findById(dto.getFollowedId())).withRel("followedCompany"));
-            case "COMPANY_TO_DEVELOPER" -> EntityModel.of(dto,
+            case COMPANY_TO_DEVELOPER -> EntityModel.of(dto,
                     linkTo(methodOn(FollowController.class).findById(dto.getType(), dto.getFollowerId(), dto.getFollowedId())).withSelfRel(),
                     linkTo(methodOn(CompanyController.class).findById(dto.getFollowerId())).withRel("followerCompany"),
                     linkTo(methodOn(DeveloperController.class).getDevById(dto.getFollowedId())).withRel("followedDeveloper"));
-            case "DEVELOPER_TO_COMPANY" -> EntityModel.of(dto,
+            case DEVELOPER_TO_COMPANY -> EntityModel.of(dto,
                     linkTo(methodOn(FollowController.class).findById(dto.getType(), dto.getFollowerId(), dto.getFollowedId())).withSelfRel(),
                     linkTo(methodOn(DeveloperController.class).getDevById(dto.getFollowerId())).withRel("followerDeveloper"),
                     linkTo(methodOn(CompanyController.class).findById(dto.getFollowedId())).withRel("followedCompany"));

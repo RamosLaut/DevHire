@@ -6,6 +6,9 @@ import TP_Final.devhire.DTOS.FollowResponseDTO;
 import TP_Final.devhire.Entities.CompanyEntity;
 import TP_Final.devhire.Entities.DeveloperEntity;
 import TP_Final.devhire.Entities.Follow.*;
+import TP_Final.devhire.Enums.EntityType;
+import TP_Final.devhire.Enums.FollowType;
+import TP_Final.devhire.Exceptions.NotFoundException;
 import TP_Final.devhire.Mappers.FollowMapper;
 import TP_Final.devhire.Repositories.*;
 import TP_Final.devhire.Security.Entities.CredentialsEntity;
@@ -18,11 +21,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+
+import static TP_Final.devhire.Enums.EntityType.COMPANY;
+import static TP_Final.devhire.Enums.EntityType.DEVELOPER;
 
 @Service
 public class FollowService {
@@ -59,8 +67,8 @@ public class FollowService {
     }
 
     public EntityModel<FollowResponseDTO> saveFollow(FollowRequestDTO dto) {
+        completeFollowerFromCredentials(dto);
         validateFollowRequest(dto);
-
         verifyAuthenticatedUserMatchesFollower(dto);
 
         IFollowRelation entity = followMapper.toEntity(dto);
@@ -82,23 +90,32 @@ public class FollowService {
         return followAssembler.toModel(responseDTO);
     }
 
-    public EntityModel<FollowResponseDTO> findById(String type, Long followerId, Long followedId) {
+    public EntityModel<FollowResponseDTO> findById(FollowType type, Long followerId, Long followedId) {
         IFollowRelation entity;
         switch (type) {
-            case "DEVELOPER_TO_DEVELOPER" -> entity = developerFollowsDeveloperRepo.findById(
-                            new DeveloperFollowsDeveloperId(followerId, followedId))
-                    .orElseThrow(() -> new EntityNotFoundException("No follow found"));
-            case "DEVELOPER_TO_COMPANY" -> entity = developerFollowsCompanyRepo.findById(
-                            new DeveloperFollowsCompanyId(followerId, followedId))
-                    .orElseThrow(() -> new EntityNotFoundException("No follow found"));
-            case "COMPANY_TO_DEVELOPER" -> entity = companyFollowsDeveloperRepo.findById(
-                            new CompanyFollowsDeveloperId(followerId, followedId))
-                    .orElseThrow(() -> new EntityNotFoundException("No follow found"));
-            case "COMPANY_TO_COMPANY" -> entity = companyFollowsCompanyRepo.findById(
-                            new CompanyFollowsCompanyId(followerId, followedId))
-                    .orElseThrow(() -> new EntityNotFoundException("No follow found"));
-            default -> throw new IllegalArgumentException("Invalid follow type");
+            case DEVELOPER_TO_DEVELOPER -> {
+                DeveloperFollowsDeveloperId id = new DeveloperFollowsDeveloperId(followerId, followedId);
+                entity = developerFollowsDeveloperRepo.findById(id)
+                        .orElseThrow(() -> new NotFoundException("No follow found for DEVELOPER_TO_DEVELOPER with IDs " + followerId + " -> " + followedId));
+            }
+            case DEVELOPER_TO_COMPANY -> {
+                DeveloperFollowsCompanyId id = new DeveloperFollowsCompanyId(followerId, followedId);
+                entity = developerFollowsCompanyRepo.findById(id)
+                        .orElseThrow(() -> new NotFoundException("No follow found for DEVELOPER_TO_COMPANY with IDs " + followerId + " -> " + followedId));
+            }
+            case COMPANY_TO_DEVELOPER -> {
+                CompanyFollowsDeveloperId id = new CompanyFollowsDeveloperId(followerId, followedId);
+                entity = companyFollowsDeveloperRepo.findById(id)
+                        .orElseThrow(() -> new NotFoundException("No follow found for COMPANY_TO_DEVELOPER with IDs " + followerId + " -> " + followedId));
+            }
+            case COMPANY_TO_COMPANY -> {
+                CompanyFollowsCompanyId id = new CompanyFollowsCompanyId(followerId, followedId);
+                entity = companyFollowsCompanyRepo.findById(id)
+                        .orElseThrow(() -> new NotFoundException("No follow found for COMPANY_TO_COMPANY with IDs " + followerId + " -> " + followedId));
+            }
+            default -> throw new IllegalArgumentException("Invalid follow type: " + type);
         }
+
         FollowResponseDTO responseDTO = followMapper.toDTO(entity);
         return followAssembler.toModel(responseDTO);
     }
@@ -116,74 +133,89 @@ public class FollowService {
 
     public ResponseEntity<Void> deleteById(FollowRequestDTO dto) {
         validateFollowRequest(dto);
-
         verifyAuthenticatedUserMatchesFollower(dto);
 
-        switch (dto.getFollowerType() + "_TO_" + dto.getFollowedType()) {
-            case "DEVELOPER_TO_DEVELOPER" -> {
+        FollowType type = FollowType.valueOf(dto.getFollowerType() + "_TO_" + dto.getFollowedType());
+
+        switch (type) {
+            case DEVELOPER_TO_DEVELOPER -> {
                 DeveloperFollowsDeveloperId id = DeveloperFollowsDeveloperId.builder()
                         .developerFollowerId(dto.getFollowerId())
                         .developerFollowedId(dto.getFollowedId())
                         .build();
+                if (!developerFollowsDeveloperRepo.existsById(id)) {
+                    throw new NotFoundException("No follow found for DEVELOPER_TO_DEVELOPER with IDs " + dto.getFollowerId() + " -> " + dto.getFollowedId());
+                }
                 developerFollowsDeveloperRepo.deleteById(id);
             }
-            case "DEVELOPER_TO_COMPANY" -> {
+            case DEVELOPER_TO_COMPANY -> {
                 DeveloperFollowsCompanyId id = DeveloperFollowsCompanyId.builder()
                         .developerFollowerId(dto.getFollowerId())
                         .companyFollowedId(dto.getFollowedId())
                         .build();
+                if (!developerFollowsCompanyRepo.existsById(id)) {
+                    throw new NotFoundException("No follow found for DEVELOPER_TO_COMPANY with IDs " + dto.getFollowerId() + " -> " + dto.getFollowedId());
+                }
                 developerFollowsCompanyRepo.deleteById(id);
             }
-            case "COMPANY_TO_DEVELOPER" -> {
+            case COMPANY_TO_DEVELOPER -> {
                 CompanyFollowsDeveloperId id = CompanyFollowsDeveloperId.builder()
                         .companyFollowerId(dto.getFollowerId())
                         .developerFollowedId(dto.getFollowedId())
                         .build();
+                if (!companyFollowsDeveloperRepo.existsById(id)) {
+                    throw new NotFoundException("No follow found for COMPANY_TO_DEVELOPER with IDs " + dto.getFollowerId() + " -> " + dto.getFollowedId());
+                }
                 companyFollowsDeveloperRepo.deleteById(id);
             }
-            case "COMPANY_TO_COMPANY" -> {
+            case COMPANY_TO_COMPANY -> {
                 CompanyFollowsCompanyId id = CompanyFollowsCompanyId.builder()
                         .companyFollowerId(dto.getFollowerId())
                         .companyFollowedId(dto.getFollowedId())
                         .build();
+                if (!companyFollowsCompanyRepo.existsById(id)) {
+                    throw new NotFoundException("No follow found for COMPANY_TO_COMPANY with IDs " + dto.getFollowerId() + " -> " + dto.getFollowedId());
+                }
                 companyFollowsCompanyRepo.deleteById(id);
             }
-            default -> throw new IllegalArgumentException("Invalid follow type");
+            default -> throw new IllegalArgumentException("Invalid follow type: " + type);
         }
         return ResponseEntity.noContent().build();
     }
 
     public EntityModel<FollowResponseDTO> deactivate(FollowRequestDTO dto) {
-        IFollowRelation entity = getFollowEntity(dto);
-
+        completeFollowerFromCredentials(dto);
+        validateFollowRequest(dto);
         verifyAuthenticatedUserMatchesFollower(dto);
 
+        IFollowRelation entity = getFollowEntity(dto);
         setEnabled(entity, false);
         IFollowRelation saved = saveFollowEntity(dto, entity);
         return followAssembler.toModel(followMapper.toDTO(saved));
     }
 
     public EntityModel<FollowResponseDTO> reactivate(FollowRequestDTO dto) {
-        IFollowRelation entity = getFollowEntity(dto);
-
+        completeFollowerFromCredentials(dto);
+        validateFollowRequest(dto);
         verifyAuthenticatedUserMatchesFollower(dto);
 
+        IFollowRelation entity = getFollowEntity(dto);
         setEnabled(entity, true);
         IFollowRelation saved = saveFollowEntity(dto, entity);
         return followAssembler.toModel(followMapper.toDTO(saved));
     }
 
-    public CollectionModel<EntityModel<FollowResponseDTO>> getFollowers(String type, Long id) {
+    public CollectionModel<EntityModel<FollowResponseDTO>> getFollowers(EntityType type, Long id) {
         List<EntityModel<FollowResponseDTO>> followers = new ArrayList<>();
 
         switch (type) {
-            case "DEVELOPER" -> {
+            case DEVELOPER -> {
                 developerFollowsDeveloperRepo.findByIdDeveloperFollowedIdAndEnabledTrue(id)
                         .forEach(f -> followers.add(followAssembler.toModel(followMapper.toDTO(f))));
                 companyFollowsDeveloperRepo.findByIdDeveloperFollowedIdAndEnabledTrue(id)
                         .forEach(f -> followers.add(followAssembler.toModel(followMapper.toDTO(f))));
             }
-            case "COMPANY" -> {
+            case COMPANY -> {
                 developerFollowsCompanyRepo.findByIdCompanyFollowedIdAndEnabledTrue(id)
                         .forEach(f -> followers.add(followAssembler.toModel(followMapper.toDTO(f))));
                 companyFollowsCompanyRepo.findByIdCompanyFollowedIdAndEnabledTrue(id)
@@ -195,17 +227,17 @@ public class FollowService {
         return CollectionModel.of(followers);
     }
 
-    public CollectionModel<EntityModel<FollowResponseDTO>> getFollowings(String type, Long id) {
+    public CollectionModel<EntityModel<FollowResponseDTO>> getFollowings(EntityType type, Long id) {
         List<EntityModel<FollowResponseDTO>> followings = new ArrayList<>();
 
         switch (type) {
-            case "DEVELOPER" -> {
+            case DEVELOPER -> {
                 developerFollowsDeveloperRepo.findByIdDeveloperFollowerIdAndEnabledTrue(id)
                         .forEach(f -> followings.add(followAssembler.toModel(followMapper.toDTO(f))));
                 developerFollowsCompanyRepo.findByIdDeveloperFollowerIdAndEnabledTrue(id)
                         .forEach(f -> followings.add(followAssembler.toModel(followMapper.toDTO(f))));
             }
-            case "COMPANY" -> {
+            case COMPANY -> {
                 companyFollowsDeveloperRepo.findByIdCompanyFollowerIdAndEnabledTrue(id)
                         .forEach(f -> followings.add(followAssembler.toModel(followMapper.toDTO(f))));
                 companyFollowsCompanyRepo.findByIdCompanyFollowerIdAndEnabledTrue(id)
@@ -216,10 +248,47 @@ public class FollowService {
 
         return CollectionModel.of(followings);
     }
+    public CollectionModel<EntityModel<FollowResponseDTO>> getOwnFollowers() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Optional<DeveloperEntity> optionalDev = developerRepository.findByCredentials_Email(email);
+        Optional<CompanyEntity> optionalCompany = companyRepository.findByCredentials_Email(email);
+
+        if (optionalDev.isPresent()) {
+            Long id = optionalDev.get().getId();
+            return getFollowers(DEVELOPER, id);
+        } else if (optionalCompany.isPresent()) {
+            Long id = optionalCompany.get().getId();
+            return getFollowers(COMPANY, id);
+        } else {
+            throw new NotFoundException("Authenticated user not found in developer or company tables.");
+        }
+    }
+
+    public CollectionModel<EntityModel<FollowResponseDTO>> getOwnFollowings() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Optional<DeveloperEntity> optionalDev = developerRepository.findByCredentials_Email(email);
+        Optional<CompanyEntity> optionalCompany = companyRepository.findByCredentials_Email(email);
+
+        if (optionalDev.isPresent()) {
+            Long id = optionalDev.get().getId();
+            return getFollowings(DEVELOPER, id);
+        } else if (optionalCompany.isPresent()) {
+            Long id = optionalCompany.get().getId();
+            return getFollowings(COMPANY, id);
+        } else {
+            throw new NotFoundException("Authenticated user not found in developer or company tables.");
+        }
+    }
+
 
     // Métodos auxiliares:
 
     private void validateFollowRequest(FollowRequestDTO dto) {
+        System.out.println("Follower type: '" + dto.getFollowerType() + "'");
+        System.out.println("Followed type: '" + dto.getFollowedType() + "'");
+
         if (dto.getFollowerId() == null || dto.getFollowedId() == null) {
             throw new IllegalArgumentException("IDs cannot be null");
         }
@@ -233,26 +302,30 @@ public class FollowService {
             throw new IllegalArgumentException("A developer or company cannot follow itself");
         }
 
-        Set<String> validTypes = Set.of("DEVELOPER", "COMPANY");
+        Set<EntityType> validTypes = Set.of(EntityType.DEVELOPER, EntityType.COMPANY);
         if (!validTypes.contains(dto.getFollowerType()) || !validTypes.contains(dto.getFollowedType())) {
             throw new IllegalArgumentException("Invalid types");
         }
     }
 
     private IFollowRelation getFollowEntity(FollowRequestDTO dto) {
-        return switch (dto.getFollowerType() + "_TO_" + dto.getFollowedType()) {
-            case "DEVELOPER_TO_DEVELOPER" -> developerFollowsDeveloperRepo.findById(
+        FollowType type = FollowType.from(
+                dto.getFollowerType(),
+                dto.getFollowedType()
+        );
+        return switch (type) {
+            case DEVELOPER_TO_DEVELOPER -> developerFollowsDeveloperRepo.findById(
                             new DeveloperFollowsDeveloperId(dto.getFollowerId(), dto.getFollowedId()))
-                    .orElseThrow(() -> new EntityNotFoundException("Follow not found"));
-            case "DEVELOPER_TO_COMPANY" -> developerFollowsCompanyRepo.findById(
+                    .orElseThrow(() -> new NotFoundException("Follow not found"));
+            case DEVELOPER_TO_COMPANY -> developerFollowsCompanyRepo.findById(
                             new DeveloperFollowsCompanyId(dto.getFollowerId(), dto.getFollowedId()))
-                    .orElseThrow(() -> new EntityNotFoundException("Follow not found"));
-            case "COMPANY_TO_DEVELOPER" -> companyFollowsDeveloperRepo.findById(
+                    .orElseThrow(() -> new NotFoundException("Follow not found"));
+            case COMPANY_TO_DEVELOPER -> companyFollowsDeveloperRepo.findById(
                             new CompanyFollowsDeveloperId(dto.getFollowerId(), dto.getFollowedId()))
-                    .orElseThrow(() -> new EntityNotFoundException("Follow not found"));
-            case "COMPANY_TO_COMPANY" -> companyFollowsCompanyRepo.findById(
+                    .orElseThrow(() -> new NotFoundException("Follow not found"));
+            case COMPANY_TO_COMPANY -> companyFollowsCompanyRepo.findById(
                             new CompanyFollowsCompanyId(dto.getFollowerId(), dto.getFollowedId()))
-                    .orElseThrow(() -> new EntityNotFoundException("Follow not found"));
+                    .orElseThrow(() -> new NotFoundException("Follow not found"));
             default -> throw new IllegalArgumentException("Invalid follow type");
         };
     }
@@ -272,42 +345,71 @@ public class FollowService {
     }
 
     private IFollowRelation saveFollowEntity(FollowRequestDTO dto, IFollowRelation entity) {
-        return switch (dto.getFollowerType() + "_TO_" + dto.getFollowedType()) {
-            case "DEVELOPER_TO_DEVELOPER" -> developerFollowsDeveloperRepo.save((DeveloperFollowsDeveloper) entity);
-            case "DEVELOPER_TO_COMPANY" -> developerFollowsCompanyRepo.save((DeveloperFollowsCompany) entity);
-            case "COMPANY_TO_DEVELOPER" -> companyFollowsDeveloperRepo.save((CompanyFollowsDeveloper) entity);
-            case "COMPANY_TO_COMPANY" -> companyFollowsCompanyRepo.save((CompanyFollowsCompany) entity);
+        FollowType type = FollowType.from(
+                dto.getFollowerType(),
+                dto.getFollowedType()
+        );
+        return switch (type) {
+            case DEVELOPER_TO_DEVELOPER -> developerFollowsDeveloperRepo.save((DeveloperFollowsDeveloper) entity);
+            case DEVELOPER_TO_COMPANY -> developerFollowsCompanyRepo.save((DeveloperFollowsCompany) entity);
+            case COMPANY_TO_DEVELOPER -> companyFollowsDeveloperRepo.save((CompanyFollowsDeveloper) entity);
+            case COMPANY_TO_COMPANY -> companyFollowsCompanyRepo.save((CompanyFollowsCompany) entity);
             default -> throw new IllegalArgumentException("Invalid follow type");
         };
     }
 
     private void verifyAuthenticatedUserMatchesFollower(FollowRequestDTO dto) {
-        String loggedUserEmail = getLoggedUserEmail();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        CredentialsEntity credentials = credentialsRepository.findByEmail(loggedUserEmail)
-                .orElseThrow(() -> new AccessDeniedException("User not authorized"));
+        Optional<DeveloperEntity> devOpt = developerRepository.findByCredentials_Email(email);
+        Optional<CompanyEntity> companyOpt = companyRepository.findByCredentials_Email(email);
 
-        if (dto.getFollowerType().equals("DEVELOPER")) {
-            DeveloperEntity developer = credentials.getDeveloper();
-            if (developer == null || !developer.getId().equals(dto.getFollowerId())) {
-                throw new AccessDeniedException("Cannot create or delete follow in another developer's name");
+        if (devOpt.isPresent()) {
+            DeveloperEntity developer = devOpt.get();
+
+            if (dto.getFollowerId() == null) dto.setFollowerId(developer.getId());
+            if (dto.getFollowerType() == null) dto.setFollowerType(DEVELOPER);
+
+            if (!dto.getFollowerType().equals(EntityType.DEVELOPER) || !dto.getFollowerId().equals(developer.getId())) {
+                throw new AccessDeniedException("You can only perform the action as an authenticated developer");
             }
-        } else if (dto.getFollowerType().equals("COMPANY")) {
-            CompanyEntity company = credentials.getCompany();
-            if (company == null || !company.getId().equals(dto.getFollowerId())) {
-                throw new AccessDeniedException("Cannot create or delete follow in another company's name");
+
+        } else if (companyOpt.isPresent()) {
+            CompanyEntity company = companyOpt.get();
+
+            if (dto.getFollowerId() == null) dto.setFollowerId(company.getId());
+            if (dto.getFollowerType() == null) dto.setFollowerType(COMPANY);
+
+            if (!dto.getFollowerType().equals(EntityType.COMPANY) || !dto.getFollowerId().equals(company.getId())) {
+                throw new AccessDeniedException("You can only perform the action as an authenticated company");
             }
+
         } else {
-            throw new AccessDeniedException("Invalid follower type");
+            throw new AccessDeniedException("Authenticated user not recognized");
         }
     }
 
-    private String getLoggedUserEmail() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("User is not authenticated");
+    private void completeFollowerFromCredentials(FollowRequestDTO dto) {
+        if (dto.getFollowerId() == null || dto.getFollowerType() == null) {
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+            Optional<CompanyEntity> companyOpt = companyRepository.findByCredentials_Email(email);
+            if (companyOpt.isPresent()) {
+                dto.setFollowerId(companyOpt.get().getId());
+                dto.setFollowerType(COMPANY);
+                return;
+            }
+
+            Optional<DeveloperEntity> developerOpt = developerRepository.findByCredentials_Email(email);
+            if (developerOpt.isPresent()) {
+                dto.setFollowerId(developerOpt.get().getId());
+                dto.setFollowerType(DEVELOPER);
+                return;
+            }
+
+            throw new IllegalStateException("Authenticated user not found as company or developer");
         }
-        return authentication.getName();
     }
+
 }
 
