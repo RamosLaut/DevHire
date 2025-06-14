@@ -80,9 +80,8 @@ public class PublicationController {
     public ResponseEntity<EntityModel<PublicationDTO>> findById(@PathVariable Long publicationId){
         return ResponseEntity.ok(publicationService.findById(publicationId));
     }
-<<<<<<< Feature/FollowCorrections
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user/{devId}")
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>>findAllByDevId(@PathVariable Long devId){
         return ResponseEntity.ok(publicationService.findByDevId(devId));
     }
@@ -102,7 +101,7 @@ public class PublicationController {
             @ApiResponse(responseCode = "404", description = "Publicación no encontrada")
     })
     @SecurityRequirement(name = "bearerAuth")
-    @PatchMapping
+    @PatchMapping("/update")
     public ResponseEntity<EntityModel<PublicationDTO>>updateContent(@RequestBody PublicationEntity publicationEntity){
         return ResponseEntity.ok(publicationService.updateContent(publicationEntity));
     }
@@ -130,18 +129,7 @@ public class PublicationController {
             },
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    @DeleteMapping("/{publicationId}")
-=======
-    @GetMapping("/user/{devId}")
-    public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>>findAllByDevId(@PathVariable Long devId){
-        return ResponseEntity.ok(publicationService.findByDevId(devId));
-    }
-    @PatchMapping("/update")
-    public ResponseEntity<EntityModel<PublicationDTO>>updateContent(@RequestBody PublicationEntity publicationEntity){
-        return ResponseEntity.ok(publicationService.updateContent(publicationEntity));
-    }
     @DeleteMapping("/delete/{publicationId}")
->>>>>>> Develop
     public ResponseEntity<?> deleteById(@PathVariable Long publicationId){
         publicationService.deleteById(publicationId);
         return ResponseEntity.noContent().build();
