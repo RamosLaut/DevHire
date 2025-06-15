@@ -26,8 +26,8 @@ public class DeveloperAssembler implements RepresentationModelAssembler<Develope
         dto.setEmail(entity.getCredentials().getEmail());
         return EntityModel.of(dto,
                 linkTo(methodOn(DeveloperController.class).getDevById(entity.getId())).withSelfRel(),
-                linkTo(methodOn(DeveloperController.class).updateDev(entity.getId(), null)).withRel("Update"),
-                linkTo(methodOn(DeveloperController.class).deleteDev(entity.getId())).withRel("Delete"));
+                linkTo(methodOn(DeveloperController.class).updateDev(entity.getId())).withRel("Update"),
+                linkTo(methodOn(DeveloperController.class).logicDown(entity.getId())).withRel("Deactivate account"));
     }
     public EntityModel<DeveloperApplicantDTO> toModelApplication(DeveloperEntity entity, Long jobId) {
         DeveloperApplicantDTO applicantDTO = developerMapper.convertToApplicantDTO(entity);

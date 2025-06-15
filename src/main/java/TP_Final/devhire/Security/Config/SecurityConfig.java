@@ -51,7 +51,7 @@ public class SecurityConfig {
                         .requestMatchers("/dev/jobExperience/*").hasAuthority("UPDATE_JOB_EXPERIENCE")
                         .requestMatchers("/skills/*").hasAuthority("UPDATE_SKILLS")
                         .requestMatchers("/dev/update/*").hasAuthority("UPDATE_PROFILE")
-                        .requestMatchers("dev/deactivate/*").hasAuthority("LOGIC_DOWN")
+                        .requestMatchers("/dev/deactivate/*").hasAuthority("LOGIC_DOWN")
                         .requestMatchers("/dev/reactivate/*").hasAuthority("LOGIC_UP")
                         .requestMatchers("/publication/post").hasAuthority("CREATE_PUBLICATION")
                         .requestMatchers("/publication/all").hasAuthority("READ_PUBLICATIONS")

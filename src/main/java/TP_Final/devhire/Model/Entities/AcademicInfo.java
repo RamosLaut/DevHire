@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -26,4 +28,15 @@ public class AcademicInfo {
     private Level level;
 
     private String degree;
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof AcademicInfo that)) return false;
+        return Objects.equals(name, that.name) && level == that.level && Objects.equals(degree, that.degree);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, level, degree);
+    }
 }

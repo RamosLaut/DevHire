@@ -3,10 +3,12 @@ package TP_Final.devhire.Model.DTOS;
 import TP_Final.devhire.Model.Enums.FollowType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Schema(description = "Representación de una relación de seguimiento")
 public class FollowResponseDTO {
     @Schema(
