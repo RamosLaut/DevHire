@@ -1,6 +1,7 @@
 package TP_Final.devhire.Repositories;
 
-import TP_Final.devhire.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
+import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,7 @@ public interface DeveloperRepository extends JpaRepository<DeveloperEntity, Long
 //    Optional<DeveloperEntity> findByUsername (String username);
     Optional<DeveloperEntity> findByCredentials_Email(String email);
     Optional<DeveloperEntity> findByDni (String dni);
-    Page<DeveloperEntity> findAll (Pageable pageable);
+    @NonNull Page<DeveloperEntity>  findAll (@NonNull Pageable pageable);
 
 
 }

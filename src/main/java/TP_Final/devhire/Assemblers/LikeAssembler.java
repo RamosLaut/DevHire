@@ -1,9 +1,9 @@
 package TP_Final.devhire.Assemblers;
 
 import TP_Final.devhire.Controllers.LikeController;
-import TP_Final.devhire.DTOS.LikeDTO;
-import TP_Final.devhire.Entities.LikeEntity;
-import TP_Final.devhire.Mappers.LikeMapper;
+import TP_Final.devhire.Model.DTOS.LikeDTO;
+import TP_Final.devhire.Model.Entities.LikeEntity;
+import TP_Final.devhire.Model.Mappers.LikeMapper;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -17,7 +17,7 @@ public class LikeAssembler implements RepresentationModelAssembler<LikeEntity, E
     @Autowired
     LikeMapper likeMapper;
     @Override
-    public @NonNull EntityModel<LikeDTO> toModel(LikeEntity like) {
+    public @NonNull EntityModel<LikeDTO> toModel(@NonNull LikeEntity like) {
         LikeDTO likeDTO = likeMapper.convertToLikeDTO(like);
         if(like.getCompany()!=null){
             likeDTO.setName(like.getCompany().getName());

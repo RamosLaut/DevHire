@@ -1,9 +1,9 @@
 package TP_Final.devhire.Controllers;
 
-import TP_Final.devhire.DTOS.FollowRequestDTO;
-import TP_Final.devhire.DTOS.FollowResponseDTO;
-import TP_Final.devhire.Enums.EntityType;
-import TP_Final.devhire.Enums.FollowType;
+import TP_Final.devhire.Model.DTOS.FollowRequestDTO;
+import TP_Final.devhire.Model.DTOS.FollowResponseDTO;
+import TP_Final.devhire.Model.Enums.EntityType;
+import TP_Final.devhire.Model.Enums.FollowType;
 import TP_Final.devhire.Services.FollowService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

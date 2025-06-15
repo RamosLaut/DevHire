@@ -1,12 +1,12 @@
 package TP_Final.devhire.Services;
 import TP_Final.devhire.Assemblers.CommentAssembler;
-import TP_Final.devhire.DTOS.CommentDTO;
-import TP_Final.devhire.Entities.CommentEntity;
-import TP_Final.devhire.Entities.CompanyEntity;
-import TP_Final.devhire.Entities.DeveloperEntity;
-import TP_Final.devhire.Entities.PublicationEntity;
+import TP_Final.devhire.Model.DTOS.CommentDTO;
+import TP_Final.devhire.Model.Entities.CommentEntity;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.Entities.PublicationEntity;
 import TP_Final.devhire.Exceptions.*;
-import TP_Final.devhire.Mappers.CommentMapper;
+import TP_Final.devhire.Model.Mappers.CommentMapper;
 import TP_Final.devhire.Repositories.CommentRepository;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.DeveloperRepository;
@@ -42,7 +42,7 @@ public class CommentService {
         this.publicationsRepository = publicationsRepository;
         this.mapper = mapper;
     }
-    public EntityModel<CommentDTO> save(CommentDTO commentDTO, @NonNull Long publicationId)throws NotFoundException, ContentRequiredException, CredentialsRequiredException{
+    public EntityModel<CommentDTO> save(CommentDTO commentDTO, @NonNull Long publicationId)throws NotFoundException, CredentialsRequiredException{
         CommentEntity comment = mapper.convertToEntity(commentDTO);
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isPresent())
@@ -59,7 +59,7 @@ public class CommentService {
         commentRepository.save(comment);
         return assembler.toOwnCommentModel(comment);
     }
-    public CollectionModel<EntityModel<CommentDTO>> findAll(){
+    public CollectionModel<EntityModel<CommentDTO>> findAll() throws NotFoundException, CredentialsRequiredException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isPresent()){
             CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
@@ -73,7 +73,7 @@ public class CommentService {
                     .toList();
             List<EntityModel<CommentDTO>> allComments = Stream.concat(otherComments.stream(), ownComments.stream()).toList();
             if (allComments.isEmpty()) {
-                throw new RuntimeException("No comments found");
+                throw new NotFoundException("No comments found");
             }
             return CollectionModel.of(allComments);
         }else if(developerRepository.findByCredentials_Email(email).isPresent()){
@@ -93,7 +93,8 @@ public class CommentService {
             return CollectionModel.of(allComments);
         } else throw new CredentialsRequiredException("You need to be logged in to see comments list");
     }
-    public CollectionModel<EntityModel<CommentDTO>> findOwnComments(){
+
+    public CollectionModel<EntityModel<CommentDTO>> findOwnComments()throws NotFoundException, CredentialsRequiredException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isPresent()){
             CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
@@ -118,7 +119,7 @@ public class CommentService {
             throw new CredentialsRequiredException("You need to be logged in to see your comments");
         }
     }
-    public EntityModel<CommentDTO>findById(Long commentId)throws NotFoundException {
+    public EntityModel<CommentDTO>findById(Long commentId)throws NotFoundException, CredentialsRequiredException {
         Optional<CommentEntity> comment = commentRepository.findById(commentId);
         if(comment.isEmpty()){
             throw new NotFoundException("Comment not found");

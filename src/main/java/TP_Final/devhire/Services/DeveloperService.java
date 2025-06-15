@@ -1,10 +1,10 @@
 package TP_Final.devhire.Services;
 
 import TP_Final.devhire.Assemblers.DeveloperAssembler;
-import TP_Final.devhire.DTOS.*;
-import TP_Final.devhire.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.DTOS.*;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
 import TP_Final.devhire.Exceptions.NotFoundException;
-import TP_Final.devhire.Mappers.DeveloperMapper;
+import TP_Final.devhire.Model.Mappers.DeveloperMapper;
 import TP_Final.devhire.Repositories.DeveloperRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -85,13 +85,6 @@ public class DeveloperService {
 
         return developerRepository.save(existingUser);
     }
-
-//    public EntityModel<DeveloperDTO> updatePassword(Long userID, DeveloperPasswordDTO dto) {
-//        DeveloperEntity user = developerRepository.findById(userID)
-//                .orElseThrow(() -> new DeveloperNotFoundException("User not found"));
-//        user.setPassword(dto.getPassword());
-//        return developerAssembler.toModel(developerRepository.save(user));
-//    }
 
     public EntityModel<DeveloperDTO> updateSkills(Long userID, SkillsDTO dto) {
         DeveloperEntity user = developerRepository.findById(userID)

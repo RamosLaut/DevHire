@@ -1,7 +1,7 @@
 package TP_Final.devhire.Security.Dtos;
 
-import TP_Final.devhire.DTOS.CompanyDTO;
-import TP_Final.devhire.DTOS.DeveloperDTO;
+import TP_Final.devhire.Model.DTOS.CompanyDTO;
+import TP_Final.devhire.Model.DTOS.DeveloperDTO;
 import lombok.Builder;
 import org.springframework.hateoas.EntityModel;
 

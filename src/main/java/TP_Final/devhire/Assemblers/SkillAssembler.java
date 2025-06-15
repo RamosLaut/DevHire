@@ -1,8 +1,8 @@
 package TP_Final.devhire.Assemblers;
 import TP_Final.devhire.Controllers.JobController;
-import TP_Final.devhire.Entities.SkillModel;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
+import TP_Final.devhire.Model.Entities.SkillModel;
 import org.springframework.stereotype.Component;
 import java.util.List;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;

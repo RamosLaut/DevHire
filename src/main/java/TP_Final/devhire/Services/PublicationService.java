@@ -1,12 +1,12 @@
 package TP_Final.devhire.Services;
 
 import TP_Final.devhire.Assemblers.PublicationAssembler;
-import TP_Final.devhire.DTOS.PublicationDTO;
-import TP_Final.devhire.Entities.CompanyEntity;
-import TP_Final.devhire.Entities.PublicationEntity;
-import TP_Final.devhire.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.DTOS.PublicationDTO;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.PublicationEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
 import TP_Final.devhire.Exceptions.*;
-import TP_Final.devhire.Mappers.PublicationMapper;
+import TP_Final.devhire.Model.Mappers.PublicationMapper;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.PublicationsRepository;
 import TP_Final.devhire.Repositories.DeveloperRepository;

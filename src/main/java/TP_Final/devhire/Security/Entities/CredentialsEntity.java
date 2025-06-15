@@ -1,10 +1,10 @@
 package TP_Final.devhire.Security.Entities;
 
-import TP_Final.devhire.Entities.CompanyEntity;
-import TP_Final.devhire.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
+
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

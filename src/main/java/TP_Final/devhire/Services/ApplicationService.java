@@ -2,13 +2,13 @@ package TP_Final.devhire.Services;
 
 import TP_Final.devhire.Assemblers.ApplicationAssembler;
 import TP_Final.devhire.Assemblers.DeveloperAssembler;
-import TP_Final.devhire.DTOS.ApplicationDTO;
-import TP_Final.devhire.DTOS.DeveloperApplicantDTO;
-import TP_Final.devhire.Entities.ApplicationEntity;
-import TP_Final.devhire.Entities.CompanyEntity;
-import TP_Final.devhire.Entities.DeveloperEntity;
-import TP_Final.devhire.Entities.JobEntity;
-import TP_Final.devhire.Enums.HardSkills;
+import TP_Final.devhire.Model.DTOS.ApplicationDTO;
+import TP_Final.devhire.Model.DTOS.DeveloperApplicantDTO;
+import TP_Final.devhire.Model.Entities.ApplicationEntity;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.Entities.JobEntity;
+import TP_Final.devhire.Model.Enums.HardSkills;
 import TP_Final.devhire.Exceptions.AlreadyExistsException;
 import TP_Final.devhire.Exceptions.CredentialsRequiredException;
 import TP_Final.devhire.Exceptions.NotFoundException;
@@ -67,7 +67,8 @@ public class ApplicationService {
         applicantsRepository.save(application);
         return applicationAssembler.toDevModel(application);
     }
-    public void deleteApplicationById(Long id){
+
+    public void deleteApplicationById(Long id)throws NotFoundException, UnauthorizedException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(developerRepository.findByCredentials_Email(email).isEmpty()){
             throw new UnauthorizedException("You don't have permission to delete this application");
@@ -103,21 +104,21 @@ public class ApplicationService {
         ApplicationEntity application = applicantsRepository.findById(id).get();
         JobEntity job = application.getJob();
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(developerRepository.findByCredentials_Email(email).isPresent()){
+        if(developerRepository.findByCredentials_Email(email).isPresent()) {
             DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
-            if(developer.getPostulatedJobs().contains(application)){
+            if (developer.getPostulatedJobs().contains(application)) {
                 return applicationAssembler.toDevModel(application);
-            }else{
+            }else {
                 return applicationAssembler.toModel(application);
             }
-        } else if (companyRepository.findByCredentials_Email(email).isPresent()){
+        }else {
             CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
-            if(company.getJobs().contains(job)){
+            if (company.getJobs().contains(job)) {
                 return applicationAssembler.toCompanyModel(application, job.getId());
-            }else{
+            } else {
                 return applicationAssembler.toModel(application);
             }
-        }else throw new CredentialsRequiredException("You need to login to view applications");
+        }
     }
     public CollectionModel<EntityModel<DeveloperApplicantDTO>> findApplicantsByJobId(Long jobId)throws NotFoundException, UnauthorizedException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();

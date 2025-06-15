@@ -1,6 +1,9 @@
 package TP_Final.devhire.Controllers;
 
-import TP_Final.devhire.DTOS.*;
+import TP_Final.devhire.Model.DTOS.CompanyDTO;
+import TP_Final.devhire.Model.DTOS.CompanyRegisterDTO;
+import TP_Final.devhire.Model.DTOS.DeveloperDTO;
+import TP_Final.devhire.Model.DTOS.DeveloperRegisterDTO;
 import TP_Final.devhire.Services.RegisterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,7 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/register")
-public class RegisterController {
+public class
+RegisterController {
     private final RegisterService registerService;
     @Autowired
     public RegisterController(RegisterService registerService) {

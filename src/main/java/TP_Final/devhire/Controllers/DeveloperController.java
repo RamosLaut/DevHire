@@ -1,7 +1,10 @@
 package TP_Final.devhire.Controllers;
 
 import TP_Final.devhire.Assemblers.DeveloperAssembler;
-import TP_Final.devhire.DTOS.*;
+import TP_Final.devhire.Model.DTOS.AcademicInfoDTO;
+import TP_Final.devhire.Model.DTOS.DeveloperDTO;
+import TP_Final.devhire.Model.DTOS.JobExperienceDTO;
+import TP_Final.devhire.Model.DTOS.SkillsDTO;
 import TP_Final.devhire.Services.DeveloperService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -10,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.hateoas.CollectionModel;

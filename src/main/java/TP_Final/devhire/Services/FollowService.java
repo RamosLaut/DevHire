@@ -1,27 +1,22 @@
 package TP_Final.devhire.Services;
 
 import TP_Final.devhire.Assemblers.FollowAssembler;
-import TP_Final.devhire.DTOS.FollowRequestDTO;
-import TP_Final.devhire.DTOS.FollowResponseDTO;
-import TP_Final.devhire.Entities.CompanyEntity;
-import TP_Final.devhire.Entities.DeveloperEntity;
-import TP_Final.devhire.Entities.Follow.*;
-import TP_Final.devhire.Enums.EntityType;
-import TP_Final.devhire.Enums.FollowType;
+import TP_Final.devhire.Model.DTOS.FollowRequestDTO;
+import TP_Final.devhire.Model.DTOS.FollowResponseDTO;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.Mappers.Mappers.Entities.Entities.Follow.*;
+import TP_Final.devhire.Model.Enums.EntityType;
+import TP_Final.devhire.Model.Enums.FollowType;
 import TP_Final.devhire.Exceptions.NotFoundException;
-import TP_Final.devhire.Mappers.FollowMapper;
+import TP_Final.devhire.Model.Mappers.FollowMapper;
 import TP_Final.devhire.Repositories.*;
-import TP_Final.devhire.Security.Entities.CredentialsEntity;
-import TP_Final.devhire.Security.Repositories.CredentialsRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,8 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static TP_Final.devhire.Enums.EntityType.COMPANY;
-import static TP_Final.devhire.Enums.EntityType.DEVELOPER;
+import static TP_Final.devhire.Model.Enums.EntityType.COMPANY;
+import static TP_Final.devhire.Model.Enums.EntityType.DEVELOPER;
 
 @Service
 public class FollowService {
@@ -43,7 +38,6 @@ public class FollowService {
     private final FollowAssembler followAssembler;
     private final CompanyRepository companyRepository;
     private final DeveloperRepository developerRepository;
-    private final CredentialsRepository credentialsRepository;
 
     @Autowired
     public FollowService(DeveloperFollowDeveloperRepository developerFollowsDeveloperRepo,
@@ -53,8 +47,7 @@ public class FollowService {
                          FollowMapper followMapper,
                          FollowAssembler followAssembler,
                          CompanyRepository companyRepository,
-                         DeveloperRepository developerRepository,
-                         CredentialsRepository credentialsRepository) {
+                         DeveloperRepository developerRepository) {
         this.developerFollowsDeveloperRepo = developerFollowsDeveloperRepo;
         this.developerFollowsCompanyRepo = developerFollowsCompanyRepo;
         this.companyFollowsDeveloperRepo = companyFollowsDeveloperRepo;
@@ -63,7 +56,6 @@ public class FollowService {
         this.followAssembler = followAssembler;
         this.companyRepository = companyRepository;
         this.developerRepository = developerRepository;
-        this.credentialsRepository = credentialsRepository;
     }
 
     public EntityModel<FollowResponseDTO> saveFollow(FollowRequestDTO dto) {
@@ -326,7 +318,6 @@ public class FollowService {
             case COMPANY_TO_COMPANY -> companyFollowsCompanyRepo.findById(
                             new CompanyFollowsCompanyId(dto.getFollowerId(), dto.getFollowedId()))
                     .orElseThrow(() -> new NotFoundException("Follow not found"));
-            default -> throw new IllegalArgumentException("Invalid follow type");
         };
     }
 
@@ -354,7 +345,6 @@ public class FollowService {
             case DEVELOPER_TO_COMPANY -> developerFollowsCompanyRepo.save((DeveloperFollowsCompany) entity);
             case COMPANY_TO_DEVELOPER -> companyFollowsDeveloperRepo.save((CompanyFollowsDeveloper) entity);
             case COMPANY_TO_COMPANY -> companyFollowsCompanyRepo.save((CompanyFollowsCompany) entity);
-            default -> throw new IllegalArgumentException("Invalid follow type");
         };
     }
 

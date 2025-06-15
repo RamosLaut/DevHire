@@ -1,9 +1,9 @@
 package TP_Final.devhire.Assemblers;
 
 import TP_Final.devhire.Controllers.ApplicationController;
-import TP_Final.devhire.DTOS.ApplicationDTO;
-import TP_Final.devhire.Entities.ApplicationEntity;
-import TP_Final.devhire.Mappers.ApplicationMapper;
+import TP_Final.devhire.Model.DTOS.ApplicationDTO;
+import TP_Final.devhire.Model.Entities.ApplicationEntity;
+import TP_Final.devhire.Model.Mappers.ApplicationMapper;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
