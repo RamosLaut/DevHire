@@ -2,10 +2,10 @@ package TP_Final.devhire.Security.Services;
 
 import TP_Final.devhire.Assemblers.CompanyAssembler;
 import TP_Final.devhire.Assemblers.DeveloperAssembler;
-import TP_Final.devhire.DTOS.CompanyDTO;
-import TP_Final.devhire.DTOS.DeveloperDTO;
-import TP_Final.devhire.Entities.CompanyEntity;
-import TP_Final.devhire.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.DTOS.CompanyDTO;
+import TP_Final.devhire.Model.DTOS.DeveloperDTO;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.DeveloperRepository;
 import TP_Final.devhire.Security.Dtos.AuthRequest;

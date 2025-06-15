@@ -1,8 +1,8 @@
 package TP_Final.devhire.Assemblers;
 import TP_Final.devhire.Controllers.CommentController;
-import TP_Final.devhire.DTOS.CommentDTO;
-import TP_Final.devhire.Entities.CommentEntity;
-import TP_Final.devhire.Mappers.CommentMapper;
+import TP_Final.devhire.Model.DTOS.CommentDTO;
+import TP_Final.devhire.Model.Mappers.Mappers.Entities.CommentEntity;
+import TP_Final.devhire.Model.Mappers.CommentMapper;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -17,7 +17,7 @@ public class CommentAssembler implements RepresentationModelAssembler<CommentEnt
     @Autowired
     CommentMapper commentMapper;
     @Override
-    public @NonNull EntityModel<CommentDTO> toModel(CommentEntity entity) {
+    public @NonNull EntityModel<CommentDTO> toModel(@NonNull CommentEntity entity) {
         CommentDTO commentDTO = commentMapper.convertCommentDTO(entity);
         if (entity.getCompany() != null) {
             commentDTO.setName(entity.getCompany().getName());

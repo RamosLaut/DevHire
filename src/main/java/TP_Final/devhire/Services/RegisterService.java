@@ -2,9 +2,12 @@ package TP_Final.devhire.Services;
 
 import TP_Final.devhire.Assemblers.CompanyAssembler;
 import TP_Final.devhire.Assemblers.DeveloperAssembler;
-import TP_Final.devhire.DTOS.*;
-import TP_Final.devhire.Entities.CompanyEntity;
-import TP_Final.devhire.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.DTOS.CompanyDTO;
+import TP_Final.devhire.Model.DTOS.CompanyRegisterDTO;
+import TP_Final.devhire.Model.DTOS.DeveloperDTO;
+import TP_Final.devhire.Model.DTOS.DeveloperRegisterDTO;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
 import TP_Final.devhire.Exceptions.AlreadyExistsException;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.DeveloperRepository;

@@ -1,5 +1,5 @@
 package TP_Final.devhire.Controllers;
-import TP_Final.devhire.DTOS.CompanyDTO;
+import TP_Final.devhire.Model.DTOS.CompanyDTO;
 import TP_Final.devhire.Services.CompanyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

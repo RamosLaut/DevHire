@@ -1,6 +1,6 @@
 package TP_Final.devhire.Repositories;
 
-import TP_Final.devhire.Entities.CommentEntity;
+import TP_Final.devhire.Model.Entities.CommentEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

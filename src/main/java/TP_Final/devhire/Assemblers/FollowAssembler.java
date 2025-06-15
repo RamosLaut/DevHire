@@ -3,14 +3,10 @@ package TP_Final.devhire.Assemblers;
 import TP_Final.devhire.Controllers.CompanyController;
 import TP_Final.devhire.Controllers.DeveloperController;
 import TP_Final.devhire.Controllers.FollowController;
-import TP_Final.devhire.DTOS.FollowResponseDTO;
-import TP_Final.devhire.Mappers.FollowMapper;
+import TP_Final.devhire.Model.DTOS.FollowResponseDTO;
 import lombok.NonNull;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -19,11 +15,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
 public class FollowAssembler implements RepresentationModelAssembler<FollowResponseDTO, EntityModel<FollowResponseDTO>> {
 
-    private final FollowMapper followMapper;
-
-    public FollowAssembler(FollowMapper followMapper) {
-        this.followMapper = followMapper;
-    }
 
     @Override
     public @NonNull EntityModel<FollowResponseDTO> toModel(FollowResponseDTO dto) {

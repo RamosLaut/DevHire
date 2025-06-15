@@ -1,11 +1,11 @@
 package TP_Final.devhire.Services;
 
 import TP_Final.devhire.Assemblers.LikeAssembler;
-import TP_Final.devhire.DTOS.LikeDTO;
-import TP_Final.devhire.Entities.CompanyEntity;
-import TP_Final.devhire.Entities.DeveloperEntity;
-import TP_Final.devhire.Entities.LikeEntity;
-import TP_Final.devhire.Entities.PublicationEntity;
+import TP_Final.devhire.Model.DTOS.LikeDTO;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.Entities.LikeEntity;
+import TP_Final.devhire.Model.Entities.PublicationEntity;
 import TP_Final.devhire.Exceptions.AlreadyExistsException;
 import TP_Final.devhire.Exceptions.CredentialsRequiredException;
 import TP_Final.devhire.Exceptions.NotFoundException;

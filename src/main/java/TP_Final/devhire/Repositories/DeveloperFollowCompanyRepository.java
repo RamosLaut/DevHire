@@ -1,10 +1,10 @@
 package TP_Final.devhire.Repositories;
 
-import TP_Final.devhire.Entities.CompanyEntity;
-import TP_Final.devhire.Entities.DeveloperEntity;
-import TP_Final.devhire.Entities.Follow.CompanyFollowsDeveloper;
-import TP_Final.devhire.Entities.Follow.DeveloperFollowsCompany;
-import TP_Final.devhire.Entities.Follow.DeveloperFollowsCompanyId;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
+
+import TP_Final.devhire.Model.Mappers.Mappers.Entities.Entities.Follow.DeveloperFollowsCompany;
+import TP_Final.devhire.Model.Mappers.Mappers.Entities.Entities.Follow.DeveloperFollowsCompanyId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -2,16 +2,16 @@ package TP_Final.devhire.Services;
 
 import TP_Final.devhire.Assemblers.JobAssembler;
 import TP_Final.devhire.Assemblers.SkillAssembler;
-import TP_Final.devhire.DTOS.JobDTO;
-import TP_Final.devhire.Entities.CompanyEntity;
-import TP_Final.devhire.Entities.JobEntity;
-import TP_Final.devhire.Entities.SkillModel;
-import TP_Final.devhire.Enums.HardSkills;
-import TP_Final.devhire.Enums.SoftSkills;
+import TP_Final.devhire.Model.DTOS.JobDTO;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.JobEntity;
+import TP_Final.devhire.Model.Entities.SkillModel;
+import TP_Final.devhire.Model.Enums.HardSkills;
+import TP_Final.devhire.Model.Enums.SoftSkills;
 import TP_Final.devhire.Exceptions.AlreadyExistsException;
 import TP_Final.devhire.Exceptions.NotFoundException;
 import TP_Final.devhire.Exceptions.UnauthorizedException;
-import TP_Final.devhire.Mappers.JobMapper;
+import TP_Final.devhire.Model.Mappers.JobMapper;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +50,6 @@ public class JobService {
         return jobAssembler.toModel(jobEntity);
     }
     public CollectionModel<EntityModel<JobDTO>> findAll() {
-        List<EntityModel<JobDTO>> jobs = List.of();
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if (companyRepository.findByCredentials_Email(email).isPresent()){
             CompanyEntity company = companyRepository.findByCredentials_Email(email).get();

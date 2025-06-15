@@ -2,9 +2,9 @@ package TP_Final.devhire.Assemblers;
 
 import TP_Final.devhire.Controllers.ApplicationController;
 import TP_Final.devhire.Controllers.JobController;
-import TP_Final.devhire.DTOS.JobDTO;
-import TP_Final.devhire.Entities.JobEntity;
-import TP_Final.devhire.Mappers.JobMapper;
+import TP_Final.devhire.Model.DTOS.JobDTO;
+import TP_Final.devhire.Model.Entities.JobEntity;
+import TP_Final.devhire.Model.Mappers.JobMapper;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;

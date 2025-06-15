@@ -1,13 +1,10 @@
 package TP_Final.devhire.Controllers;
 
-import TP_Final.devhire.DTOS.PublicationDTO;
-import TP_Final.devhire.Entities.PublicationEntity;
+import TP_Final.devhire.Model.DTOS.PublicationDTO;
 import TP_Final.devhire.Services.PublicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,13 +29,13 @@ public class PublicationController {
 
     @Operation(
             summary = "Crear una publicación",
-            description = "Permite que un desarrollador o una empresa cree una publicación."
+            description = "Permite a usuarios con rol ROLE_DEV o ROLE_COMPANY crear una publicación.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Publicación creada"),
-            @ApiResponse(responseCode = "403", description = "No autorizado, se requiere autenticación")
+            @ApiResponse(responseCode = "200", description = "Publicación creada exitosamente"),
+            @ApiResponse(responseCode = "403", description = "No autorizado. El usuario no tiene permisos para crear publicaciones.")
     })
-    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/post")
     public ResponseEntity<EntityModel<PublicationDTO>> save(@RequestBody @Valid PublicationDTO publicationDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(publicationService.save(publicationDTO));
@@ -56,11 +53,15 @@ public class PublicationController {
     }
 
     @Operation(
-            summary = "Listar publicaciones propias",
-            description = "Devuelve las publicaciones creadas por el usuario autenticado"
+            summary = "Obtener publicaciones propias",
+            description = "Devuelve todas las publicaciones creadas por el usuario autenticado con rol ROLE_DEV o ROLE_COMPANY.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
-    @ApiResponse(responseCode = "200", description = "Publicaciones propias obtenidas correctamente")
-    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Publicaciones recuperadas exitosamente"),
+            @ApiResponse(responseCode = "403", description = "No autorizado. El usuario no tiene permisos para acceder a este recurso."),
+            @ApiResponse(responseCode = "404", description = "No se encontraron publicaciones para el usuario actual.")
+    })
     @GetMapping("/ownPublications")
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>> findOwnPublications(){
         return ResponseEntity.ok(publicationService.findOwnPublications());
@@ -68,14 +69,13 @@ public class PublicationController {
 
     @Operation(
             summary = "Buscar publicación por ID",
-            description = "Permite obtener una publicación específica según su ID",
-            parameters = {
-                    @Parameter(name = "publicationId", description = "ID de la publicación", required = true)
-            }
+            description = "Permite a usuarios con rol ROLE_DEV o ROLE_COMPANY buscar una publicación por su ID.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Publicación encontrada"),
-            @ApiResponse(responseCode = "404", description = "Publicación no encontrada")
+            @ApiResponse(responseCode = "200", description = "Publicación encontrada exitosamente"),
+            @ApiResponse(responseCode = "404", description = "No se encontró ninguna publicación con el ID suministrado."),
+            @ApiResponse(responseCode = "403", description = "No autorizado. El usuario no tiene permisos para acceder a esta publicación")
     })
     @GetMapping("/{publicationId}")
     public ResponseEntity<EntityModel<PublicationDTO>> findById(@PathVariable Long publicationId){
@@ -89,19 +89,14 @@ public class PublicationController {
 
     @Operation(
             summary = "Actualizar contenido de una publicación",
-            description = "Permite actualizar el contenido de una publicación propia. Solo se permite si el usuario autenticado es el autor.",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Entidad con ID y nuevo contenido",
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = PublicationEntity.class))
-            )
+            description = "Permite a usuarios con rol ROLE_DEV o ROLE_COMPANY actualizar el contenido de una publicación propia.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Publicación actualizada correctamente"),
-            @ApiResponse(responseCode = "403", description = "No autorizado"),
-            @ApiResponse(responseCode = "404", description = "Publicación no encontrada")
+            @ApiResponse(responseCode = "200", description = "Contenido actualizado exitosamente"),
+            @ApiResponse(responseCode = "403", description = "No autorizado. El usuario no tiene permisos para modificar esta publicación"),
+            @ApiResponse(responseCode = "404", description = "La publicación no fue encontrada")
     })
-    @SecurityRequirement(name = "bearerAuth")
     @PatchMapping("/update")
     public ResponseEntity<EntityModel<PublicationDTO>>updateContent(@RequestBody PublicationDTO publicationDTO){
         return ResponseEntity.ok(publicationService.updateContent(publicationDTO));
@@ -126,6 +121,10 @@ public class PublicationController {
                             responseCode = "403",
                             description = "No autorizado para eliminar esta publicación",
                             content = @Content()
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "No se encontró la publicación con el ID dado."
                     )
             },
             security = @SecurityRequirement(name = "bearerAuth")

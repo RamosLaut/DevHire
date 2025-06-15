@@ -1,7 +1,7 @@
 package TP_Final.devhire.Services;
 import TP_Final.devhire.Assemblers.CompanyAssembler;
-import TP_Final.devhire.DTOS.CompanyDTO;
-import TP_Final.devhire.Entities.CompanyEntity;
+import TP_Final.devhire.Model.DTOS.CompanyDTO;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
 import TP_Final.devhire.Exceptions.LocationEmptyException;
 import TP_Final.devhire.Exceptions.NotFoundException;
 import TP_Final.devhire.Exceptions.UnauthorizedException;

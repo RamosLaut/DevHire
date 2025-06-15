@@ -2,10 +2,11 @@ package TP_Final.devhire.Assemblers;
 
 import TP_Final.devhire.Controllers.ApplicationController;
 import TP_Final.devhire.Controllers.DeveloperController;
-import TP_Final.devhire.DTOS.DeveloperApplicantDTO;
-import TP_Final.devhire.DTOS.DeveloperDTO;
-import TP_Final.devhire.Entities.DeveloperEntity;
-import TP_Final.devhire.Mappers.DeveloperMapper;
+import TP_Final.devhire.Model.DTOS.DeveloperApplicantDTO;
+import TP_Final.devhire.Model.DTOS.DeveloperDTO;
+import TP_Final.devhire.Model.Mappers.Mappers.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.Mappers.DeveloperMapper;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -20,10 +21,7 @@ public class DeveloperAssembler implements RepresentationModelAssembler<Develope
     DeveloperMapper developerMapper;
 
     @Override
-    public EntityModel<DeveloperDTO> toModel(DeveloperEntity entity) {
-        if (entity == null) {
-            throw new IllegalArgumentException("DeveloperEntity can't be null");
-        }
+    public @NonNull EntityModel<DeveloperDTO> toModel(@NonNull DeveloperEntity entity) {
         DeveloperDTO dto = developerMapper.convertToDto(entity);
         dto.setEmail(entity.getCredentials().getEmail());
         return EntityModel.of(dto,

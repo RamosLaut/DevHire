@@ -1,6 +1,6 @@
 package TP_Final.devhire.Repositories;
 
-import TP_Final.devhire.Entities.ApplicationEntity;
+import TP_Final.devhire.Model.Entities.ApplicationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

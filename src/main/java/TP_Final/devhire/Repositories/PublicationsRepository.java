@@ -1,6 +1,6 @@
 package TP_Final.devhire.Repositories;
 
-import TP_Final.devhire.Entities.PublicationEntity;
+import TP_Final.devhire.Model.Entities.PublicationEntity;
 import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
