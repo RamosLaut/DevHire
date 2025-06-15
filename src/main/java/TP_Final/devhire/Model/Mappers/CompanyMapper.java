@@ -2,7 +2,7 @@ package TP_Final.devhire.Model.Mappers;
 
 import TP_Final.devhire.Model.DTOS.CompanyDTO;
 import TP_Final.devhire.Model.Entities.CompanyEntity;
-import TP_Final.devhire.Model.Mappers.Mappers.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

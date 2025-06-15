@@ -3,7 +3,7 @@ package TP_Final.devhire.Controllers;
 import TP_Final.devhire.Model.DTOS.ApplicationDTO;
 import TP_Final.devhire.Model.DTOS.JobDTO;
 
-import TP_Final.devhire.Model.Mappers.Mappers.Entities.SkillModel;
+import TP_Final.devhire.Model.Entities.SkillModel;
 import TP_Final.devhire.Services.ApplicationService;
 
 import TP_Final.devhire.Services.JobService;

@@ -2,7 +2,7 @@ package TP_Final.devhire.Assemblers;
 
 import TP_Final.devhire.Controllers.CompanyController;
 import TP_Final.devhire.Model.DTOS.CompanyDTO;
-import TP_Final.devhire.Model.Mappers.Mappers.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
 import TP_Final.devhire.Model.Mappers.CompanyMapper;
 import io.micrometer.common.lang.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;

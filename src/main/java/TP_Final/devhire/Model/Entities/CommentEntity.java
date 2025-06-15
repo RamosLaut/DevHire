@@ -1,7 +1,7 @@
 package TP_Final.devhire.Model.Entities;
 
-import TP_Final.devhire.Model.Mappers.Mappers.Entities.CompanyEntity;
-import TP_Final.devhire.Model.Mappers.Mappers.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.Entities.CompanyEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
 import jakarta.persistence.*;
 
 import lombok.*;

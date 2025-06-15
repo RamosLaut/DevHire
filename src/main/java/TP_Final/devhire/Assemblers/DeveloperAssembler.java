@@ -4,7 +4,7 @@ import TP_Final.devhire.Controllers.ApplicationController;
 import TP_Final.devhire.Controllers.DeveloperController;
 import TP_Final.devhire.Model.DTOS.DeveloperApplicantDTO;
 import TP_Final.devhire.Model.DTOS.DeveloperDTO;
-import TP_Final.devhire.Model.Mappers.Mappers.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
 import TP_Final.devhire.Model.Mappers.DeveloperMapper;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;

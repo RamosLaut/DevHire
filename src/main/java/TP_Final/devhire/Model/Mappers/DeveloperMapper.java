@@ -2,7 +2,7 @@ package TP_Final.devhire.Model.Mappers;
 
 import TP_Final.devhire.Model.DTOS.*;
 import TP_Final.devhire.Model.Entities.DeveloperEntity;
-import TP_Final.devhire.Model.Mappers.Mappers.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
 import TP_Final.devhire.Model.Entities.AcademicInfo;
 import TP_Final.devhire.Model.Entities.JobExperience;
 import org.modelmapper.ModelMapper;

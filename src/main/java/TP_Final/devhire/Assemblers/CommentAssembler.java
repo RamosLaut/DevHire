@@ -1,7 +1,7 @@
 package TP_Final.devhire.Assemblers;
 import TP_Final.devhire.Controllers.CommentController;
 import TP_Final.devhire.Model.DTOS.CommentDTO;
-import TP_Final.devhire.Model.Mappers.Mappers.Entities.CommentEntity;
+import TP_Final.devhire.Model.Entities.CommentEntity;
 import TP_Final.devhire.Model.Mappers.CommentMapper;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
