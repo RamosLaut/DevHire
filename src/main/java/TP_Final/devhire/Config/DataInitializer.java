@@ -1,12 +1,19 @@
 package TP_Final.devhire.Config;
 
+import TP_Final.devhire.Exceptions.NotFoundException;
+import TP_Final.devhire.Model.Entities.AdminEntity;
+import TP_Final.devhire.Repositories.AdminRepository;
+import TP_Final.devhire.Security.Entities.CredentialsEntity;
 import TP_Final.devhire.Security.Entities.PermitEntity;
 import TP_Final.devhire.Security.Entities.RoleEntity;
 import TP_Final.devhire.Security.Enums.Permits;
 import TP_Final.devhire.Security.Enums.Roles;
+import TP_Final.devhire.Security.Repositories.CredentialsRepository;
 import TP_Final.devhire.Security.Repositories.PermitRepository;
 import TP_Final.devhire.Security.Repositories.RolesRepository;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -15,9 +22,15 @@ import java.util.Set;
 public class DataInitializer implements CommandLineRunner {
     private final RolesRepository roleRepository;
     private final PermitRepository permitRepository;
-    public DataInitializer(RolesRepository roleRepository, PermitRepository permitRepository) {
+    private final CredentialsRepository credentialsRepository;
+    private final AdminRepository adminRepository;
+    private final PasswordEncoder passwordEncoder;
+    public DataInitializer(RolesRepository roleRepository, PermitRepository permitRepository, CredentialsRepository credentialsRepository, AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
         this.roleRepository = roleRepository;
         this.permitRepository = permitRepository;
+        this.credentialsRepository = credentialsRepository;
+        this.adminRepository = adminRepository;
+        this.passwordEncoder = passwordEncoder;
     }
     @Override
     public void run(String... args) {
@@ -86,10 +99,46 @@ public class DataInitializer implements CommandLineRunner {
                 Permits.FILTER_FOLLOWERS, Permits.FILTER_FOLLOWING,
 
                 Permits.READ_APPLICANTS, Permits.FILTER_APPLICANTS,
-                Permits.DISCARD_APPLICANT
-
+                Permits.ACCEPT_APPLICANT, Permits.REJECT_APPLICANT
         ));
 
+        createRoleWithPermits(Roles.ROLE_ADMIN, Set.of(
+                Permits.READ_PROFILE, Permits.UPDATE_PROFILE,
+                Permits.READ_COMPANIES, Permits.FILTER_COMPANIES,
+                Permits.LOGIC_DOWN,
+
+                Permits.FILTER_DEVS, Permits.READ_DEVS,
+
+                Permits.READ_PUBLICATIONS, Permits.FILTER_PUBLICATIONS,
+                Permits.DELETE_PUBLICATION,
+
+                Permits.READ_COMMENTS, Permits.FILTER_COMMENTS,
+                Permits.DELETE_COMMENT,
+
+                Permits.FILTER_LIKES, Permits.READ_LIKES,
+
+                Permits.READ_JOBS, Permits.FILTER_JOBS,
+                Permits.DELETE_JOB,
+
+                Permits.READ_FOLLOWERS, Permits.READ_FOLLOWING,
+                Permits.FILTER_FOLLOWERS, Permits.FILTER_FOLLOWING,
+
+                Permits.READ_APPLICATIONS,
+
+                Permits.GET_STATS
+        ));
+        Dotenv dotenv = Dotenv.load();
+        String email = dotenv.get("ADMIN_EMAIL");
+        String password = dotenv.get("ADMIN_PASSWORD");
+        AdminEntity admin = AdminEntity.builder().name("Lautaro").lastName("Ramos").charge("Backend Developer").build();
+        CredentialsEntity credentials = CredentialsEntity.builder()
+                .email(email)
+                .password(passwordEncoder.encode(password))
+                .roles(Set.of(roleRepository.findByRole(Roles.ROLE_ADMIN).orElseThrow(()-> new NotFoundException("ROLE_ADMIN not found"))))
+                .build();
+        credentialsRepository.save(credentials);
+        admin.setCredentials(credentials);
+        adminRepository.save(admin);
     }
     private void createRoleWithPermits(Roles roleEnum, Set<Permits> permits) {
         RoleEntity role = roleRepository.findByRole(roleEnum)

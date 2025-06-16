@@ -100,7 +100,6 @@ public class CommentController {
     public ResponseEntity<CollectionModel<EntityModel<CommentDTO>>> findOwnComments(){
         return ResponseEntity.ok(commentService.findOwnComments());
     }
-
     @Operation(
             summary = "Obtener un comentario por ID",
             description = "Permite a un usuario autenticado (ROLE_DEV o ROLE_COMPANY) buscar un comentario específico por su ID.",
@@ -207,7 +206,6 @@ public class CommentController {
     public ResponseEntity<EntityModel<CommentDTO>> updateContent(@RequestBody CommentDTO commentDTO){
         return ResponseEntity.ok().body(commentService.updateContent(commentDTO));
     }
-
     @Operation(
             summary = "Eliminar un comentario propio",
             description = "Permite a un programador o empresa autenticado previamente eliminar un comentario propio.",

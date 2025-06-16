@@ -1,5 +1,6 @@
 package TP_Final.devhire.Model.Entities;
 
+import TP_Final.devhire.Model.Enums.State;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +29,7 @@ public class ApplicationEntity {
     private JobEntity job;
 
     private LocalDateTime postulationDate = LocalDateTime.now();
-    private Boolean enabled = true;
+    @Enumerated(EnumType.STRING)
+    private State state;
 
 }

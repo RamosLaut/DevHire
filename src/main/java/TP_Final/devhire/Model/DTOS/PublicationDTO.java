@@ -16,4 +16,5 @@ public class PublicationDTO {
     private LocalDateTime publicationDate = LocalDateTime.now();
     @NotBlank(message = "Publication content cannot be empty")
     private String content;
+    private int totalLikes;
 }

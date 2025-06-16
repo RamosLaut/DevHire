@@ -22,16 +22,16 @@ public class JobAssembler implements RepresentationModelAssembler<JobEntity, Ent
     public @NonNull EntityModel<JobDTO> toModel(@NonNull JobEntity entity) {
         JobDTO jobDTO = mapper.convertToDTO(entity);
         return EntityModel.of(jobDTO,
-              linkTo(methodOn(JobController.class).findById(entity.getId())).withSelfRel(),
-              linkTo(methodOn(JobController.class).findJobOfferRequirements(entity.getId())).withRel("Requirements"),
-              linkTo(methodOn(JobController.class).deleteJobOffer(entity.getId())).withRel("Delete"),
-              linkTo(methodOn(JobController.class).findAvailableSkills(entity.getId())).withRel("Skills to add"),
-              linkTo(methodOn(ApplicationController.class).getApplicantsByJobId(entity.getId())).withRel("See applicants"));
+                linkTo(methodOn(JobController.class).findById(entity.getId())).withSelfRel(),
+                linkTo(methodOn(JobController.class).deleteJobOffer(entity.getId())).withRel("Delete"),
+                linkTo(methodOn(JobController.class).findJobOfferRequirements(entity.getId())).withRel("Requirements"),
+                linkTo(methodOn(JobController.class).findAvailableSkills(entity.getId())).withRel("Skills to add"),
+                linkTo(methodOn(ApplicationController.class).getApplicantsByJobId(entity.getId())).withRel("See candidates"));
     }
     public @NonNull EntityModel<JobDTO> toDevModel(@NonNull JobEntity entity) {
         JobDTO jobDTO = mapper.convertToDTO(entity);
         return EntityModel.of(jobDTO,
                 linkTo(methodOn(JobController.class).apply(entity.getId())).withRel("Apply to this job"),
-                linkTo(methodOn(JobController.class).findJobOfferRequirements(entity.getId())).withRel("Requirements"));
+                linkTo(methodOn(JobController.class).findJobOfferRequirements(entity.getId())).withRel("See job requirements"));
     }
 }

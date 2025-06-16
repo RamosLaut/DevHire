@@ -28,7 +28,6 @@ RegisterController {
     public RegisterController(RegisterService registerService) {
         this.registerService = registerService;
     }
-
     @Operation(
             summary = "Registro de programador",
             description = "Permite a un programador registrarse en la aplicación.",
@@ -67,7 +66,6 @@ RegisterController {
     public ResponseEntity<EntityModel<DeveloperDTO>> devRegister(@Valid @RequestBody DeveloperRegisterDTO devRegisterDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(registerService.devRegister(devRegisterDTO));
     }
-
     @Operation(
             summary = "Registro de empresa",
             description = "Permite a una empresa registrarse en la aplicación.",

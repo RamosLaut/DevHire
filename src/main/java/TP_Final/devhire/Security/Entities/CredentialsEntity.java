@@ -1,10 +1,13 @@
 package TP_Final.devhire.Security.Entities;
 
+import TP_Final.devhire.Model.Entities.AdminEntity;
 import TP_Final.devhire.Model.Entities.CompanyEntity;
 import TP_Final.devhire.Model.Entities.DeveloperEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,8 +31,7 @@ public class CredentialsEntity implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
     @Column(nullable = false)
-//    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$")
-//    @NotEmpty
+    @NotBlank
     private String password;
 
     @OneToOne(mappedBy = "credentials", cascade = CascadeType.ALL)
@@ -39,6 +41,10 @@ public class CredentialsEntity implements UserDetails {
     @OneToOne(mappedBy = "credentials", cascade = CascadeType.ALL)
     @JoinColumn(name = "company_id", referencedColumnName = "id", unique = true)
     private CompanyEntity company;
+
+    @OneToOne(mappedBy = "credentials", cascade = CascadeType.ALL)
+    @JoinColumn(name = "admin_id", referencedColumnName = "id", unique = true)
+    private AdminEntity admin;
 
     @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
     @JoinTable(

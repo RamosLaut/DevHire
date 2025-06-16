@@ -70,6 +70,17 @@ public class DeveloperService {
             .collect(Collectors.toList());
     }
 
+    public CollectionModel<EntityModel<DeveloperApplicantDTO>> findByName(String name){
+        List<EntityModel<DeveloperApplicantDTO>> devs = developerRepository.findAll().stream()
+                .filter(dev -> name.equalsIgnoreCase(dev.getName()))
+                .map(developerAssembler::onlySelfRel)
+                .toList();
+        if(devs.isEmpty()){
+            throw new NotFoundException("Developer not found");
+        }
+        return CollectionModel.of(devs);
+    }
+
     public void deleteById(Long userID) {
         developerRepository.deleteById(userID);}
 
@@ -77,6 +88,20 @@ public class DeveloperService {
         verifyAuthenticatedUserMatchesId(userID);
         DeveloperEntity existingUser = developerRepository.findById(userID)
                 .orElseThrow(() -> new NotFoundException("User not found"));
+
+        DeveloperEntity updatedData = developerMapper.convertToEntity(dto);
+
+        existingUser.setName(updatedData.getName());
+        existingUser.setLastName(updatedData.getLastName());
+        existingUser.setDni(updatedData.getDni());
+        existingUser.setAcademicInfo(updatedData.getAcademicInfo());
+        existingUser.setLocation(updatedData.getLocation());
+        existingUser.setSeniority(updatedData.getSeniority());
+        existingUser.setJobExperience(updatedData.getJobExperience());
+        existingUser.setSoftSkills(updatedData.getSoftSkills());
+        existingUser.setHardSkills(updatedData.getHardSkills());
+
+        return developerRepository.save(existingUser);
 
         if (dto.getAcademicInfo() == null) dto.setAcademicInfo(Collections.emptyList());
         if (dto.getJobExperience() == null) dto.setJobExperience(Collections.emptyList());
@@ -187,6 +212,13 @@ public class DeveloperService {
         user.setEnabled(true);
         return developerAssembler.toModel(developerRepository.save(user));
     }
+
+
+    public int devsQuantity(){
+        return developerRepository.findAll().size();
+    }
+
+
     private DeveloperEntity getAuthenticatedDeveloper() throws AccessDeniedException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return developerRepository.findByCredentials_Email(email)

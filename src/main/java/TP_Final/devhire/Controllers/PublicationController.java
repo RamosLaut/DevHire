@@ -26,7 +26,6 @@ public class PublicationController {
     public PublicationController(PublicationService publicationService) {
         this.publicationService = publicationService;
     }
-
     @Operation(
             summary = "Crear una publicación",
             description = "Permite a usuarios con rol ROLE_DEV o ROLE_COMPANY crear una publicación.",
@@ -40,8 +39,6 @@ public class PublicationController {
     public ResponseEntity<EntityModel<PublicationDTO>> save(@RequestBody @Valid PublicationDTO publicationDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(publicationService.save(publicationDTO));
     }
-
-
     @Operation(
             summary = "Listar todas las publicaciones",
             description = "Devuelve una lista con todas las publicaciones públicas registradas"
@@ -51,7 +48,6 @@ public class PublicationController {
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>> findAll() {
         return ResponseEntity.ok(publicationService.findAll());
     }
-
     @Operation(
             summary = "Obtener publicaciones propias",
             description = "Devuelve todas las publicaciones creadas por el usuario autenticado con rol ROLE_DEV o ROLE_COMPANY.",
@@ -66,7 +62,6 @@ public class PublicationController {
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>> findOwnPublications(){
         return ResponseEntity.ok(publicationService.findOwnPublications());
     }
-
     @Operation(
             summary = "Buscar publicación por ID",
             description = "Permite a usuarios con rol ROLE_DEV o ROLE_COMPANY buscar una publicación por su ID.",
@@ -81,12 +76,10 @@ public class PublicationController {
     public ResponseEntity<EntityModel<PublicationDTO>> findById(@PathVariable Long publicationId){
         return ResponseEntity.ok(publicationService.findById(publicationId));
     }
-
     @GetMapping("/dev/{devId}")
     public ResponseEntity<CollectionModel<EntityModel<PublicationDTO>>>findAllByDevId(@PathVariable Long devId){
         return ResponseEntity.ok(publicationService.findByDevId(devId));
     }
-
     @Operation(
             summary = "Actualizar contenido de una publicación",
             description = "Permite a usuarios con rol ROLE_DEV o ROLE_COMPANY actualizar el contenido de una publicación propia.",
@@ -101,7 +94,6 @@ public class PublicationController {
     public ResponseEntity<EntityModel<PublicationDTO>>updateContent(@RequestBody PublicationDTO publicationDTO){
         return ResponseEntity.ok(publicationService.updateContent(publicationDTO));
     }
-
     @Operation(
             summary = "Eliminar publicación propia",
             description = "Permite a un programador o empresa autenticado previamente eliminar una publicación propia.",

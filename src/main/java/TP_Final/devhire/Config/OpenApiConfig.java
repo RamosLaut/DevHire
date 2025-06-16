@@ -1,4 +1,4 @@
-package TP_Final.devhire.Security.Config;
+package TP_Final.devhire.Config;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
