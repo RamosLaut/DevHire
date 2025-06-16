@@ -9,6 +9,7 @@ import TP_Final.devhire.Repositories.DeveloperRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -62,6 +63,17 @@ public class DeveloperService {
             .collect(Collectors.toList());
     }
 
+    public CollectionModel<EntityModel<DeveloperDTO>> findByName(String name){
+        List<EntityModel<DeveloperDTO>> devs = developerRepository.findAll().stream()
+                .filter(dev -> name.equalsIgnoreCase(dev.getName()))
+                .map(developerAssembler::toModel)
+                .toList();
+        if(devs.isEmpty()){
+            throw new NotFoundException("Developer not found");
+        }
+        return CollectionModel.of(devs);
+    }
+
     public void deleteById(Long userID) {
         developerRepository.deleteById(userID);}
 
@@ -73,9 +85,7 @@ public class DeveloperService {
 
         existingUser.setName(updatedData.getName());
         existingUser.setLastName(updatedData.getLastName());
-//        existingUser.setEmail(updatedData.getEmail());
         existingUser.setDni(updatedData.getDni());
-//        existingUser.setPassword(updatedData.getPassword());
         existingUser.setAcademicInfo(updatedData.getAcademicInfo());
         existingUser.setLocation(updatedData.getLocation());
         existingUser.setSeniority(updatedData.getSeniority());
@@ -124,5 +134,8 @@ public class DeveloperService {
         return developerAssembler.toModel(developerRepository.save(user));
     }
 
+    public int devsQuantity(){
+        return developerRepository.findAll().size();
+    }
 
 }

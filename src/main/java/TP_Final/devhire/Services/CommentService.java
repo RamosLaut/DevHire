@@ -211,4 +211,7 @@ public class CommentService {
             return CollectionModel.of(allComments);
         } else throw new CredentialsRequiredException("You need to be logged in to see comments");
     }
+    public int commentsQuantity(){
+        return commentRepository.findAll().size();
+    }
 }

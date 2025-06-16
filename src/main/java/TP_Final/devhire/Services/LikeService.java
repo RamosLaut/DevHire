@@ -176,4 +176,7 @@ public class LikeService {
         PublicationEntity publication = publicationsRepository.findById(publicationId).get();
         return "Total likes of publication "+ publication.getId()+ ": " + publication.getLikes().size();
     }
+    public int likesQuantity(){
+        return likeRepository.findAll().size();
+    }
 }

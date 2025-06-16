@@ -104,6 +104,6 @@ public class RegisterService {
         credentials.setRoles(Set.of(companyRole));
         credentialRepository.save(credentials);
         company.setCredentials(credentials);
-        return companyAssembler.toModel(companyRepository.save(company));
+        return companyAssembler.toOwnCompanyModel(companyRepository.save(company));
     }
 }

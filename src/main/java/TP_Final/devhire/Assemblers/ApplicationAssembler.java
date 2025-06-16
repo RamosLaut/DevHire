@@ -26,7 +26,9 @@ public class ApplicationAssembler implements RepresentationModelAssembler<Applic
     public @NonNull EntityModel<ApplicationDTO> toCompanyModel(@NonNull ApplicationEntity entity, Long jobId) {
         ApplicationDTO applicationDTO = mapper.convertToDTO(entity);
         return EntityModel.of(applicationDTO, linkTo(methodOn(ApplicationController.class).findById(entity.getId())).withSelfRel(),
-                linkTo(methodOn(ApplicationController.class).discardApplicantByDevId(entity.getDev().getId(), jobId)).withRel("Discard applicant"));
+                linkTo(methodOn(ApplicationController.class).discardApplicantByDevId(entity.getDev().getId(), jobId)).withRel("Discard applicant"),
+                linkTo(methodOn(ApplicationController.class).acceptApplication(applicationDTO.getId())).withRel("Accept application"),
+                linkTo(methodOn(ApplicationController.class).rejectApplication(applicationDTO.getId())).withRel("Reject application"));
     }
     public @NonNull EntityModel<ApplicationDTO> toDevModel(@NonNull ApplicationEntity entity){
         ApplicationDTO applicationDTO = mapper.convertToDTO(entity);

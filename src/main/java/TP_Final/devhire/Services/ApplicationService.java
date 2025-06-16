@@ -13,6 +13,7 @@ import TP_Final.devhire.Exceptions.AlreadyExistsException;
 import TP_Final.devhire.Exceptions.CredentialsRequiredException;
 import TP_Final.devhire.Exceptions.NotFoundException;
 import TP_Final.devhire.Exceptions.UnauthorizedException;
+import TP_Final.devhire.Model.Enums.State;
 import TP_Final.devhire.Repositories.ApplicantsRepository;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.DeveloperRepository;
@@ -64,6 +65,7 @@ public class ApplicationService {
         }
         application.setJob(job);
         application.setDev(developer);
+        application.setState(State.PENDING);
         applicantsRepository.save(application);
         return applicationAssembler.toDevModel(application);
     }
@@ -232,6 +234,44 @@ public class ApplicationService {
         }
         return CollectionModel.of(filtered.stream().map(dev -> developerAssembler.toModelApplication(dev, jobId)).toList());
     }
+    public void acceptApplication(long id) throws NotFoundException, UnauthorizedException{
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(companyRepository.findByCredentials_Email(email).isEmpty()){
+            throw new UnauthorizedException("You don't have permission to accept this application");
+        }
+        CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+        if(applicantsRepository.findById(id).isEmpty()){
+            throw new NotFoundException("Application not found");
+        }
+        ApplicationEntity application = applicantsRepository.findById(id).get();
+        JobEntity job = application.getJob();
+        if(!company.getJobs().contains(job)){
+            throw new UnauthorizedException("You don't have permission to accept this application");
+        }
+        if(application.getState().equals(State.PENDING)){
+            application.setState(State.ACCEPTED);
+            applicantsRepository.save(application);
+        }else throw new UnauthorizedException("This application has already been accepted");
+    }
+    public void rejectApplication(long id) throws NotFoundException, UnauthorizedException{
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(companyRepository.findByCredentials_Email(email).isEmpty()){
+            throw new UnauthorizedException("You don't have permission to reject this application");
+        }
+        CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
+        if(applicantsRepository.findById(id).isEmpty()){
+            throw new NotFoundException("Application not found");
+        }
+        ApplicationEntity application = applicantsRepository.findById(id).get();
+        JobEntity job = application.getJob();
+        if(!company.getJobs().contains(job)){
+            throw new UnauthorizedException("You don't have permission to reject this application");
+        }
+        if(application.getState().equals(State.PENDING)){
+            application.setState(State.REJECTED);
+            applicantsRepository.save(application);
+        }else throw new UnauthorizedException("This application has already been rejected");
+    }
     public void discardApplicantByDevId(Long devId, Long jobId)throws NotFoundException, UnauthorizedException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         if(companyRepository.findByCredentials_Email(email).isEmpty()){
@@ -257,5 +297,14 @@ public class ApplicationService {
                 .findAny()
                 .ifPresent(applicantsRepository::delete);
     }
-
+    public int applicationsQuantity(){
+        return applicantsRepository.findAll().size();
+    }
+    public double percentageOfAcceptedApplications(){
+        int acceptedApplications = (int)applicantsRepository.findAll().stream()
+                .filter(app -> app.getState().equals(State.ACCEPTED))
+                .count();
+        int totalApplications = applicantsRepository.findAll().size();
+        return (double)acceptedApplications / totalApplications * 100;
+    }
 }

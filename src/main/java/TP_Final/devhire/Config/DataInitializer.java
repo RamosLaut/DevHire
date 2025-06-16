@@ -1,5 +1,6 @@
 package TP_Final.devhire.Config;
 
+import TP_Final.devhire.Security.Entities.CredentialsEntity;
 import TP_Final.devhire.Security.Entities.PermitEntity;
 import TP_Final.devhire.Security.Entities.RoleEntity;
 import TP_Final.devhire.Security.Enums.Permits;
@@ -86,8 +87,34 @@ public class DataInitializer implements CommandLineRunner {
                 Permits.FILTER_FOLLOWERS, Permits.FILTER_FOLLOWING,
 
                 Permits.READ_APPLICANTS, Permits.FILTER_APPLICANTS,
-                Permits.DISCARD_APPLICANT
+                Permits.DISCARD_APPLICANT, Permits.ACCEPT_APPLICANT,
+                Permits.REJECT_APPLICANT
+        ));
 
+        createRoleWithPermits(Roles.ROLE_ADMIN, Set.of(
+                Permits.READ_PROFILE, Permits.UPDATE_PROFILE,
+                Permits.READ_COMPANIES, Permits.FILTER_COMPANIES,
+                Permits.LOGIC_DOWN,
+
+                Permits.FILTER_DEVS, Permits.READ_DEVS,
+
+                Permits.READ_PUBLICATIONS, Permits.FILTER_PUBLICATIONS,
+                Permits.DELETE_PUBLICATION,
+
+                Permits.READ_COMMENTS, Permits.FILTER_COMMENTS,
+                Permits.DELETE_COMMENT,
+
+                Permits.FILTER_LIKES, Permits.READ_LIKES,
+
+                Permits.READ_JOBS, Permits.FILTER_JOBS,
+                Permits.DELETE_JOB,
+
+                Permits.READ_FOLLOWERS, Permits.READ_FOLLOWING,
+                Permits.FILTER_FOLLOWERS, Permits.FILTER_FOLLOWING,
+
+                Permits.READ_APPLICATIONS,
+
+                Permits.GET_STATS
         ));
 
     }

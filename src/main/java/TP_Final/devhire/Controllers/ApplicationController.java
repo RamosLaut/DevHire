@@ -296,4 +296,14 @@ public class ApplicationController {
         applicationService.discardApplicantByDevId(devId, jobId);
         return ResponseEntity.noContent().build();
     }
+    @PutMapping("/acceptApplication/{applicationId}")
+    public ResponseEntity<?> acceptApplication(@PathVariable Long applicationId){
+        applicationService.acceptApplication(applicationId);
+        return ResponseEntity.noContent().build();
+    }
+    @PutMapping("/rejectApplication/{applicationId}")
+    public ResponseEntity<?> rejectApplication(@PathVariable Long applicationId){
+        applicationService.rejectApplication(applicationId);
+        return ResponseEntity.noContent().build();
+    }
 }

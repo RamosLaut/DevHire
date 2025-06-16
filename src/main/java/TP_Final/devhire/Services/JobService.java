@@ -240,6 +240,9 @@ public class JobService {
             return CollectionModel.of(companyOpt.get().getJobs().stream().map(jobAssembler::toDevModel).toList());
         }else throw new NotFoundException("Company not found");
     }
+    public int jobsQuantity(){
+        return jobRepository.findAll().size();
+    }
 }
 
 //    public EntityModel<JobDTO> FilterByLocation(String location)throws NotFoundJobLocationException {

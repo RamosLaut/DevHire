@@ -102,6 +102,9 @@ public class SecurityConfig {
                         .requestMatchers("/application/applicantsWithAnyHardRequirement/*").hasAuthority("FILTER_APPLICANTS")
                         .requestMatchers("/application/applicantsWithMinHardRequirement/*").hasAuthority("FILTER_APPLICANTS")
                         .requestMatchers("/application/job/*/discardApplicant/*").hasAuthority("DISCARD_APPLICANT")
+                        .requestMatchers("/application/acceptApplication/*").hasAuthority("ACCEPT_APPLICANT")
+                        .requestMatchers("/application/rejectApplication/*").hasAuthority("REJECT_APPLICANT")
+                        .requestMatchers("/api/stats").hasAuthority("READ_STATS")
                         .requestMatchers("/v3/api-docs/**",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**").permitAll()

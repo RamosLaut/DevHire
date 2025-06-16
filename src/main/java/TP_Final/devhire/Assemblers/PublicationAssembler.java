@@ -22,6 +22,11 @@ public class PublicationAssembler implements RepresentationModelAssembler<Public
     @Override
     public @NonNull EntityModel<PublicationDTO> toModel(@NonNull PublicationEntity publication) {
         PublicationDTO publicationDTO = mapper.converToPublicationDTO(publication);
+        if(publication.getLikes() == null){
+            publicationDTO.setTotalLikes(0);
+        }else if(publication.getLikes().isEmpty()){
+            publicationDTO.setTotalLikes(0);
+        }else publicationDTO.setTotalLikes(publication.getLikes().size());
         if(publication.getCompany() != null) {
             publicationDTO.setName(publication.getCompany().getName());
         }
@@ -34,6 +39,11 @@ public class PublicationAssembler implements RepresentationModelAssembler<Public
     }
     public @NonNull EntityModel<PublicationDTO> toOwnPublicationModel(@NonNull PublicationEntity publication){
         PublicationDTO publicationDTO = mapper.converToPublicationDTO(publication);
+        if(publication.getLikes() == null){
+            publicationDTO.setTotalLikes(0);
+        }else if(publication.getLikes().isEmpty()){
+            publicationDTO.setTotalLikes(0);
+        }else publicationDTO.setTotalLikes(publication.getLikes().size());
         if(publication.getCompany() != null) {
             publicationDTO.setName(publication.getCompany().getName());
         }

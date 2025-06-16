@@ -167,4 +167,14 @@ public class PublicationService{
         }
         return publicationAssembler.toOwnPublicationModel(publication);
     }
+    public int publicationsQuantity(){
+        return publicationsRepository.findAll().size();
+    }
+    public double averageByUser(){
+        int totalPublications = publicationsRepository.findAll().size();
+        int totalUsers = companyRepository.findAll().size() + developerRepository.findAll().size();
+        if(totalUsers == 0){
+            return 0;
+        }else return (double)totalPublications/totalUsers;
+    }
 }

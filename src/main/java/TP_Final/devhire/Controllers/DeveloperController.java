@@ -80,6 +80,10 @@ public class DeveloperController {
                     linkTo(methodOn(DeveloperController.class).listAllDevsPage(page, size)).withSelfRel())
         );
     }
+    @GetMapping("/search/{name}")
+    public ResponseEntity<CollectionModel<EntityModel<DeveloperDTO>>> searchDevByName(@PathVariable String name) {
+        return ResponseEntity.ok(developerService.findByName(name));
+    }
 
     @Operation(
             summary = "Actualizar información académica",
@@ -124,11 +128,6 @@ public class DeveloperController {
     public ResponseEntity<EntityModel<DeveloperDTO>> updateSkills(@PathVariable Long id, @RequestBody SkillsDTO skillsDTO) {
         return ResponseEntity.ok(developerService.updateSkills(id, skillsDTO));
     }
-//
-//    @PutMapping("/password/{id}")
-//    public ResponseEntity<EntityModel<DeveloperDTO>> updatePassword(@PathVariable Long id, @RequestBody @Valid DeveloperPasswordDTO dto) {
-//        return ResponseEntity.ok(developerService.updatePassword(id, dto));
-//    }
 
     @Operation(
             summary = "Actualizar campos del programador",

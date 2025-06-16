@@ -106,6 +106,9 @@ public class CompanyService {
             return false;
         }
     }
+    public int companiesQuantity(){
+        return companyRepository.findAll().size();
+    }
 }
 
 
