@@ -227,6 +227,4 @@ public class JobController {
              @PathVariable Long jobId){
         return ResponseEntity.ok(applicationService.apply(jobId));
     }
-
-
 }

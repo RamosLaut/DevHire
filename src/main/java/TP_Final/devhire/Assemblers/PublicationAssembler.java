@@ -51,9 +51,9 @@ public class PublicationAssembler implements RepresentationModelAssembler<Public
             publicationDTO.setName(publication.getDeveloper().getName());
         }
         return EntityModel.of(publicationDTO, linkTo(methodOn(PublicationController.class).findById(publicationDTO.getId())).withSelfRel(),
-                linkTo(methodOn(PublicationController.class).deleteById(publicationDTO.getId())).withRel("Delete publication"),
-                linkTo(methodOn(PublicationController.class).updateContent(publicationDTO)).withRel("Update content"),
                 linkTo(methodOn(CommentController.class).save(null, publication.getId())).withRel("Comment"),
-                linkTo(methodOn(LikeController.class).save(publicationDTO.getId())).withRel("Like"));
+                linkTo(methodOn(LikeController.class).save(publicationDTO.getId())).withRel("Like"),
+                linkTo(methodOn(PublicationController.class).deleteById(publicationDTO.getId())).withRel("Delete publication"),
+                linkTo(methodOn(PublicationController.class).updateContent(publicationDTO)).withRel("Update content"));
     }
 }

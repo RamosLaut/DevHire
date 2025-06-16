@@ -1,5 +1,6 @@
 package TP_Final.devhire.Security.Entities;
 
+import TP_Final.devhire.Model.Entities.AdminEntity;
 import TP_Final.devhire.Model.Entities.CompanyEntity;
 import TP_Final.devhire.Model.Entities.DeveloperEntity;
 import jakarta.persistence.*;
@@ -30,7 +31,6 @@ public class CredentialsEntity implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
     @Column(nullable = false)
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d]{8,}$")
     @NotBlank
     private String password;
 
@@ -41,6 +41,10 @@ public class CredentialsEntity implements UserDetails {
     @OneToOne(mappedBy = "credentials", cascade = CascadeType.ALL)
     @JoinColumn(name = "company_id", referencedColumnName = "id", unique = true)
     private CompanyEntity company;
+
+    @OneToOne(mappedBy = "credentials", cascade = CascadeType.ALL)
+    @JoinColumn(name = "admin_id", referencedColumnName = "id", unique = true)
+    private AdminEntity admin;
 
     @ManyToMany(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
     @JoinTable(

@@ -62,7 +62,6 @@ public class LikeController {
         likeService.save(publicationId);
         return ResponseEntity.noContent().build();
     }
-
     @Operation(
             summary = "Obtener todos los likes",
             description = "Permite obtener una colección con todos los likes disponibles.",
@@ -77,7 +76,6 @@ public class LikeController {
     public ResponseEntity<CollectionModel<EntityModel<LikeDTO>>> findAll() {
         return ResponseEntity.ok(likeService.findAll());
     }
-
     @Operation(
             summary = "Obtener todos los likes propios",
             description = "Permite a usuarios con rol ROLE_DEV o ROLE_COMPANY obtener una colección con todos sus likes propios.",
@@ -92,7 +90,6 @@ public class LikeController {
     public ResponseEntity<CollectionModel<EntityModel<LikeDTO>>> findOwnLikes() {
         return ResponseEntity.ok(likeService.findOwnLikes());
     }
-
     @Operation(
             summary = "Buscar un like por ID",
             description = "Permite a usuarios con rol ROLE_DEV o ROLE_ADMIN buscar un like específico por su ID.",
@@ -107,7 +104,6 @@ public class LikeController {
     public ResponseEntity<EntityModel<LikeDTO>> findById(@PathVariable long id) {
         return ResponseEntity.ok(likeService.findById(id));
     }
-
     @Operation(
             summary = "Obtener likes de una publicación",
             description = "Permite a usuarios con rol ROLE_DEV o ROLE_PUBLICATION ver los likes asociados a una publicación específica por su ID.",
@@ -124,7 +120,6 @@ public class LikeController {
      @PathVariable long publicationId) {
         return ResponseEntity.ok(likeService.findByPublicationId(publicationId));
     }
-
     @Operation(
             summary = "Obtener cantidad de likes de una publicación",
             description = "Permite a un programador o empresa autenticado previamente obtener la cantidad de likes de una publicación por su ID.",
@@ -158,7 +153,6 @@ public class LikeController {
     public ResponseEntity<String> likesQuantity(@PathVariable long publicationId) {
         return ResponseEntity.ok(likeService.findLikesQuantityByPublicationId(publicationId));
     }
-
     @Operation(
             summary = "Eliminar un like propio",
             description = "Permite a un programador o empresa autenticado previamente eliminar un like propio.",

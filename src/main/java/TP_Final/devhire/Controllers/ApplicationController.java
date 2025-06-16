@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -148,6 +149,33 @@ public class ApplicationController {
         return ResponseEntity.noContent().build();
     }
     @Operation(
+            summary = "Ver aplicaciones aceptadas",
+            description = "Permite a un usuario con rol ROLE_DEV ver sus aplicaciones a empleos que han sido aceptadas.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Aplicaciones aceptadas obtenidas exitosamente"),
+            @ApiResponse(responseCode = "403", description = "No autorizado. El usuario no tiene permisos para acceder a este recurso"),
+            @ApiResponse(responseCode = "404", description = "No se encontraron aplicaciones aceptadas para el usuario")
+    })
+    @GetMapping("/acceptedApplications")
+    public ResponseEntity<CollectionModel<EntityModel<ApplicationDTO>>> findAcceptedApplications(){
+        return ResponseEntity.ok(applicationService.findAcceptedApplications());
+    }
+    @Operation(
+            summary = "Ver aplicaciones rechazadas",
+            description = "Permite a un desarrollador (ROLE_DEV) ver sus aplicaciones a empleo rechazadas."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Aplicaciones rechazadas encontradas correctamente"),
+            @ApiResponse(responseCode = "404", description = "No se encontraron aplicaciones rechazadas para este desarrollador"),
+            @ApiResponse(responseCode = "403", description = "Acceso denegado. Este endpoint está restringido al rol ROLE_DEV")
+    })
+    @GetMapping("/rejectedApplications")
+    public ResponseEntity<CollectionModel<EntityModel<ApplicationDTO>>> findRejectedApplications(){
+        return ResponseEntity.ok(applicationService.findRejectedApplications());
+    }
+    @Operation(
             summary = "Listar aplicantes que cumplen con todos los requisitos técnicos",
             description = "Permite a un usuario con rol ROLE_COMPANY obtener una lista de programadores que aplicaron a una oferta de empleo y cumplen con todos los requisitos técnicos (hard skills) definidos en dicha oferta.",
             security = @SecurityRequirement(name = "bearerAuth"),
@@ -259,48 +287,30 @@ public class ApplicationController {
         return ResponseEntity.ok(applicationService.findApplicantsWithMinHardRequirements(jobId, min));
     }
     @Operation(
-            summary = "Descartar aplicante de una oferta de empleo",
-            description = "Permite a un usuario con rol ROLE_COMPANY descartar un programador que aplicó a una oferta de empleo publicada por su empresa.",
-            security = @SecurityRequirement(name = "bearerAuth"),
-            parameters = {
-                    @Parameter(
-                            name = "devId",
-                            description = "ID del desarrollador a descartar",
-                            required = true,
-                            example = "12"
-                    ),
-                    @Parameter(
-                            name = "jobId",
-                            description = "ID de la oferta de empleo",
-                            required = true,
-                            example = "7"
-                    )
-            },
-            responses = {
-                    @ApiResponse(
-                            responseCode = "204",
-                            description = "Aplicante descartado correctamente. No se retorna contenido."
-                    ),
-                    @ApiResponse(
-                            responseCode = "403",
-                            description = "Acceso denegado. Solo usuarios con rol ROLE_COMPANY pueden realizar esta operación."
-                    ),
-                    @ApiResponse(
-                            responseCode = "404",
-                            description = "No se encontró el empleo, el desarrollador o la relación entre ambos."
-                    )
-            }
+            summary = "Aceptar aplicación",
+            description = "Permite a un usuario con rol ROLE_COMPANY aceptar una aplicación a un empleo publicado por él mismo.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
-    @DeleteMapping("discardApplicant/{devId}/job/{jobId}")
-    public ResponseEntity<?> discardApplicantByDevId(@PathVariable Long devId, @PathVariable Long jobId){
-        applicationService.discardApplicantByDevId(devId, jobId);
-        return ResponseEntity.noContent().build();
-    }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Aplicación aceptada exitosamente"),
+            @ApiResponse(responseCode = "403", description = "No autorizado. El usuario no tiene permisos para aceptar esta aplicación"),
+            @ApiResponse(responseCode = "404", description = "No se encontró la aplicación con el ID especificado")
+    })
     @PutMapping("/acceptApplication/{applicationId}")
     public ResponseEntity<?> acceptApplication(@PathVariable Long applicationId){
         applicationService.acceptApplication(applicationId);
         return ResponseEntity.noContent().build();
     }
+    @Operation(
+            summary = "Rechazar aplicación",
+            description = "Permite a un usuario con rol ROLE_COMPANY rechazar una aplicación a un empleo publicado por él mismo.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Aplicación rechazada exitosamente"),
+            @ApiResponse(responseCode = "403", description = "No autorizado. El usuario no tiene permisos para rechazar esta aplicación"),
+            @ApiResponse(responseCode = "404", description = "No se encontró la aplicación con el ID especificado")
+    })
     @PutMapping("/rejectApplication/{applicationId}")
     public ResponseEntity<?> rejectApplication(@PathVariable Long applicationId){
         applicationService.rejectApplication(applicationId);

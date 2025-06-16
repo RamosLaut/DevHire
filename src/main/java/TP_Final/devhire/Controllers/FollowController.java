@@ -49,7 +49,6 @@ public class FollowController {
     public ResponseEntity<EntityModel<FollowResponseDTO>> saveFollow(@RequestBody @Valid FollowRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(followService.saveFollow(dto));
     }
-
     @Operation(
             summary = "Buscar seguimiento por tipo e IDs",
             description = "Recupera un seguimiento existente por su tipo y los IDs de seguidor y seguido.",
@@ -65,7 +64,6 @@ public class FollowController {
             @PathVariable Long followedId) {
         return ResponseEntity.ok(followService.findById(followType, followerId, followedId));
     }
-
     @Operation(
             summary = "Listar todos los seguimientos",
             description = "Devuelve todos los seguimientos registrados en la plataforma."
@@ -74,7 +72,6 @@ public class FollowController {
     public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> findAll() {
         return ResponseEntity.ok(followService.findAll());
     }
-
     @Operation(
             summary = "Desactivar un seguimiento",
             description = "Desactiva un seguimiento sin eliminarlo permanentemente.",
@@ -90,7 +87,6 @@ public class FollowController {
     public ResponseEntity<EntityModel<FollowResponseDTO>> deactivateFollow(@RequestBody @Valid FollowRequestDTO dto) {
         return ResponseEntity.ok(followService.deactivate(dto));
     }
-
     @Operation(
             summary = "Reactivar un seguimiento",
             description = "Permite reactivar un seguimiento previamente desactivado.",
@@ -107,7 +103,6 @@ public class FollowController {
     public ResponseEntity<EntityModel<FollowResponseDTO>> reactivateFollow(@RequestBody @Valid FollowRequestDTO dto) {
         return ResponseEntity.ok(followService.reactivate(dto));
     }
-
     @Operation(
             summary = "Listar seguidores de una entidad",
             description = "Devuelve todos los seguidores de un usuario o empresa dado su tipo e ID."
@@ -118,7 +113,6 @@ public class FollowController {
             @PathVariable Long followedId) {
         return ResponseEntity.ok(followService.getFollowers(followedType, followedId));
     }
-
     @Operation(
             summary = "Obtener seguidos",
             description = "Devuelve todas las entidades que sigue el usuario o empresa indicado."
@@ -127,7 +121,6 @@ public class FollowController {
     public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> getFollowings(@PathVariable EntityType followerType, @PathVariable Long followerId) {
         return ResponseEntity.ok(followService.getFollowings(followerType, followerId));
     }
-
     @Operation(
             summary = "Obtener mis seguidores",
             description = "Devuelve todos los seguidores del usuario o empresa autenticado."
@@ -136,7 +129,6 @@ public class FollowController {
     public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> getOwnFollowers() {
         return ResponseEntity.ok(followService.getOwnFollowers());
     }
-
     @Operation(
             summary = "Obtener a quién sigo",
             description = "Devuelve todas las entidades que el usuario o empresa autenticado sigue."
@@ -145,7 +137,6 @@ public class FollowController {
     public ResponseEntity<CollectionModel<EntityModel<FollowResponseDTO>>> getOwnFollowings() {
         return ResponseEntity.ok(followService.getOwnFollowings());
     }
-
     @Operation(
             summary = "Eliminar seguimiento",
             description = "Elimina un seguimiento de forma permanente.",
@@ -161,6 +152,5 @@ public class FollowController {
     public ResponseEntity<Void> deleteById(@RequestBody @Valid FollowRequestDTO dto) {
         return followService.deleteById(dto);
     }
-
 }
 

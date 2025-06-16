@@ -137,7 +137,7 @@ public class ApplicationService {
         }
         List<EntityModel<DeveloperApplicantDTO>> applicants = job.getApplicants().stream()
                 .map(ApplicationEntity::getDev)
-                .map(dev->developerAssembler.toModelApplication(dev, jobId))
+                .map(dev->developerAssembler.toDevApplicantModel(dev, jobId))
                 .toList();
         if(applicants.isEmpty()){
             throw new NotFoundException("No applicants found for this job");
@@ -172,7 +172,7 @@ public class ApplicationService {
         if(filtered.isEmpty()){
             throw new NotFoundException("No applicants were found with all the required qualifications for this job.");
         }
-        return CollectionModel.of(filtered.stream().map(dev->developerAssembler.toModelApplication(dev,jobId)).toList());
+        return CollectionModel.of(filtered.stream().map(dev->developerAssembler.toDevApplicantModel(dev,jobId)).toList());
     }
     public CollectionModel<EntityModel<DeveloperApplicantDTO>> findApplicantsWithAnyHardRequirements(Long jobId)throws NotFoundException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -202,7 +202,7 @@ public class ApplicationService {
         if(filtered.isEmpty()){
             throw new NotFoundException("No applicants were found with any of the required qualifications for this job.");
         }
-        return CollectionModel.of(filtered.stream().map(dev->developerAssembler.toModelApplication(dev, jobId)).toList());
+        return CollectionModel.of(filtered.stream().map(dev->developerAssembler.toDevApplicantModel(dev, jobId)).toList());
     }
     public CollectionModel<EntityModel<DeveloperApplicantDTO>> findApplicantsWithMinHardRequirements(Long jobId, int minRequirements)throws NotFoundException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -232,7 +232,7 @@ public class ApplicationService {
         if(filtered.isEmpty()){
             throw new NotFoundException("No applicants were found with at least " + minRequirements + " of the required qualifications for this job.");
         }
-        return CollectionModel.of(filtered.stream().map(dev -> developerAssembler.toModelApplication(dev, jobId)).toList());
+        return CollectionModel.of(filtered.stream().map(dev -> developerAssembler.toDevApplicantModel(dev, jobId)).toList());
     }
     public void acceptApplication(long id) throws NotFoundException, UnauthorizedException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -272,31 +272,6 @@ public class ApplicationService {
             applicantsRepository.save(application);
         }else throw new UnauthorizedException("This application has already been rejected");
     }
-    public void discardApplicantByDevId(Long devId, Long jobId)throws NotFoundException, UnauthorizedException{
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(companyRepository.findByCredentials_Email(email).isEmpty()){
-            throw new UnauthorizedException("You don't have permission to delete applicants to this job");
-        }
-        CompanyEntity company = companyRepository.findByCredentials_Email(email).get();
-        if(developerRepository.findById(devId).isEmpty()){
-            throw new NotFoundException("Developer not found");
-        }
-        DeveloperEntity developer = developerRepository.findById(devId).get();
-        if(jobRepository.findById(jobId).isEmpty()){
-            throw new NotFoundException("Job not found");
-        }
-        JobEntity job = jobRepository.findById(jobId).get();
-        if(!company.getJobs().contains(job)){
-            throw new UnauthorizedException("You don't have permission to delete applicants to this job");
-        }
-        if(job.getApplicants().isEmpty()){
-            throw new NotFoundException("No applicants found for this job");
-        }
-        job.getApplicants().stream()
-                .filter(app -> app.getDev().equals(developer))
-                .findAny()
-                .ifPresent(applicantsRepository::delete);
-    }
     public int applicationsQuantity(){
         return applicantsRepository.findAll().size();
     }
@@ -306,5 +281,27 @@ public class ApplicationService {
                 .count();
         int totalApplications = applicantsRepository.findAll().size();
         return (double)acceptedApplications / totalApplications * 100;
+    }
+    public CollectionModel<EntityModel<ApplicationDTO>> findAcceptedApplications(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(developerRepository.findByCredentials_Email(email).isEmpty()){
+            throw new CredentialsRequiredException("You need to login to view your applications");
+        }
+        DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
+        return CollectionModel.of(developer.getPostulatedJobs().stream()
+                .filter(app -> app.getState().equals(State.ACCEPTED))
+                .map(applicationAssembler::toDevModel)
+                .toList());
+    }
+    public CollectionModel<EntityModel<ApplicationDTO>> findRejectedApplications(){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(developerRepository.findByCredentials_Email(email).isEmpty()){
+            throw new CredentialsRequiredException("You need to login to view your applications");
+        }
+        DeveloperEntity developer = developerRepository.findByCredentials_Email(email).get();
+        return CollectionModel.of(developer.getPostulatedJobs().stream()
+                .filter(app -> app.getState().equals(State.REJECTED))
+                .map(applicationAssembler::toDevModel)
+                .toList());
     }
 }

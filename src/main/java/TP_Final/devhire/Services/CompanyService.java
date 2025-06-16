@@ -79,6 +79,14 @@ public class CompanyService {
         }
         return CollectionModel.of(companies.stream().map(companyAssembler::toModel).toList());
     }
+    public CollectionModel<EntityModel<CompanyDTO>> findByName(String name)throws NotFoundException {
+        List<CompanyEntity> companies = companyRepository.findByName(name).stream()
+                .toList();
+        if(companies.isEmpty()){
+            throw new NotFoundException("Company not found");
+        }
+        return CollectionModel.of(companies.stream().map(companyAssembler::toModel).toList());
+    }
     public EntityModel<CompanyDTO> update(CompanyDTO companyDTO)throws UnauthorizedException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         CompanyEntity company = companyRepository.findByCredentials_Email(email).orElseThrow(()->new UnauthorizedException("You don't have permission to update this account"));

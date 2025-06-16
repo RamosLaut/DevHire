@@ -4,11 +4,15 @@ import TP_Final.devhire.Assemblers.CompanyAssembler;
 import TP_Final.devhire.Assemblers.DeveloperAssembler;
 import TP_Final.devhire.Exceptions.NotFoundException;
 import TP_Final.devhire.Exceptions.UnauthorizedException;
+import TP_Final.devhire.Model.DTOS.AdminDTO;
 import TP_Final.devhire.Model.DTOS.CompanyDTO;
 import TP_Final.devhire.Model.DTOS.DeveloperDTO;
 import TP_Final.devhire.Model.DTOS.PasswordChangeDTO;
+import TP_Final.devhire.Model.Entities.AdminEntity;
 import TP_Final.devhire.Model.Entities.CompanyEntity;
 import TP_Final.devhire.Model.Entities.DeveloperEntity;
+import TP_Final.devhire.Model.Mappers.AdminMapper;
+import TP_Final.devhire.Repositories.AdminRepository;
 import TP_Final.devhire.Repositories.CompanyRepository;
 import TP_Final.devhire.Repositories.DeveloperRepository;
 import TP_Final.devhire.Security.Dtos.AuthRequest;
@@ -30,18 +34,22 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final DeveloperRepository developerRepository;
     private final CompanyRepository companyRepository;
+    private final AdminRepository adminRepository;
     private final DeveloperAssembler developerAssembler;
     private final CompanyAssembler companyAssembler;
+    private final AdminMapper adminMapper;
     private final PasswordEncoder passwordEncoder;
 
     public AuthService(CredentialsRepository credentialsRepository,
-                       AuthenticationManager authenticationManager, DeveloperRepository developerRepository, CompanyRepository companyRepository, DeveloperAssembler developerAssembler, CompanyAssembler companyAssembler, PasswordEncoder passwordEncoder) {
+                       AuthenticationManager authenticationManager, DeveloperRepository developerRepository, CompanyRepository companyRepository, AdminRepository adminRepository, DeveloperAssembler developerAssembler, CompanyAssembler companyAssembler, AdminMapper adminMapper, PasswordEncoder passwordEncoder) {
         this.credentialsRepository = credentialsRepository;
         this.authenticationManager = authenticationManager;
         this.developerRepository = developerRepository;
         this.companyRepository = companyRepository;
+        this.adminRepository = adminRepository;
         this.developerAssembler = developerAssembler;
         this.companyAssembler = companyAssembler;
+        this.adminMapper = adminMapper;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -57,13 +65,16 @@ public class AuthService {
     public AuthResponse getAuthResponse(String token, String email){
         Optional<DeveloperEntity> userOpt = developerRepository.findByCredentials_Email(email);
         Optional<CompanyEntity> companyOpt = companyRepository.findByCredentials_Email(email);
-
+        Optional<AdminEntity> adminOpt = adminRepository.findByCredentials_Email(email);
         if (userOpt.isPresent()) {
             EntityModel<DeveloperDTO> dto = developerAssembler.toModel(userOpt.get());
             return AuthResponse.builder().developer(dto).token(token).build();
-        } else{
+        } else if(companyOpt.isPresent()){
             EntityModel<CompanyDTO> dto = companyAssembler.toOwnCompanyModel(companyOpt.get());
             return AuthResponse.builder().company(dto).token(token).build();
+        } else{
+            AdminDTO adminDTO = adminMapper.convertToAdminDTO(adminOpt.get());
+            return AuthResponse.builder().admin(adminDTO).token(token).build();
         }
     }
 

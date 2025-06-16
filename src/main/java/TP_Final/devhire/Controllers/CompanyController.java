@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -24,7 +25,6 @@ public class CompanyController {
     public CompanyController(CompanyService companyService) {
         this.companyService = companyService;
     }
-
     @Operation(
             summary = "Listar todas las empresas",
             description = "Retorna una colección de todas las empresas registradas.",
@@ -36,7 +36,6 @@ public class CompanyController {
     public ResponseEntity<CollectionModel<EntityModel<CompanyDTO>>> findAll(){
         return ResponseEntity.ok(companyService.findAll());
     }
-
     @Operation(
             summary = "Buscar empresa por ID",
             description = "Obtiene una empresa específica mediante su ID.",
@@ -50,7 +49,19 @@ public class CompanyController {
     public ResponseEntity<EntityModel<CompanyDTO>> findById(@PathVariable Long id){
         return ResponseEntity.ok(companyService.findById(id));
     }
-
+    @Operation(
+            summary = "Buscar empresa por nombre",
+            description = "Permite a cualquier rol buscar una empresa por su nombre."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Empresas encontradas correctamente"),
+            @ApiResponse(responseCode = "404", description = "No se encontró ninguna empresa con ese nombre"),
+            @ApiResponse(responseCode = "403", description = "Acceso denegado")
+    })
+    @GetMapping("/name/{name}")
+    public ResponseEntity<CollectionModel<EntityModel<CompanyDTO>>> findByName(@PathVariable String name){
+        return ResponseEntity.ok(companyService.findByName(name));
+    }
     @Operation(
             summary = "Buscar empresas por ubicación",
             description = "Devuelve todas las empresas registradas en la ubicación especificada.",
@@ -63,7 +74,6 @@ public class CompanyController {
     public ResponseEntity<CollectionModel<EntityModel<CompanyDTO>>>findByLocation(@PathVariable String location){
         return ResponseEntity.ok((companyService.findByLocation(location)));
     }
-
     @Operation(
             summary = "Actualizar los datos de la empresa autenticada",
             description = "Permite a una empresa autenticada actualizar su propia información.",
@@ -91,7 +101,6 @@ public class CompanyController {
     public ResponseEntity<EntityModel<CompanyDTO>> updateOwnCompany(@RequestBody CompanyDTO company){
         return ResponseEntity.ok(companyService.update(company));
     }
-
     @Operation(
             summary = "Eliminar cuenta propia de empresa",
             description = "Elimina la cuenta de la empresa actualmente autenticada.",
@@ -105,7 +114,6 @@ public class CompanyController {
         companyService.deleteOwnAccount();
         return ResponseEntity.noContent().build();
     }
-
     @Operation(
             summary = "Eliminar empresa por nombre",
             description = "Elimina una empresa en base a su nombre.",

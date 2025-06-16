@@ -1,10 +1,7 @@
 package TP_Final.devhire.Controllers;
 
 import TP_Final.devhire.Assemblers.DeveloperAssembler;
-import TP_Final.devhire.Model.DTOS.AcademicInfoDTO;
-import TP_Final.devhire.Model.DTOS.DeveloperDTO;
-import TP_Final.devhire.Model.DTOS.JobExperienceDTO;
-import TP_Final.devhire.Model.DTOS.SkillsDTO;
+import TP_Final.devhire.Model.DTOS.*;
 import TP_Final.devhire.Services.DeveloperService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,7 +35,6 @@ public class DeveloperController {
         this.developerService = developerService;
         this.developerAssembler = developerAssembler;
     }
-
     @Operation(
             summary = "Obtener programador por ID",
             parameters = {
@@ -52,7 +49,6 @@ public class DeveloperController {
     public ResponseEntity<EntityModel<DeveloperDTO>> getDevById(@PathVariable Long id){
         return ResponseEntity.ok(developerService.findById(id));
     }
-
     @Operation(
             summary = "Listar todos los programadores",
             responses = @ApiResponse(responseCode = "200", description = "Lista de programadores", content = @Content(array = @ArraySchema(schema = @Schema(implementation = DeveloperDTO.class))))
@@ -63,7 +59,6 @@ public class DeveloperController {
        return ResponseEntity.ok(
                 CollectionModel.of(users));
     }
-
     @Operation(
             summary = "Listar programadores paginados",
             parameters = {
@@ -80,11 +75,19 @@ public class DeveloperController {
                     linkTo(methodOn(DeveloperController.class).listAllDevsPage(page, size)).withSelfRel())
         );
     }
+    @Operation(
+            summary = "Buscar desarrollador por nombre",
+            description = "Permite a cualquier rol buscar un programador por su nombre."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Desarrolladores encontrados correctamente"),
+            @ApiResponse(responseCode = "404", description = "No se encontró ningún desarrollador con ese nombre"),
+            @ApiResponse(responseCode = "403", description = "Acceso denegado")
+    })
     @GetMapping("/search/{name}")
-    public ResponseEntity<CollectionModel<EntityModel<DeveloperDTO>>> searchDevByName(@PathVariable String name) {
+    public ResponseEntity<CollectionModel<EntityModel<DeveloperApplicantDTO>>> searchDevByName(@PathVariable String name) {
         return ResponseEntity.ok(developerService.findByName(name));
     }
-
     @Operation(
             summary = "Actualizar información académica",
             parameters = @Parameter(name = "id", description = "ID del programador"),
@@ -99,8 +102,6 @@ public class DeveloperController {
     public ResponseEntity<EntityModel<DeveloperDTO>> updateAcademicInfo(@PathVariable Long id, @RequestBody List<AcademicInfoDTO> academicInfoDTOS) {
         return ResponseEntity.ok(developerService.updateAcademicInfo(id, academicInfoDTOS));
     }
-
-
     @Operation(
             summary = "Actualizar experiencia laboral",
             parameters = @Parameter(name = "id", description = "ID del programador"),
@@ -114,7 +115,6 @@ public class DeveloperController {
     public ResponseEntity<EntityModel<DeveloperDTO>> updateJobExperience(@PathVariable Long id, @RequestBody List<JobExperienceDTO> jobExperienceDTOS) {
         return ResponseEntity.ok(developerService.updateJobExperience(id, jobExperienceDTOS));
     }
-
     @Operation(
             summary = "Actualizar habilidades del programador",
             parameters = @Parameter(name = "id", description = "ID del programador"),
@@ -128,7 +128,6 @@ public class DeveloperController {
     public ResponseEntity<EntityModel<DeveloperDTO>> updateSkills(@PathVariable Long id, @RequestBody SkillsDTO skillsDTO) {
         return ResponseEntity.ok(developerService.updateSkills(id, skillsDTO));
     }
-
     @Operation(
             summary = "Actualizar campos del programador",
             parameters = @Parameter(name = "id", description = "ID del programador"),
@@ -142,7 +141,6 @@ public class DeveloperController {
     public ResponseEntity<EntityModel<DeveloperDTO>> updateDev(@PathVariable Long id, @RequestBody DeveloperDTO dto) {
         return ResponseEntity.ok(developerAssembler.toModel(developerService.updateUserFields(id, dto)));
     }
-
     @Operation(
             summary = "Desactivar programador (baja lógica)",
             parameters = @Parameter(name = "id", description = "ID del programador")
@@ -151,7 +149,6 @@ public class DeveloperController {
     public ResponseEntity<EntityModel<DeveloperDTO>> logicDown(@PathVariable Long id) {
         return ResponseEntity.ok(developerService.deactivate(id));
     }
-
     @Operation(
             summary = "Reactivar programador (alta lógica)",
             parameters = @Parameter(name = "id", description = "ID del programador")
@@ -160,7 +157,6 @@ public class DeveloperController {
     public ResponseEntity<EntityModel<DeveloperDTO>> logicHigh(@PathVariable Long id) {
         return ResponseEntity.ok(developerService.reactivate(id));
     }
-
     @Operation(
             summary = "Eliminar programador",
             parameters = @Parameter(name = "id", description = "ID del programador"),

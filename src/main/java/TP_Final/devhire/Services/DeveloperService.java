@@ -63,10 +63,10 @@ public class DeveloperService {
             .collect(Collectors.toList());
     }
 
-    public CollectionModel<EntityModel<DeveloperDTO>> findByName(String name){
-        List<EntityModel<DeveloperDTO>> devs = developerRepository.findAll().stream()
+    public CollectionModel<EntityModel<DeveloperApplicantDTO>> findByName(String name){
+        List<EntityModel<DeveloperApplicantDTO>> devs = developerRepository.findAll().stream()
                 .filter(dev -> name.equalsIgnoreCase(dev.getName()))
-                .map(developerAssembler::toModel)
+                .map(developerAssembler::onlySelfRel)
                 .toList();
         if(devs.isEmpty()){
             throw new NotFoundException("Developer not found");
