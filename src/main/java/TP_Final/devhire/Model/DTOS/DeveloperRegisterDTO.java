@@ -1,10 +1,12 @@
 package TP_Final.devhire.Model.DTOS;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DeveloperRegisterDTO {
     @NotNull
     @Email

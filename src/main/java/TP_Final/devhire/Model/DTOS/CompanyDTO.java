@@ -1,11 +1,13 @@
 package TP_Final.devhire.Model.DTOS;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 public class CompanyDTO {
     @NotNull
     Long id;
