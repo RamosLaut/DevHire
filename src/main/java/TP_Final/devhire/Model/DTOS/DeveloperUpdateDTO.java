@@ -5,10 +5,14 @@ import TP_Final.devhire.Model.Entities.JobExperience;
 import TP_Final.devhire.Model.Enums.HardSkills;
 import TP_Final.devhire.Model.Enums.Seniority;
 import TP_Final.devhire.Model.Enums.SoftSkills;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 @Data
+@NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DeveloperUpdateDTO {
         private String name;
         private String lastName;

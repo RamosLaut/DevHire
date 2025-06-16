@@ -82,7 +82,7 @@ public class FollowService {
         return followAssembler.toModel(responseDTO);
     }
 
-    public EntityModel<FollowResponseDTO> findById(FollowType type, Long followerId, Long followedId) {
+    public EntityModel<FollowResponseDTO> findById(FollowType type, Long followerId, Long followedId) throws NotFoundException, IllegalArgumentException{
         IFollowRelation entity;
         switch (type) {
             case DEVELOPER_TO_DEVELOPER -> {
@@ -123,7 +123,7 @@ public class FollowService {
         return CollectionModel.of(allFollows);
     }
 
-    public ResponseEntity<Void> deleteById(FollowRequestDTO dto) {
+    public ResponseEntity<Void> deleteById(FollowRequestDTO dto) throws NotFoundException, IllegalArgumentException {
         validateFollowRequest(dto);
         verifyAuthenticatedUserMatchesFollower(dto);
 
@@ -197,7 +197,7 @@ public class FollowService {
         return followAssembler.toModel(followMapper.toDTO(saved));
     }
 
-    public CollectionModel<EntityModel<FollowResponseDTO>> getFollowers(EntityType type, Long id) {
+    public CollectionModel<EntityModel<FollowResponseDTO>> getFollowers(EntityType type, Long id) throws IllegalArgumentException{
         List<EntityModel<FollowResponseDTO>> followers = new ArrayList<>();
 
         switch (type) {
@@ -219,7 +219,7 @@ public class FollowService {
         return CollectionModel.of(followers);
     }
 
-    public CollectionModel<EntityModel<FollowResponseDTO>> getFollowings(EntityType type, Long id) {
+    public CollectionModel<EntityModel<FollowResponseDTO>> getFollowings(EntityType type, Long id)throws IllegalArgumentException {
         List<EntityModel<FollowResponseDTO>> followings = new ArrayList<>();
 
         switch (type) {
@@ -240,7 +240,7 @@ public class FollowService {
 
         return CollectionModel.of(followings);
     }
-    public CollectionModel<EntityModel<FollowResponseDTO>> getOwnFollowers() {
+    public CollectionModel<EntityModel<FollowResponseDTO>> getOwnFollowers()throws NotFoundException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Optional<DeveloperEntity> optionalDev = developerRepository.findByCredentials_Email(email);
@@ -257,7 +257,7 @@ public class FollowService {
         }
     }
 
-    public CollectionModel<EntityModel<FollowResponseDTO>> getOwnFollowings() {
+    public CollectionModel<EntityModel<FollowResponseDTO>> getOwnFollowings() throws NotFoundException {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Optional<DeveloperEntity> optionalDev = developerRepository.findByCredentials_Email(email);
@@ -277,7 +277,7 @@ public class FollowService {
 
     // Métodos auxiliares:
 
-    private void validateFollowRequest(FollowRequestDTO dto) {
+    private void validateFollowRequest(FollowRequestDTO dto)throws IllegalArgumentException {
         System.out.println("Follower type: '" + dto.getFollowerType() + "'");
         System.out.println("Followed type: '" + dto.getFollowedType() + "'");
 
@@ -300,7 +300,7 @@ public class FollowService {
         }
     }
 
-    private IFollowRelation getFollowEntity(FollowRequestDTO dto) {
+    private IFollowRelation getFollowEntity(FollowRequestDTO dto) throws NotFoundException {
         FollowType type = FollowType.from(
                 dto.getFollowerType(),
                 dto.getFollowedType()
@@ -321,7 +321,7 @@ public class FollowService {
         };
     }
 
-    private void setEnabled(Object entity, boolean value) {
+    private void setEnabled(Object entity, boolean value) throws IllegalArgumentException {
         if (entity instanceof DeveloperFollowsDeveloper dfd) {
             dfd.setEnabled(value);
         } else if (entity instanceof DeveloperFollowsCompany dfc) {
@@ -348,7 +348,7 @@ public class FollowService {
         };
     }
 
-    private void verifyAuthenticatedUserMatchesFollower(FollowRequestDTO dto) {
+    private void verifyAuthenticatedUserMatchesFollower(FollowRequestDTO dto) throws AccessDeniedException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Optional<DeveloperEntity> devOpt = developerRepository.findByCredentials_Email(email);
@@ -379,7 +379,7 @@ public class FollowService {
         }
     }
 
-    private void completeFollowerFromCredentials(FollowRequestDTO dto) {
+    private void completeFollowerFromCredentials(FollowRequestDTO dto) throws IllegalStateException{
         if (dto.getFollowerId() == null || dto.getFollowerType() == null) {
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
 

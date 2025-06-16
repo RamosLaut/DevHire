@@ -1,7 +1,14 @@
 package TP_Final.devhire.Controllers;
 
 import TP_Final.devhire.Assemblers.DeveloperAssembler;
+
 import TP_Final.devhire.Model.DTOS.*;
+
+import TP_Final.devhire.Model.DTOS.AcademicInfoDTO;
+import TP_Final.devhire.Model.DTOS.DeveloperDTO;
+import TP_Final.devhire.Model.DTOS.JobExperienceDTO;
+import TP_Final.devhire.Model.DTOS.SkillsDTO;
+
 import TP_Final.devhire.Services.DeveloperService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,10 +18,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -68,12 +80,17 @@ public class DeveloperController {
             responses = @ApiResponse(responseCode = "200", description = "Lista paginada", content = @Content(array = @ArraySchema(schema = @Schema(implementation = DeveloperDTO.class))))
     )
     @GetMapping("/page")
-    public ResponseEntity<CollectionModel<EntityModel<DeveloperDTO>>> listAllDevsPage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-    Page<EntityModel<DeveloperDTO>> userPage = developerService.findAllPage(page, size);
-        return ResponseEntity.ok(
-            CollectionModel.of(userPage.getContent(),
-                    linkTo(methodOn(DeveloperController.class).listAllDevsPage(page, size)).withSelfRel())
-        );
+    public ResponseEntity<CollectionModel<EntityModel<DeveloperDTO>>> listAllDevsPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "2") int size,
+            PagedResourcesAssembler<DeveloperEntity> pagedResourcesAssembler) {
+
+        Page<DeveloperEntity> developerPage = developerService.findAllPage(page, size);
+
+        PagedModel<EntityModel<DeveloperDTO>> pagedModel =
+                pagedResourcesAssembler.toModel(developerPage, developerAssembler);
+
+        return ResponseEntity.ok(pagedModel);
     }
     @Operation(
             summary = "Buscar desarrollador por nombre",
@@ -125,7 +142,7 @@ public class DeveloperController {
             )
     )
     @PutMapping("/skills/{id}")
-    public ResponseEntity<EntityModel<DeveloperDTO>> updateSkills(@PathVariable Long id, @RequestBody SkillsDTO skillsDTO) {
+    public ResponseEntity<EntityModel<DeveloperDTO>> updateSkills(@PathVariable Long id, @Valid @RequestBody SkillsDTO skillsDTO) {
         return ResponseEntity.ok(developerService.updateSkills(id, skillsDTO));
     }
     @Operation(
@@ -139,7 +156,13 @@ public class DeveloperController {
     )
     @PutMapping("/update/{id}")
     public ResponseEntity<EntityModel<DeveloperDTO>> updateDev(@PathVariable Long id, @RequestBody DeveloperDTO dto) {
-        return ResponseEntity.ok(developerAssembler.toModel(developerService.updateUserFields(id, dto)));
+        return ResponseEntity.ok(developerService.updateUserFields(id, dto));
+    }
+
+    //Metodo para generar link en assembler
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateDev(@PathVariable Long id) {
+        return ResponseEntity.ok().build();
     }
     @Operation(
             summary = "Desactivar programador (baja lógica)",

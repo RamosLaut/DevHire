@@ -4,10 +4,14 @@ package TP_Final.devhire.Model.DTOS;
 import TP_Final.devhire.Model.Enums.EntityType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "Datos requeridos para crear o modificar una relación de seguimiento")
 public class FollowRequestDTO {
 
@@ -25,13 +29,4 @@ public class FollowRequestDTO {
    @Schema(description = "Tipo del seguido: DEVELOPER o COMPANY", example = "COMPANY")
    private EntityType followedType; //DEVELOPER - COMPANY
 
-   public FollowRequestDTO() {
-   }
-
-   public FollowRequestDTO(long followerId, EntityType followerType, long followedId, EntityType followedType) {
-      this.followerId = followerId;
-      this.followerType = followerType;
-      this.followedId = followedId;
-      this.followedType = followedType;
-   }
 }
