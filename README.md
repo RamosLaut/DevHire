@@ -93,7 +93,6 @@ DevHire/
 - Java 21
 - Maven
 - MySQL
-- 
 ## Instalación y ejecución
 
 1. 📦 Clonar el repositorio
@@ -125,7 +124,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
     ```
 ---
 
-🔑 Endpoints destacados
+##🔑 Endpoints destacados
 
 | Método | Endpoint         | Rol requerido | Descripción                 |
 | ------ | ---------------- | ------------- | --------------------------- |
@@ -136,17 +135,17 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
 | POST   | `/job/apply`     | DEV           | Aplicar a un empleo         |
 | GET    | `/stats`         | ADMIN         | Ver estadísticas generales  |
 
-💡 Ideas futuras
+##💡 Ideas futuras
 - Sistema de notificaciones por correo.
 - Integracion API GitHub.
 
-📌 Diseño y arquitectura
+##📌 Diseño y arquitectura
 - Se utilizan DTOs para entrada/salida de datos.
 - Las respuestas utilizan HATEOAS (EntityModel, CollectionModel) para navegación semántica RESTful.
 - Las habilidades se definen como enums: HardSkill, SoftSkill.
 - Manejo centralizado de errores mediante @ControllerAdvice.
 
-👥 Autores
+##👥 Autores
 - Lautaro Ramos @RamosLaut
 - Maica Odera @Katzehell
 - Lautaro Castro @sklaucha
