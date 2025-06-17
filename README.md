@@ -56,13 +56,13 @@ Este proyecto fue realizado por **tres estudiantes universitarios** como trabajo
 - Gestión global de entidades.
 
 ---
-## 📂 Estructura del proyecto
+## 📁 Estructura del proyecto
+
+```text
 DevHire/
 ├── .env
-├── .gitattributes
 ├── .gitignore
 ├── mvnw
-├── mvnw.cmd
 ├── pom.xml
 ├── src/
 │   ├── main/
@@ -86,7 +86,6 @@ DevHire/
 │           └── TP_Final/
 │               └── devhire/
 │                   └── DevHireApplicationTests.java
-
 ---
 ## 🛠️ Configuración del entorno
 ### 🔧 Requisitos
