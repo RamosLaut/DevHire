@@ -87,6 +87,7 @@ DevHire/
 │               └── devhire/
 │                   └── DevHireApplicationTests.java
 ---
+
 ## 🛠️ Configuración del entorno
 ### 🔧 Requisitos
 - Java 21
