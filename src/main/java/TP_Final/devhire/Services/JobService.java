@@ -23,7 +23,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -243,11 +245,28 @@ public class JobService {
     public int jobsQuantity(){
         return jobRepository.findAll().size();
     }
+    public String hardSkillMostRequested(){
+        HardSkills mostRequested = jobRepository.findAll().stream()
+                .flatMap(job -> job.getHardSkills().stream())
+                .collect(Collectors.groupingBy(skill -> skill, Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+        return mostRequested.name();
+    }
+    public String softSkillMostRequested(){
+        SoftSkills mostRequested = jobRepository.findAll().stream()
+                .flatMap(job -> job.getSoftSkills().stream())
+                .collect(Collectors.groupingBy(skill -> skill, Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+        return mostRequested.name();
+    }
 }
 
-//    public EntityModel<JobDTO> FilterByLocation(String location)throws NotFoundJobLocationException {
-//        return assembler.toModel(jobRepository.FilterByLocation(location).orElseThrow(()->new NotFoundJobLocationException("location empty of companys")));
-//    }
 
 
 

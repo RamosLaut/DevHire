@@ -6,7 +6,6 @@ import TP_Final.devhire.Model.Entities.AcademicInfo;
 import TP_Final.devhire.Model.Entities.DeveloperEntity;
 import TP_Final.devhire.Exceptions.NotFoundException;
 import TP_Final.devhire.Model.Entities.JobExperience;
-import TP_Final.devhire.Model.Entities.SkillModel;
 import TP_Final.devhire.Model.Enums.HardSkills;
 import TP_Final.devhire.Model.Enums.SoftSkills;
 import TP_Final.devhire.Model.Mappers.DeveloperMapper;
@@ -24,7 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 @Service
 public class DeveloperService {
@@ -38,20 +37,6 @@ public class DeveloperService {
         this.developerMapper = developerMapper;
         this.developerAssembler = developerAssembler;
     }
-
-    public EntityModel<DeveloperDTO> register(DeveloperRegisterDTO dto) {
-        if (developerRepository.findByCredentials_Email(dto.getEmail()).isPresent()) {
-            throw new RuntimeException("The email is already registered");
-        }
-        if (developerRepository.findByDni(dto.getDni()).isPresent()) {
-            throw new RuntimeException("The DNI is already registered");
-        }
-        DeveloperEntity entity = developerMapper.convertRegisterDTOToEntity(dto);
-        entity.setEnabled(true);
-        DeveloperEntity saved = developerRepository.save(entity);
-        return developerAssembler.toModel(saved);
-    }
-
 
     public EntityModel<DeveloperDTO> findById (Long id) throws NotFoundException {
         DeveloperEntity user = developerRepository.findById(id)
@@ -198,11 +183,9 @@ public class DeveloperService {
         return developerAssembler.toModel(developerRepository.save(user));
     }
 
-
     public int devsQuantity(){
         return developerRepository.findAll().size();
     }
-
 
     private DeveloperEntity getAuthenticatedDeveloper() throws AccessDeniedException{
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
