@@ -152,7 +152,7 @@ DevHire/
 ---
 
 👥 Autores
-- Lautaro Ramos @RamosLaut
-- Maica Odera @Katzehell
-- Lautaro Castro @sklaucha
+- [Lautaro Ramos](https://github.com/RamosLaut)
+- [Maica Odera](https://github.com/Katzehell)
+- [Lautaro Castro](https://github.com/sklaucha)
 
