@@ -88,39 +88,42 @@ DevHire/
 │                   └── DevHireApplicationTests.java
 ```
 ## 🛠️ Configuración del entorno
+
 ### 🔧 Requisitos
-- Java 21
-- Maven
-- MySQL
+
+- Java 21  
+- Maven  
+- MySQL  
+
 ---
-###  Instalación y ejecución
 
-1. 📦 Clonar el repositorio
-```bash
-git clone https://github.com/tu-usuario/devhire.git
-cd devhire
+### 🧪 Instalación y ejecución
 
-2. ⚙️ Configurar las variables en el archivo `.env` o `application.properties`:
-    ```properties
+1. 📦 Clonar el repositorio  
+   ```bash
+   git clone https://github.com/tu-usuario/devhire.git
+   cd devhire
+⚙️ Configurar las variables en el archivo .env o application.properties
+
+properties
 spring.datasource.url=jdbc:mysql://localhost:3306/devhire
 spring.datasource.username=TU_USUARIO
 spring.datasource.password=TU_PASSWORD
+
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+🗄️ Crear una base de datos MySQL llamada devhire_db.
 
-3. 🗄️ Crear una base de datos MySQL llamada devhire_db.
+🚀 Ejecutar la aplicación
+bash
+./mvnw spring-boot:run
 
-4. 🚀 Ejecutar la aplicación:
-    ```bash
-    ./mvnw spring-boot:run
-    ```
-5. 📑 Acceder a Swagger:
-    ```
-    http://localhost:8080/swagger-ui/index.html
-    ```
+📑 Acceder a Swagger
+http://localhost:8080/swagger-ui/index.html
+
 ---
-##🔑 Endpoints destacados
+🔑 Endpoints destacados
 
 | Método | Endpoint         | Rol requerido | Descripción                 |
 | ------ | ---------------- | ------------- | --------------------------- |
