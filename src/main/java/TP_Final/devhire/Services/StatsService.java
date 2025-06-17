@@ -32,6 +32,14 @@ public class StatsService {
         int applications = applicationService.applicationsQuantity();
         double acceptedApplications = applicationService.percentageOfAcceptedApplications();
         double averagesPosts = publicationService.averageByUser();
+        String hardSkillMostRequested = jobService.hardSkillMostRequested();
+        if(hardSkillMostRequested==null){
+            hardSkillMostRequested = "-";
+        }
+        String softSkillMostRequested = jobService.softSkillMostRequested();
+        if (softSkillMostRequested==null){
+            softSkillMostRequested = "-";
+        }
         return "General stats"+'\n'
                 +"Publications: "+publications+'\n'
                 +"Average number of posts per user: "+averagesPosts+'\n'
@@ -41,6 +49,8 @@ public class StatsService {
                 +"Companies: "+companies+'\n'
                 +"Jobs offers: "+jobs+'\n'
                 +"Applications to jobs: "+applications+'\n'
-                +"% of accepted applications: "+'%'+acceptedApplications;
+                +"% of accepted applications: "+'%'+acceptedApplications+'\n'
+                +"Hard skill most requested: "+hardSkillMostRequested+'\n'
+                +"Soft skill most requested: "+softSkillMostRequested+'\n';
     }
 }
