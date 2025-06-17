@@ -113,15 +113,17 @@ DevHire/
    spring.jpa.show-sql=true
    spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
    ```
-3.🗄️ Crear una base de datos MySQL llamada devhire_db.
+3. 🗄️ Crear una base de datos MySQL llamada devhire_db.
 
-4.🚀 Ejecutar la aplicación
+4. 🚀 Ejecutar la aplicación
 ```bash
    ./mvnw spring-boot:run
 ```
 5.📑 Acceder a Swagger
    http://localhost:8080/swagger-ui/index.html
+   
 ---
+
 🔑 Endpoints destacados
 
 | Método | Endpoint         | Rol requerido | Descripción                 |
@@ -133,9 +135,13 @@ DevHire/
 | POST   | `/job/apply`     | DEV           | Aplicar a un empleo         |
 | GET    | `/stats`         | ADMIN         | Ver estadísticas generales  |
 
+---
+
 💡 Ideas futuras
 - Sistema de notificaciones por correo.
 - Integracion API GitHub.
+
+---
 
 📌 Diseño y arquitectura
 - Se utilizan DTOs para entrada/salida de datos.
