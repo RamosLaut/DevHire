@@ -86,7 +86,6 @@ DevHire/
 │           └── TP_Final/
 │               └── devhire/
 │                   └── DevHireApplicationTests.java
----
 
 ## 🛠️ Configuración del entorno
 ### 🔧 Requisitos
