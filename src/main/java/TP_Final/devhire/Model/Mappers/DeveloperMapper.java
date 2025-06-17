@@ -32,10 +32,6 @@ public class DeveloperMapper {
         return modelMapper.map(dto, DeveloperEntity.class);
     }
 
-    public DeveloperEntity convertUpdateDTOToEntity(DeveloperUpdateDTO dto){
-        return modelMapper.map(dto, DeveloperEntity.class);
-    }
-
     public AcademicInfo convertToAcademicInfo(AcademicInfoDTO dto) {
         return modelMapper.map(dto, AcademicInfo.class);
     }
@@ -62,16 +58,6 @@ public class DeveloperMapper {
 
     public JobExperienceDTO convertToJobExperienceDTO(JobExperience entity) {
         return modelMapper.map(entity, JobExperienceDTO.class);
-    }
-
-    public DeveloperRegisterDTO convertToRegisterDTO(DeveloperEntity user){
-        return modelMapper.map(user, DeveloperRegisterDTO.class);
-    }
-    public DeveloperPasswordDTO convertToCredentialsDTO(DeveloperEntity user){
-        return modelMapper.map(user, DeveloperPasswordDTO.class);
-    }
-    public DeveloperUpdateDTO convertToUpdateDTO(DeveloperEntity user){
-        return modelMapper.map(user, DeveloperUpdateDTO.class);
     }
 
     // List

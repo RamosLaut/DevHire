@@ -71,65 +71,52 @@ public class DeveloperService {
 
     public EntityModel<DeveloperDTO> updateUserFields (Long userID, DeveloperDTO dto) throws NotFoundException {
         verifyAuthenticatedUserMatchesId(userID);
+
         DeveloperEntity existingUser = developerRepository.findById(userID)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-        DeveloperEntity updatedData = developerMapper.convertToEntity(dto);
-
-        existingUser.setName(updatedData.getName());
-        existingUser.setLastName(updatedData.getLastName());
-        existingUser.setDni(updatedData.getDni());
-        existingUser.setAcademicInfo(updatedData.getAcademicInfo());
-        existingUser.setLocation(updatedData.getLocation());
-        existingUser.setSeniority(updatedData.getSeniority());
-        existingUser.setJobExperience(updatedData.getJobExperience());
-        existingUser.setSoftSkills(updatedData.getSoftSkills());
-        existingUser.setHardSkills(updatedData.getHardSkills());
 
         if (dto.getAcademicInfo() == null) dto.setAcademicInfo(Collections.emptyList());
         if (dto.getJobExperience() == null) dto.setJobExperience(Collections.emptyList());
         if (dto.getSoftSkills() == null) dto.setSoftSkills(Collections.emptyList());
         if (dto.getHardSkills() == null) dto.setHardSkills(Collections.emptyList());
 
-        if (dto.getName() != null) {
-            existingUser.setName(dto.getName());
-        }
-        if (dto.getLastName() != null) {
-            existingUser.setLastName(dto.getLastName());
-        }
-        if (dto.getDni() != null) {
-            existingUser.setDni(dto.getDni());
-        }
-        if (dto.getLocation() != null) {
-            existingUser.setLocation(dto.getLocation());
-        }
-        if (dto.getSeniority() != null) {
-            existingUser.setSeniority(dto.getSeniority());
-        }
+
+        if (dto.getName() != null) existingUser.setName(dto.getName());
+        if (dto.getLastName() != null) existingUser.setLastName(dto.getLastName());
+        if (dto.getDni() != null) existingUser.setDni(dto.getDni());
+        if (dto.getLocation() != null) existingUser.setLocation(dto.getLocation());
+        if (dto.getSeniority() != null) existingUser.setSeniority(dto.getSeniority());
+
+
         if (!dto.getAcademicInfo().isEmpty()) {
-            Set<AcademicInfo> current = new HashSet<>(existingUser.getAcademicInfo());
-            current.addAll(dto.getAcademicInfo().stream()
+            Set<AcademicInfo> merged = new HashSet<>(existingUser.getAcademicInfo());
+            merged.addAll(dto.getAcademicInfo().stream()
                     .map(developerMapper::convertToAcademicInfo)
                     .toList());
-            existingUser.setAcademicInfo(new ArrayList<>(current));
+            existingUser.setAcademicInfo(new ArrayList<>(merged));
         }
+
         if (!dto.getJobExperience().isEmpty()) {
-            Set<JobExperience> current = new HashSet<>(existingUser.getJobExperience());
-            current.addAll(dto.getJobExperience().stream()
+            Set<JobExperience> merged = new HashSet<>(existingUser.getJobExperience());
+            merged.addAll(dto.getJobExperience().stream()
                     .map(developerMapper::convertToJobExperience)
                     .toList());
-            existingUser.setJobExperience(new ArrayList<>(current));
+            existingUser.setJobExperience(new ArrayList<>(merged));
         }
+
         if (!dto.getSoftSkills().isEmpty()) {
-            Set<SoftSkills> current = new HashSet<>(existingUser.getSoftSkills());
-            current.addAll(dto.getSoftSkills());
-            existingUser.setSoftSkills(new ArrayList<>(current));
+            Set<SoftSkills> merged = new HashSet<>(existingUser.getSoftSkills());
+            merged.addAll(dto.getSoftSkills());
+            existingUser.setSoftSkills(new ArrayList<>(merged));
         }
+
         if (!dto.getHardSkills().isEmpty()) {
-            Set<HardSkills> current = new HashSet<>(existingUser.getHardSkills());
-            current.addAll(dto.getHardSkills());
-            existingUser.setHardSkills(new ArrayList<>(current));
+            Set<HardSkills> merged = new HashSet<>(existingUser.getHardSkills());
+            merged.addAll(dto.getHardSkills());
+            existingUser.setHardSkills(new ArrayList<>(merged));
         }
+
         DeveloperEntity saved = developerRepository.save(existingUser);
         return developerAssembler.toModel(saved);
     }

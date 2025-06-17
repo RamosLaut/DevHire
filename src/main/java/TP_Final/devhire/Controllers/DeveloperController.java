@@ -186,7 +186,7 @@ public class DeveloperController {
             parameters = @Parameter(name = "id", description = "ID del programador"),
             responses = @ApiResponse(responseCode = "204", description = "Eliminación exitosa")
     )
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteDev(@PathVariable Long id) {
         developerService.deleteById(id);
         return ResponseEntity.noContent().build();

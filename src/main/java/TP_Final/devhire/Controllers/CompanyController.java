@@ -109,7 +109,7 @@ public class CompanyController {
                     @ApiResponse(responseCode = "403", description = "No autorizado")
             }
     )
-    @DeleteMapping("/delete")
+    @PatchMapping("/delete")
     public ResponseEntity<?> deleteOwnCompany(){
         companyService.deleteOwnAccount();
         return ResponseEntity.noContent().build();
@@ -123,7 +123,7 @@ public class CompanyController {
                     @ApiResponse(responseCode = "404", description = "Empresa no encontrada")
             }
     )
-    @DeleteMapping("/{name}")
+    @DeleteMapping("/delete/{name}")
     public ResponseEntity<?> deleteByName(@PathVariable String name){
             boolean deleted = companyService.deleteByName(name);
             if (deleted) {
