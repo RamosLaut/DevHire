@@ -96,18 +96,15 @@ DevHire/
 ###  Instalación y ejecución
 
 1. 📦 Clonar el repositorio
-
 ```bash
 git clone https://github.com/tu-usuario/devhire.git
 cd devhire
 
 2. ⚙️ Configurar las variables en el archivo `.env` o `application.properties`:
     ```properties
-
 spring.datasource.url=jdbc:mysql://localhost:3306/devhire
 spring.datasource.username=TU_USUARIO
 spring.datasource.password=TU_PASSWORD
-
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
