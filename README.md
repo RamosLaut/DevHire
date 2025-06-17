@@ -103,20 +103,20 @@ DevHire/
    ```bash
    git clone https://github.com/tu-usuario/devhire.git
    cd devhire
-⚙️ Configurar las variables en el archivo .env o application.properties
-
-properties
+   
+2. ⚙️ Configurar las variables en el archivo .env o application.properties
+```bash
 spring.datasource.url=jdbc:mysql://localhost:3306/devhire
 spring.datasource.username=TU_USUARIO
 spring.datasource.password=TU_PASSWORD
-
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
-🗄️ Crear una base de datos MySQL llamada devhire_db.
 
-🚀 Ejecutar la aplicación
-bash
+3.🗄️ Crear una base de datos MySQL llamada devhire_db.
+
+4.🚀 Ejecutar la aplicación
+```bash
 ./mvnw spring-boot:run
 
 📑 Acceder a Swagger
@@ -134,17 +134,17 @@ http://localhost:8080/swagger-ui/index.html
 | POST   | `/job/apply`     | DEV           | Aplicar a un empleo         |
 | GET    | `/stats`         | ADMIN         | Ver estadísticas generales  |
 
-##💡 Ideas futuras
+💡 Ideas futuras
 - Sistema de notificaciones por correo.
 - Integracion API GitHub.
 
-##📌 Diseño y arquitectura
+📌 Diseño y arquitectura
 - Se utilizan DTOs para entrada/salida de datos.
 - Las respuestas utilizan HATEOAS (EntityModel, CollectionModel) para navegación semántica RESTful.
 - Las habilidades se definen como enums: HardSkill, SoftSkill.
 - Manejo centralizado de errores mediante @ControllerAdvice.
 
-##👥 Autores
+👥 Autores
 - Lautaro Ramos @RamosLaut
 - Maica Odera @Katzehell
 - Lautaro Castro @sklaucha
