@@ -119,7 +119,7 @@ DevHire/
 ```bash
    ./mvnw spring-boot:run
 ```
-5.📑 Acceder a Swagger
+5. 📑 Acceder a Swagger
    http://localhost:8080/swagger-ui/index.html
    
 ---
@@ -148,6 +148,8 @@ DevHire/
 - Las respuestas utilizan HATEOAS (EntityModel, CollectionModel) para navegación semántica RESTful.
 - Las habilidades se definen como enums: HardSkill, SoftSkill.
 - Manejo centralizado de errores mediante @ControllerAdvice.
+
+---
 
 👥 Autores
 - Lautaro Ramos @RamosLaut
