@@ -86,13 +86,13 @@ DevHire/
 │           └── TP_Final/
 │               └── devhire/
 │                   └── DevHireApplicationTests.java
-
+```
 ## 🛠️ Configuración del entorno
 ### 🔧 Requisitos
 - Java 21
 - Maven
 - MySQL
-## Instalación y ejecución
+###  Instalación y ejecución
 
 1. 📦 Clonar el repositorio
 
@@ -121,7 +121,6 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
     ```
     http://localhost:8080/swagger-ui/index.html
     ```
----
 
 ##🔑 Endpoints destacados
 
