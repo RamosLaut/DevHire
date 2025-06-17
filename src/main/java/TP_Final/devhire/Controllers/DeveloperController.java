@@ -9,6 +9,7 @@ import TP_Final.devhire.Model.DTOS.DeveloperDTO;
 import TP_Final.devhire.Model.DTOS.JobExperienceDTO;
 import TP_Final.devhire.Model.DTOS.SkillsDTO;
 
+import TP_Final.devhire.Model.Entities.DeveloperEntity;
 import TP_Final.devhire.Services.DeveloperService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

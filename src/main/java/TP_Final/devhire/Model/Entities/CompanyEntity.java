@@ -5,7 +5,6 @@ import TP_Final.devhire.Model.Mappers.Mappers.Entities.Entities.Follow.CompanyFo
 import TP_Final.devhire.Model.Mappers.Mappers.Entities.Entities.Follow.DeveloperFollowsCompany;
 import TP_Final.devhire.Security.Entities.CredentialsEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 
 import lombok.*;
 
@@ -42,9 +41,10 @@ public class CompanyEntity {
     @JoinColumn(name = "user_id")
     private CredentialsEntity credentials;
 
+
     //Seguimientos:
     @OneToMany(mappedBy = "follower")
-    private List<CompanyFollowsCompany> companiesFollowed = new ArrayList<>();
+    private List<CompanyFollowsCompany> companiesFollowers = new ArrayList<>();
 
     @OneToMany(mappedBy = "followed")
     private List<CompanyFollowsCompany> companyFollowings = new ArrayList<>();
@@ -53,5 +53,5 @@ public class CompanyEntity {
     private List<DeveloperFollowsCompany> developerFollowings = new ArrayList<>();
 
     @OneToMany(mappedBy = "follower")
-    private List<CompanyFollowsDeveloper> developersFollowed = new ArrayList<>();
+    private List<CompanyFollowsDeveloper> devsFollowers = new ArrayList<>();
 }
