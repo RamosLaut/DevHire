@@ -123,6 +123,7 @@ public class DataInitializer implements CommandLineRunner {
 
                 Permits.READ_FOLLOWERS, Permits.READ_FOLLOWING,
                 Permits.FILTER_FOLLOWERS, Permits.FILTER_FOLLOWING,
+                Permits.READ_FOLLOWS,
 
                 Permits.READ_APPLICATIONS,
 
