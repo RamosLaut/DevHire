@@ -117,11 +117,10 @@ DevHire/
 
 4.🚀 Ejecutar la aplicación
 ```bash
-./mvnw spring-boot:run
+   ./mvnw spring-boot:run
 ```
-📑 Acceder a Swagger
-http://localhost:8080/swagger-ui/index.html
-
+5.📑 Acceder a Swagger
+   http://localhost:8080/swagger-ui/index.html
 ---
 🔑 Endpoints destacados
 
