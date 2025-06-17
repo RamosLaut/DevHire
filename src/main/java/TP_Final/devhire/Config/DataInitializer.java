@@ -66,6 +66,7 @@ public class DataInitializer implements CommandLineRunner {
                 Permits.FOLLOW, Permits.UNFOLLOW,
                 Permits.READ_FOLLOWERS, Permits.READ_FOLLOWING,
                 Permits.FILTER_FOLLOWERS, Permits.FILTER_FOLLOWING,
+                Permits.DEACTIVATE_FOLLOW, Permits.REACTIVATE_FOLLOW,
 
                 Permits.DELETE_APPLY, Permits.READ_OWN_APPLICATIONS,
                 Permits.FILTER_APPLICATIONS
@@ -105,7 +106,7 @@ public class DataInitializer implements CommandLineRunner {
         createRoleWithPermits(Roles.ROLE_ADMIN, Set.of(
                 Permits.READ_PROFILE, Permits.UPDATE_PROFILE,
                 Permits.READ_COMPANIES, Permits.FILTER_COMPANIES,
-                Permits.LOGIC_DOWN,
+                Permits.LOGIC_DOWN, Permits.DELETE_ACCOUNT,
 
                 Permits.FILTER_DEVS, Permits.READ_DEVS,
 
