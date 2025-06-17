@@ -92,6 +92,7 @@ DevHire/
 - Java 21
 - Maven
 - MySQL
+---
 ###  Instalación y ejecución
 
 1. 📦 Clonar el repositorio
@@ -121,7 +122,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
     ```
     http://localhost:8080/swagger-ui/index.html
     ```
-
+---
 ##🔑 Endpoints destacados
 
 | Método | Endpoint         | Rol requerido | Descripción                 |
